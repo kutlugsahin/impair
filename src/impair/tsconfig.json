@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.app.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "allowImportingTsExtensions": false,
+    "strict": false,
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "rootDir": ".",
+    "sourceMap": true,
+  },
+  "include": [
+    "src/**/*.ts",
+    "./types.d.ts"
+  ]
+}
