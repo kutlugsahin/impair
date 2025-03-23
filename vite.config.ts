@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react-swc'
 import { defineConfig } from 'vite'
 import tsConfigPaths from 'vite-tsconfig-paths'
@@ -9,7 +8,6 @@ export default defineConfig({
       tsDecorators: true,
     }),
     tsConfigPaths(),
-    tailwindcss(),
   ],
   // esbuild: {
   //   target: 'es2020',

@@ -8,6 +8,7 @@
     "declarationDir": "dist/types",
     "rootDir": ".",
     "sourceMap": true,
+    "target": "ESNext"
   },
   "include": [
     "src/**/*.ts",
