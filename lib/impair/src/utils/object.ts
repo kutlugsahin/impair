@@ -32,7 +32,7 @@ function getAllMethods<T>(obj: T) {
 
 export function bindMethods<T extends object>(instance: T): T {
   getAllMethods(instance).forEach((key) => {
-    (instance as any)[key] = (instance as any)[key].bind(instance)
+    ;(instance as any)[key] = (instance as any)[key].bind(instance)
   })
 
   return instance
