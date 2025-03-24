@@ -1,18 +1,17 @@
 {
   "name": "impair",
-  "version": "1.0.2",
-  "main": "index.cjs.js",
-  "module": "index.esm.js",
-  "types": "index.cjs.d.ts",
+  "version": "1.0.3",
+  "main": "index.cjs",
+  "module": "index.js",
+  "types": "index.d.ts",
   "author": {
     "email": "kutlugsahin@gmail.com",
     "name": "Kutlu Sahin"
   },
-  "homepage": "https://kutlugsahin.gitbook.io/re-active/",
+  "homepage": "https://github.com/kutlugsahin/impair",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kutlugsahin/reactive.git",
-    "directory": "packages/re-active/oop"
+    "url": "https://github.com/kutlugsahin/impair.git"
   },
   "keywords": [
     "reactive",
