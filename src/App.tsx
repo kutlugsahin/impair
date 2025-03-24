@@ -1,4 +1,4 @@
-import { component, inject, injectable, Props, state, trigger } from 'impair'
+import { component, inject, injectable, onInit, Props, state, trigger } from 'impair'
 import { QueryService } from '../lib/query/src/queryService'
 import { onMount } from 'impair/lifecycle/onMount'
 
@@ -43,7 +43,14 @@ class PostViewModel {
   }
 
   @onMount
-  sdfsdfsd() {}
+  mounted() {
+    console.log('mounted')
+  }
+
+  @onInit
+  init() {
+    console.log('init')
+  }
 
   render() {
     return (

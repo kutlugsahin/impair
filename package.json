@@ -8,8 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:lib": "rollup -c lib/impair/rollup.config.cjs",
-    "dev:lib": "rollup -c lib/impair/rollup.config.cjs -w"
+    "impair:build": "rollup -c lib/impair/rollup.config.cjs",
+    "impair:publish": "cd ./dist/impair && npm publish --access=public",
+    "impair:build:publish": "npm run impair:build && npm run impair:publish"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
