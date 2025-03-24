@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:lib": "rollup -c impair/rollup.config.cjs",
-    "dev:lib": "rollup -c impair/rollup.config.cjs -w"
+    "build:lib": "rollup -c lib/impair/rollup.config.cjs",
+    "dev:lib": "rollup -c lib/impair/rollup.config.cjs -w"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",

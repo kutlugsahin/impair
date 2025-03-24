@@ -1,0 +1,32 @@
+{
+  "name": "impair",
+  "version": "1.0.1",
+  "main": "index.cjs.js",
+  "module": "index.esm.js",
+  "types": "index.cjs.d.ts",
+  "author": {
+    "email": "kutlugsahin@gmail.com",
+    "name": "Kutlu Sahin"
+  },
+  "homepage": "https://kutlugsahin.gitbook.io/re-active/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kutlugsahin/reactive.git",
+    "directory": "packages/re-active/oop"
+  },
+  "keywords": [
+    "reactive",
+    "reactivity",
+    "react",
+    "oop",
+    "dependency",
+    "injection"
+  ],
+  "peerDependencies": {
+    "react": ">=17.0.2",
+    "@vue/reactivity": ">=3.2.0",
+    "tsyringe": ">=4.8.0",
+    "reflect-metadata": ">=0.2.2"
+  },
+  "license": "MIT"
+}

@@ -1,11 +1,11 @@
 {
-  "extends": "../tsconfig.app.json",
+  "extends": "../../tsconfig.app.json",
   "compilerOptions": {
     "module": "esnext",
     "allowImportingTsExtensions": false,
     "strict": false,
     "declaration": true,
-    "declarationDir": "../dist/types",
+    "declarationDir": "../../dist/impair/types",
     "rootDir": ".",
     "sourceMap": true,
     "target": "ESNext"

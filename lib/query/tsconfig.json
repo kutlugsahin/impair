@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.app.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "allowImportingTsExtensions": false,
+    "strict": false,
+    "declaration": true,
+    "declarationDir": "../../dist/impair-query/types",
+    "sourceMap": true,
+    "target": "ESNext",
+    "paths": {
+      "impair/*": [
+        "../impair/src/*"
+      ],
+      "impair": [
+        "../impair/src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}

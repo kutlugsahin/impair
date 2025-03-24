@@ -23,13 +23,21 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "paths": {
       "impair/*": [
-        "./impair/src/*"
+        "./lib/impair/src/*"
       ],
       "impair": [
-        "./impair/src/index.ts"
-      ]
+        "./lib/impair/src/index.ts"
+      ],
+      "impair-query": [
+        "./lib/query/src/index.ts"
+      ],
+      "impair-query/*": [
+        "./lib/query/src/*"
+      ],
     }
   },
   "include": [
