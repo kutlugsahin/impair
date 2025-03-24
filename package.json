@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:lib": "rollup -c src/impair/rollup.config.cjs",
-    "dev:lib": "rollup -c src/impair/rollup.config.cjs -w"
+    "build:lib": "rollup -c impair/rollup.config.cjs",
+    "dev:lib": "rollup -c impair/rollup.config.cjs -w"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
@@ -21,6 +21,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "reflect-metadata": "^0.2.2",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.2.1",
     "tsyringe": "^4.8.0",
     "vite-tsconfig-paths": "^5.1.4"

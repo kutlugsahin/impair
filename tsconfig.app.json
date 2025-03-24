@@ -25,14 +25,15 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "impair/*": [
-        "./src/impair/src/*"
+        "./impair/src/*"
       ],
       "impair": [
-        "./src/impair/src/index.ts"
+        "./impair/src/index.ts"
       ]
     }
   },
   "include": [
-    "src"
+    "src",
+    "impair"
   ]
 }
