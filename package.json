@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "impair:build": "rollup -c lib/impair/rollup.config.cjs",
     "impair:publish": "cd ./dist/impair && npm publish --access=public",
-    "impair:build:publish": "npm run impair:build && npm run impair:publish"
+    "impair:build:publish": "npm run impair:build && npm run impair:publish",
+    "impair-query:build": "rollup -c lib/impair-query/rollup.config.cjs",
+    "impair-query:publish": "cd ./dist/impair-query && npm publish --access=public",
+    "impair-query:build:publish": "npm run impair-query:build && npm run impair-query:publish"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",

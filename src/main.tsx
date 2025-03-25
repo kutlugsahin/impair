@@ -5,7 +5,7 @@ import { Posts } from './App.tsx'
 import './index.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { setQueryClient } from 'impair-query'
+import { setQueryClient } from '../lib/impair-query/src/index.ts'
 
 const client = new QueryClient()
 
@@ -13,6 +13,6 @@ setQueryClient(client)
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={client}>
-    <Posts id={3} />
+    <Posts id={6} />
   </QueryClientProvider>
 )

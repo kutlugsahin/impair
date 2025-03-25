@@ -63,8 +63,10 @@ export function component<P>(component: FC<P>) {
       runner.current?.()
     }
 
-    useEffect(
-      () => () => {
+    useEffect(() => {
+      forceUpdate()
+
+      return () => {
         if (runner.current) {
           stop(runner.current)
         }
@@ -74,9 +76,8 @@ export function component<P>(component: FC<P>) {
           componentContainer.current.dispose()
           componentContainer.current = undefined
         }
-      },
-      []
-    )
+      }
+    }, [])
 
     if (componentContainer.current) {
       return createElement(

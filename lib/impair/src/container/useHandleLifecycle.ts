@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import type { DependencyContainer } from 'tsyringe'
 
-import { getOnMountMethods } from 'impair/lifecycle/onMount'
-import { getOnUnmountMethods } from 'impair/lifecycle/onUnmount'
+import { getOnMountMethods } from '../lifecycle/onMount'
+import { getOnUnmountMethods } from '../lifecycle/onUnmount'
 import type { ServiceInstance } from '../types'
 import { isMounted } from '../utils/symbols'
 

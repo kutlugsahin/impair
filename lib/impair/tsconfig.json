@@ -7,6 +7,7 @@
     "declaration": true,
     "declarationDir": "../../dist/impair/types",
     "rootDir": ".",
+    "baseUrl": "./",
     "sourceMap": true,
     "target": "ESNext"
   },

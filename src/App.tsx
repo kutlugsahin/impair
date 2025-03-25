@@ -1,5 +1,5 @@
-import { component, inject, injectable, onInit, Props, state, trigger } from 'impair'
-import { QueryService } from '../lib/query/src/queryService'
+import { component, inject, injectable, onDispose, onInit, onUnmount, Props, provide, state, trigger } from 'impair'
+import { QueryService } from '../lib/impair-query/src/queryService'
 import { onMount } from 'impair/lifecycle/onMount'
 
 type Post = {
@@ -21,6 +21,7 @@ type PostProps = {
   id: number
 }
 
+@provide([QueryPost])
 @injectable()
 class PostViewModel {
   @state
@@ -45,11 +46,29 @@ class PostViewModel {
   @onMount
   mounted() {
     console.log('mounted')
+
+    return () => {
+      console.log('mounted > unmounted')
+    }
+  }
+
+  @onUnmount
+  unmount() {
+    console.log('unmount')
   }
 
   @onInit
   init() {
     console.log('init')
+  }
+
+  @onDispose
+  destroy() {
+    console.log('destroy')
+  }
+
+  dispose() {
+    console.log('dispose')
   }
 
   render() {

@@ -33,10 +33,10 @@
         "./lib/impair/src/index.ts"
       ],
       "impair-query": [
-        "./lib/query/src/index.ts"
+        "./lib/impair-query/src/index.ts"
       ],
       "impair-query/*": [
-        "./lib/query/src/*"
+        "./lib/impair-query/src/*"
       ],
     }
   },
