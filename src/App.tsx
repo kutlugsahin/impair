@@ -27,7 +27,7 @@ type PostProps = {
   id: number
 }
 
-@provide([QueryPost])
+// @provide([QueryPost])
 @injectable()
 class PostViewModel {
   @state
@@ -39,14 +39,20 @@ class PostViewModel {
     @inject(Props) public props: PostProps
   ) {}
 
-  @trigger
+  @trigger.async
   querySelectedPost() {
     this.posts.query(this.selectedId)
   }
 
   @trigger
   querySelectedPost2() {
-    this.posts2.query(this.selectedId + 1)
+    const id = this.selectedId + 1
+
+    this.posts2.query(id)
+
+    return () => {
+      console.log('querySelectedPost2', id)
+    }
   }
 
   @onMount
@@ -81,7 +87,16 @@ class PostViewModel {
     return (
       <div>
         <div>
-          <button onClick={() => this.selectedId++}>Inc</button>
+          <button
+            onClick={() => {
+              this.selectedId++
+              this.selectedId++
+              this.selectedId++
+              this.selectedId++
+            }}
+          >
+            Inc
+          </button>
           <button onClick={() => this.selectedId--}>Dec</button>
         </div>
         <hr />
@@ -110,7 +125,7 @@ export function Posts() {
     <div>
       <button onClick={() => setShow(!show)}>Toggle</button>
       <hr />
-      {show && <PostsComponent id={1} />}
+      {show && <PostsComponent id={5} />}
     </div>
   )
 }

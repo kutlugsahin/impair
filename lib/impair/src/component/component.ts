@@ -6,6 +6,7 @@ import { disposeContainer } from '../container/dispose'
 import { Context } from '../context/context'
 import { Constructor, RendererViewModel } from '../types'
 import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel'
+import { debounceMicrotask } from '../utils/debounceMicrotask'
 
 function useForceUpdate() {
   const [_, setVal] = useState({})
@@ -13,20 +14,6 @@ function useForceUpdate() {
   return useCallback(() => {
     setVal({})
   }, [])
-}
-
-function debounceMicrotask(fn: () => void) {
-  let called = false
-
-  return () => {
-    if (!called) {
-      called = true
-      queueMicrotask(() => {
-        called = false
-        fn()
-      })
-    }
-  }
 }
 
 export function component<P>(component: FC<P>) {
