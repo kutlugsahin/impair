@@ -13,6 +13,6 @@ setQueryClient(client)
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={client}>
-    <Posts id={6} />
+    <Posts />
   </QueryClientProvider>
 )

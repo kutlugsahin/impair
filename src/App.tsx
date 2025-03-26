@@ -21,13 +21,23 @@ class QueryPost extends QueryService<Post, [id: number]> {
   dispose() {
     console.log('dispose query')
   }
+
+  @onMount
+  onMunt() {
+    console.log('onMunt query')
+  }
+
+  @onInit
+  onInit() {
+    console.log('onInit query')
+  }
 }
 
 type PostProps = {
   id: number
 }
 
-// @provide([QueryPost])
+@provide([QueryPost])
 @injectable()
 class PostViewModel {
   @state

@@ -8,22 +8,21 @@ type TriggerInfo = {
   flush: 'sync' | 'async'
 }
 
-export function trigger(target: any, propertyKey: string) {
+function addTriggerMetadata(target: any, propertyKey: string, flush: 'sync' | 'async' = 'sync') {
   const triggerInfoArr: TriggerInfo[] = Reflect.getMetadata(triggerMetadataKey, target) ?? []
   triggerInfoArr.push({
     propertyKey,
-    flush: 'sync',
+    flush,
   })
   return Reflect.metadata(triggerMetadataKey, triggerInfoArr)(target)
 }
 
+export function trigger(target: any, propertyKey: string) {
+  return addTriggerMetadata(target, propertyKey)
+}
+
 trigger.async = function (target: any, propertyKey: string) {
-  const triggerInfoArr: TriggerInfo[] = Reflect.getMetadata(triggerMetadataKey, target) ?? []
-  triggerInfoArr.push({
-    propertyKey,
-    flush: 'async',
-  })
-  return Reflect.metadata(triggerMetadataKey, triggerInfoArr)(target)
+  return addTriggerMetadata(target, propertyKey, 'async')
 }
 
 type InitParams = {
