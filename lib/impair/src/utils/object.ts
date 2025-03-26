@@ -42,14 +42,22 @@ export function patchClassInstanceMethod(instance: any, methodName: string, call
   const originalMethod = instance[methodName]
 
   if (originalMethod) {
-    const originalOnUnmount = originalMethod.bind(instance)
-
-    instance[methodName] = function () {
-      originalOnUnmount()
-      callback()
-    }
+    Object.defineProperty(instance, methodName, {
+      value: function (this: any) {
+        originalMethod.call(instance)
+        callback()
+      },
+      configurable: true,
+      writable: true,
+    })
   } else {
-    instance[methodName] = callback
+    Object.defineProperty(instance, methodName, {
+      value: function () {
+        callback()
+      },
+      configurable: true,
+      writable: true,
+    })
   }
 
   return instance

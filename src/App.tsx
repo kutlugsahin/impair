@@ -1,6 +1,7 @@
 import { component, inject, injectable, onDispose, onInit, onUnmount, Props, provide, state, trigger } from 'impair'
 import { QueryService } from '../lib/impair-query/src/queryService'
 import { onMount } from 'impair/lifecycle/onMount'
+import { useState } from 'react'
 
 type Post = {
   id: number
@@ -14,6 +15,11 @@ class QueryPost extends QueryService<Post, [id: number]> {
 
   protected async fetch(id: number) {
     return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json())
+  }
+
+  @onDispose
+  dispose() {
+    console.log('dispose query')
   }
 }
 
@@ -95,4 +101,16 @@ class PostViewModel {
   }
 }
 
-export const Posts = component.fromViewModel<PostProps>(PostViewModel)
+export const PostsComponent = component.fromViewModel<PostProps>(PostViewModel)
+
+export function Posts() {
+  const [show, setShow] = useState(true)
+
+  return (
+    <div>
+      <button onClick={() => setShow(!show)}>Toggle</button>
+      <hr />
+      {show && <PostsComponent id={1} />}
+    </div>
+  )
+}

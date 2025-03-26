@@ -2,6 +2,7 @@ import { effect, ReactiveEffectRunner, stop } from '@vue/reactivity'
 import { createElement, FC, memo, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
+import { disposeContainer } from '../container/dispose'
 import { Context } from '../context/context'
 import { Constructor, RendererViewModel } from '../types'
 import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel'
@@ -37,9 +38,6 @@ export function component<P>(component: FC<P>) {
     const isDirty = useRef(false)
     const componentContainer = useRef<DependencyContainer>(null)
 
-    propsRef.current = props
-    isDirty.current = false
-
     if (!runner.current) {
       const render = debounceMicrotask(() => {
         if (isDirty.current) {
@@ -73,7 +71,7 @@ export function component<P>(component: FC<P>) {
         runner.current = undefined
 
         if (componentContainer.current) {
-          componentContainer.current.dispose()
+          disposeContainer(componentContainer.current)
           componentContainer.current = undefined
         }
       }

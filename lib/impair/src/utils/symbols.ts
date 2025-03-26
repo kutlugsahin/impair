@@ -13,3 +13,5 @@ export const onUnmountMetadataKey = Symbol('onUnmount')
 
 export const onInitMetadataKey = Symbol('onInit')
 export const onDestroyMetadataKey = Symbol('onDestroy')
+
+export const isContainerDisposed = Symbol('isContainerDisposed')

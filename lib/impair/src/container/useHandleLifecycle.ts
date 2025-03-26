@@ -5,6 +5,7 @@ import { getOnMountMethods } from '../lifecycle/onMount'
 import { getOnUnmountMethods } from '../lifecycle/onUnmount'
 import type { ServiceInstance } from '../types'
 import { isMounted } from '../utils/symbols'
+import { disposeContainer } from './dispose'
 
 export function useHandleLifecycle(container: DependencyContainer, resolvedServices: Set<ServiceInstance>) {
   useEffect(() => {
@@ -30,7 +31,7 @@ export function useHandleLifecycle(container: DependencyContainer, resolvedServi
       disposers.forEach((dispose) => {
         dispose?.()
       })
-      container.dispose()
+      disposeContainer(container)
     }
   }, [container])
 
