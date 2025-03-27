@@ -7,11 +7,6 @@ export type Constructor<T = any> = new (...args: any[]) => T
 
 export type InstanceLifecycle = 'singleton' | 'transient' | 'container' | 'resolution'
 
-export type RegisterType<T = any> = {
-  token: Constructor<T>
-  factory: ClassProvider<T>
-}
-
 export type Provider<T = any> =
   | ValueProvider<T>
   | ClassProvider<T>
@@ -29,6 +24,7 @@ export type ProviderProps<P extends object> = {
   readonly provide: readonly (
     | Constructor
     | Registration
+    | [Constructor, InstanceLifecycle]
     | [InjectionToken, ClassProvider<any>['useClass']]
     | [InjectionToken, ClassProvider<any>['useClass'], InstanceLifecycle]
   )[]
@@ -37,31 +33,17 @@ export type ProviderProps<P extends object> = {
 
 export type Dispose = () => void
 
-export type OnMount = {
-  onMount(): void | Dispose
+export type ServiceInstance = {
+  [isMounted]: boolean
+  [isLifecycleHandled]: boolean
 }
-
-export type OnUnmount = {
-  onUnmount(): void
-}
-
-export type ServiceInstance = OnMount &
-  OnUnmount & {
-    [isMounted]: boolean
-    [isLifecycleHandled]: boolean
-  }
 
 export type Dictionary<T = any> = {
   [key: string]: T
 }
 
-export type StateMetadata = {
-  propertyKey: string
-  type: StateType
-}
-
-export type StateType = 'shallow' | 'deep' | 'ref'
-
 export interface RendererViewModel {
   render(): ReactElement | null
 }
+
+export type EffectCallback = () => void | (() => void)

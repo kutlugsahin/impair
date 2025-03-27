@@ -1,5 +1,5 @@
 import { stop } from '@vue/reactivity'
-import { Dictionary, Dispose } from '../types'
+import { Dictionary, Dispose, EffectCallback } from '../types'
 import { triggerMetadataKey } from '../utils/symbols'
 import { asyncEffect, effect } from '../reactivity/effect'
 
@@ -35,7 +35,7 @@ export function initTrigger({ instance, disposers }: InitParams) {
 
   if (triggerProperties) {
     triggerProperties.forEach(({ flush, propertyKey }) => {
-      const effectFn = instance[propertyKey] as () => unknown
+      const effectFn = instance[propertyKey] as EffectCallback
 
       const effectRunner = flush === 'sync' ? effect : asyncEffect
 

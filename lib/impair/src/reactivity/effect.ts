@@ -1,7 +1,6 @@
 import { ReactiveEffectOptions, ReactiveEffectRunner, effect as coreEffect } from '@vue/reactivity'
 import { debounceMicrotask } from '../utils/debounceMicrotask'
-
-type EffectCallback = () => void | (() => void)
+import { EffectCallback } from '../types'
 
 export function effect(fn: EffectCallback, options?: ReactiveEffectOptions): ReactiveEffectRunner<void> {
   let cleanup: void | (() => void)

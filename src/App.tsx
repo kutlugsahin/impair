@@ -25,6 +25,10 @@ class QueryPost extends QueryService<Post, [id: number]> {
   @onMount
   onMunt() {
     console.log('onMunt query')
+
+    return () => {
+      console.log('onMunt > unmount query')
+    }
   }
 
   @onInit
@@ -37,7 +41,7 @@ type PostProps = {
   id: number
 }
 
-@provide([QueryPost])
+@provide([[QueryPost, 'transient']])
 @injectable()
 class PostViewModel {
   @state

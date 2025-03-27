@@ -1,7 +1,14 @@
 import { Ref, ref, shallowRef } from '@vue/reactivity'
 
-import { Dictionary, StateMetadata } from '../types'
+import { Dictionary } from '../types'
 import { stateMetadataKey } from '../utils/symbols'
+
+export type StateType = 'shallow' | 'deep' | 'ref'
+
+export type StateMetadata = {
+  propertyKey: string
+  type: StateType
+}
 
 function registerStateMetadata(target: any, metadata: StateMetadata) {
   const statePropMetadata: StateMetadata[] = Reflect.getMetadata(stateMetadataKey, target) ?? []

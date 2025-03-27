@@ -20,10 +20,10 @@ export function component<P>(component: FC<P>) {
   return memo((props: P) => {
     const forceUpdate = useForceUpdate()
     const renderResult = useRef<ReturnType<typeof component>>(null)
-    const runner = useRef<ReactiveEffectRunner>(null)
+    const runner = useRef<ReactiveEffectRunner | undefined>(undefined)
     const propsRef = useRef<P>(props)
     const isDirty = useRef(false)
-    const componentContainer = useRef<DependencyContainer>(null)
+    const componentContainer = useRef<DependencyContainer | undefined>(undefined)
 
     if (!runner.current) {
       const render = debounceMicrotask(() => {

@@ -1,20 +1,20 @@
-import { DependencyContainer, Lifecycle } from 'tsyringe';
+import { DependencyContainer, Lifecycle } from 'tsyringe'
 
-import { InstanceLifecycle, ProviderProps, Registration, ServiceInstance } from '../types';
-import { isLifecycleHandled } from '../utils/symbols';
+import { InstanceLifecycle, ProviderProps, Registration, ServiceInstance } from '../types'
+import { isLifecycleHandled } from '../utils/symbols'
 
 function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
   switch (lifecycle) {
     case 'singleton':
-      return Lifecycle.Singleton;
+      return Lifecycle.Singleton
     case 'transient':
-      return Lifecycle.Transient;
+      return Lifecycle.Transient
     case 'container':
-      return Lifecycle.ContainerScoped;
+      return Lifecycle.ContainerScoped
     case 'resolution':
-      return Lifecycle.ResolutionScoped;
+      return Lifecycle.ResolutionScoped
     default:
-      throw new Error('Invalid lifecycle');
+      throw new Error('Invalid lifecycle')
   }
 }
 
@@ -24,28 +24,39 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
    * it means that it is a class to be registered as singleton
    */
   if (typeof registration === 'function') {
-    const serviceClass = registration;
+    const serviceClass = registration
     return {
       token: serviceClass,
       provider: {
         useClass: serviceClass,
       },
       lifecycle: 'singleton',
-    };
+    }
   }
 
   /**
    * The registration is a tuple of token and useClass,
    */
   if (Array.isArray(registration)) {
-    const [serviceToken, providedClass, lifecycle = 'singleton'] = registration;
+    if (typeof registration[1] === 'string') {
+      const [serviceClass, lifecycle] = registration
+      return {
+        token: serviceClass,
+        provider: {
+          useClass: serviceClass,
+        },
+        lifecycle,
+      }
+    }
+
+    const [serviceToken, providedClass, lifecycle = 'singleton'] = registration
     return {
       token: serviceToken,
       provider: {
         useClass: providedClass,
       },
       lifecycle,
-    };
+    }
   }
 
   /**
@@ -57,35 +68,35 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
       return {
         ...registration,
         lifecycle: 'singleton',
-      };
+      }
     }
 
-    return registration;
+    return registration
   }
 
-  throw new Error('Invalid service provider registration');
+  throw new Error('Invalid service provider registration')
 }
 
 export function registerServices(container: DependencyContainer, services: ProviderProps<any>['provide']) {
-  const resolvedServices = new Set<ServiceInstance>();
+  const resolvedServices = new Set<ServiceInstance>()
   services.forEach((serviceInfo) => {
-    const { provider, token, lifecycle } = getRegistrationOptions(serviceInfo);
+    const { provider, token, lifecycle } = getRegistrationOptions(serviceInfo)
 
     container.register(token, provider as any, {
       lifecycle: toLifecycle(lifecycle),
-    });
+    })
 
     container.afterResolution(
       token,
       (_, result) => {
         if (!result[isLifecycleHandled]) {
-          result[isLifecycleHandled] = true;
-          resolvedServices.add(result);
+          result[isLifecycleHandled] = true
+          resolvedServices.add(result)
         }
       },
       { frequency: 'Once' }
-    );
-  });
+    )
+  })
 
-  return resolvedServices;
+  return resolvedServices
 }

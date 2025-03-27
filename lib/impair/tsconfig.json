@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "esnext",
     "allowImportingTsExtensions": false,
-    "strict": false,
+    "strict": true,
     "declaration": true,
     "declarationDir": "../../dist/impair/types",
     "rootDir": ".",
