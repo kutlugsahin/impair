@@ -1,5 +1,5 @@
+import { QueryClient, QueryKey, QueryObserver, QueryObserverOptions, QueryObserverResult } from '@tanstack/react-query'
 import { state } from 'impair'
-import { QueryClient, QueryKey, QueryObserver, QueryObserverResult } from '@tanstack/react-query'
 
 let client: QueryClient
 
@@ -54,20 +54,26 @@ export abstract class QueryService<T, P extends QueryKey> implements QueryState<
     }
   }
 
+  protected getQueryOptions(...params: P): QueryObserverOptions<T, Error, T, T, P, never> {
+    const queryFn = () => this.fetch(...params)
+
+    return {
+      queryKey: [this.key, ...params] as any,
+      queryFn,
+      placeholderData: (prev) => prev,
+    }
+  }
+
   public query(...params: P) {
     this.unsubscribe?.()
 
+    const options = this.getQueryOptions(...params)
+
     if (this.observer) {
-      this.observer.destroy()
+      this.observer.setOptions(options)
+    } else {
+      this.observer = new QueryObserver(client, options)
     }
-
-    const queryFn = () => this.fetch(...params)
-
-    this.observer = new QueryObserver(client, {
-      queryKey: [this.key, ...params] as any as P,
-      queryFn: queryFn,
-      placeholderData: (prev) => prev,
-    })
 
     this.unsubscribe = this.observer.subscribe((result) => this.updateStates(result))
   }

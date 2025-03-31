@@ -5,8 +5,8 @@ import { DependencyContainer } from 'tsyringe'
 import { disposeContainer } from '../container/dispose'
 import { Context } from '../context/context'
 import { Constructor, RendererViewModel } from '../types'
-import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel'
 import { debounceMicrotask } from '../utils/debounceMicrotask'
+import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel'
 
 function useForceUpdate() {
   const [_, setVal] = useState({})
@@ -42,7 +42,7 @@ export function component<P>(component: FC<P>) {
             isDirty.current = true
             render()
           },
-        }
+        },
       )
     } else {
       runner.current?.()
@@ -68,7 +68,7 @@ export function component<P>(component: FC<P>) {
       return createElement(
         Context.Provider,
         { value: componentContainer.current },
-        renderResult.current as ReactElement
+        renderResult.current as ReactElement,
       )
     }
 

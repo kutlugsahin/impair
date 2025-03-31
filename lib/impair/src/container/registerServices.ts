@@ -35,7 +35,7 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
   }
 
   /**
-   * The registration is a tuple of token and useClass,
+   * The registration is [token, class, lifecycle] or [class, lifecycle],
    */
   if (Array.isArray(registration)) {
     if (typeof registration[1] === 'string') {
@@ -94,7 +94,7 @@ export function registerServices(container: DependencyContainer, services: Provi
           resolvedServices.add(result)
         }
       },
-      { frequency: 'Once' }
+      { frequency: 'Once' },
     )
   })
 
