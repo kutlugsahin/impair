@@ -10,7 +10,13 @@ export function effect(fn: EffectCallback, options?: ReactiveEffectOptions): Rea
       cleanup()
     }
 
-    cleanup = fn()
+    const effectValue = fn()
+
+    if (typeof effectValue === 'function') {
+      cleanup = effectValue
+    } else {
+      cleanup = undefined
+    }
   }, options)
 }
 
