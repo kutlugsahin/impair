@@ -1,265 +1,287 @@
 # Impair
 
-Impair is a framework for building React applications using a layered architecture approach with object-oriented programming principles and a powerful dependency injection system.
+A framework for building React applications with OOP principles and a layered architecture.
+
+## Motivation
+
+Impair empowers developers to build React applications using a structured, layered architecture with proper separation of concerns. By leveraging OOP principles and dependency injection, Impair makes it easier to:
+
+- Create maintainable and testable code
+- Separate business logic from UI components
+- Implement proper dependency management
+- Use reactive programming patterns
+
+Impair combines the flexibility of React with the structure of traditional OOP frameworks to give you the best of both worlds.
 
 ## Installation
 
 ```bash
 # Using npm
-npm install impair
+npm install impair reflect-metadata @vue/reactivity tsyringe
 
 # Using yarn
-yarn add impair
-
-# Using pnpm
-pnpm add impair
+yarn add impair reflect-metadata @vue/reactivity tsyringe
 ```
 
-## Motivation
+Make sure to include `reflect-metadata` in your entry file:
 
-Modern React applications often become complex and difficult to maintain as they grow. While React provides excellent UI rendering capabilities, it doesn't enforce any particular architecture for organizing business logic, services, and data flow.
-
-Impair addresses these challenges by:
-
-1. **Enforcing Separation of Concerns** - Organizing code into distinct layers (UI, application logic, domain, data)
-2. **Enhancing Testability** - Making components and services easily testable through dependency injection
-3. **Improving Maintainability** - Using OOP principles to create well-structured, modular code
-4. **Reducing Boilerplate** - Providing clean abstractions to handle common patterns
-
-Rather than mixing UI components with application logic, Impair encourages a clean separation that leads to more maintainable and scalable applications.
+```typescript
+// index.ts or index.js
+import 'reflect-metadata'
+```
 
 ## Core Concepts
 
-### Layered Architecture
+### Services and Dependency Injection
 
-Impair promotes organizing your application in distinct layers:
-
-- **Presentation Layer** - React components that render UI
-- **Application Layer** - Services that orchestrate use cases
-- **Domain Layer** - Business logic and entity models
-- **Data Layer** - APIs, repositories, and external data sources
-
-### Dependency Injection
-
-With Impair's DI system, you can:
-
-- Register services and dependencies in a container
-- Inject dependencies into components and other services
-- Create testable code by easily mocking dependencies
-- Manage service lifecycles (singleton, transient, etc.)
-
-### Object-Oriented Approach
-
-Impair leverages TypeScript's OOP capabilities to:
-
-- Define clear interfaces for services and components
-- Create inheritance hierarchies where appropriate
-- Encapsulate related behavior in cohesive classes
-- Apply SOLID principles to React development
-
-## API Documentation
-
-### Component Creation
+Create injectable services with proper lifecycle management:
 
 ```typescript
-import { component } from 'impair';
+import { injectable, onInit, onDispose, state } from 'impair'
 
-// Define a component with dependency injection
-const UserProfile = component(() => {
-  // Component logic here
-  return <div>User Profile</div>;
-});
-```
-
-### Service Integration
-
-```typescript
-import { useService, useViewModel } from 'impair';
-
-// Use a service in a component
-function UserList() {
-  const userService = useService(UserService);
-  // Use service methods
-  
-  return <div>{/* Render user data */}</div>;
-}
-
-// Use a view model in a component
-function ProductDetails() {
-  const viewModel = useViewModel(ProductViewModel);
-  // Access view model properties and methods
-  
-  return <div>{/* Render using view model data */}</div>;
-}
-```
-
-### Dependency Injection
-
-```typescript
-import { injectable, inject } from 'impair';
-
-// Mark a class as injectable
 @injectable()
-class UserService {
-  constructor(
-    @inject(ApiClient) private apiClient: ApiClient,
-    @inject(LoggerService) private logger: LoggerService
-  ) {}
-  
-  // Service methods
-}
+export class UserService {
+  @state users = []
 
-// Provide dependencies
-import { provide } from 'impair';
+  @onInit
+  initialize() {
+    console.log('UserService initialized')
+  }
 
-@provide(ApiClient, CustomApiClient)
-@injectable()
-class CustomApiClient implements ApiClient {
-  // Implementation
+  @onDispose
+  cleanup() {
+    console.log('UserService being disposed')
+  }
+
+  fetchUsers() {
+    // Implementation
+  }
 }
 ```
 
-### Service Provider
+### View Models
+
+Separate presentation logic from UI:
 
 ```typescript
-import { ServiceProvider } from 'impair';
+import { injectable, derived, state } from 'impair'
+import { UserService } from './UserService'
 
-function App() {
+@injectable()
+export class UserViewModel {
+  @state filter = ''
+
+  constructor(private userService: UserService) {}
+
+  @derived
+  get filteredUsers() {
+    return this.userService.users.filter((user) => user.name.includes(this.filter))
+  }
+
+  setFilter(value: string) {
+    this.filter = value
+  }
+
+  render() {
+    return (
+      <div>
+        <input value={this.filter} onChange={(e) => this.setFilter(e.target.value)} />
+        <UserList users={this.filteredUsers} />
+      </div>
+    )
+  }
+}
+```
+
+### Components
+
+Use components with automatic reactivity:
+
+```typescript
+import { component } from 'impair'
+import { UserService } from './UserService'
+
+export const UserList = component<{ users: User[] }>((props) => {
+  const userService = useService(UserService)
+
   return (
-    <ServiceProvider services={[UserService, ProductService]}>
-      <YourApp />
-    </ServiceProvider>
-  );
+    <div>
+      {props.users.map((user) => (
+        <div key={user.id}>{user.name}</div>
+      ))}
+    </div>
+  )
+})
+```
+
+Or create components directly from ViewModels:
+
+```typescript
+import { component } from 'impair'
+import { UserViewModel } from './UserViewModel'
+
+export const UserPage = component.fromViewModel(UserViewModel)
+```
+
+## API Reference
+
+### Dependency Injection
+
+#### `@injectable()`
+
+Marks a class as injectable into the dependency container.
+
+```typescript
+@injectable()
+class MyService {}
+
+// With scope
+@injectable('container-scoped')
+class ScopedService {}
+```
+
+#### `@provide`
+
+Registers dependencies for a component or service.
+
+```typescript
+@provide([UserService, [Token, Implementation], [Token, Implementation, 'singleton']])
+@injectable()
+class AppViewModel {}
+```
+
+#### `ServiceProvider`
+
+Provides dependencies to a component tree.
+
+```tsx
+<ServiceProvider provide={[UserService, AuthService]} props={{ baseUrl: 'https://api.example.com' }}>
+  <App />
+</ServiceProvider>
+```
+
+### State Management
+
+#### `@state`
+
+Creates reactive state properties.
+
+```typescript
+@state count = 0;
+@state.shallow users = []; // Shallow reactivity
+```
+
+#### `@derived`
+
+Creates computed properties.
+
+```typescript
+@derived
+get doubleCount() {
+  return this.count * 2;
 }
 ```
 
-### Reactivity System
+#### `@trigger`
+
+Creates effects that run when dependencies change.
 
 ```typescript
-import { state, derived, trigger, untrack } from 'impair';
+@trigger
+updateTitle() {
+  document.title = `Count: ${this.count}`;
+}
 
-@injectable()
-class CounterViewModel {
-  // Create reactive state
-  counter = state(0);
-  
-  // Derived state calculated from other state
-  doubleCount = derived(() => this.counter.value * 2);
-  
-  increment() {
-    // Update state
-    this.counter.value++;
-  }
-  
-  logWithoutTracking() {
-    // Execute code without tracking dependencies
-    untrack(() => {
-      console.log(this.counter.value);
-    });
-  }
-  
-  manuallyTriggerReactions() {
-    // Force reactions to run
-    trigger();
-  }
+@trigger.async
+fetchData() {
+  // This will be debounced automatically
 }
 ```
 
 ### Lifecycle Hooks
 
-```typescript
-import { onInit, onMount, onUnmount, onDispose } from 'impair';
+#### `@onInit`
 
-@injectable()
-class ProfileViewModel {
-  constructor() {
-    onInit(() => {
-      // Called during initialization
-      console.log('ViewModel initialized');
-    });
-    
-    onMount(() => {
-      // Called when the component using this ViewModel mounts
-      this.loadData();
-    });
-    
-    onUnmount(() => {
-      // Called when the component using this ViewModel unmounts
-      this.cancelRequests();
-    });
-    
-    onDispose(() => {
-      // Called when the ViewModel is being disposed
-      this.cleanup();
-    });
-  }
-  
-  // ViewModel methods
+Method called when the service is initialized.
+
+```typescript
+@onInit
+initialize() {
+  // Setup code
 }
 ```
 
-### Advanced Reactivity Control
+#### `@onDispose`
+
+Method called when the service is being disposed.
 
 ```typescript
-import { enableTracking, pauseTracking, toRaw, toReadonly } from 'impair';
-
-function complexOperation() {
-  // Temporarily pause dependency tracking
-  pauseTracking();
-  
-  // Do operations without creating dependencies
-  const result = someCalculation();
-  
-  // Re-enable tracking
-  enableTracking();
-  
-  // Get the raw, non-reactive version of an object
-  const rawData = toRaw(reactiveObject);
-  
-  // Get readonly version of reactive object
-  const readonlyData = toReadonly(reactiveObject);
-  
-  return result;
+@onDispose
+cleanup() {
+  // Cleanup resources
 }
 ```
 
-## Example Usage
+#### `@onMount`
+
+Method called when a service is mounted into a component tree.
 
 ```typescript
-// Define a service
-@injectable()
-class TodoService {
-  private todos = state<Todo[]>([]);
-  
-  add(todo: Todo) {
-    this.todos.value = [...this.todos.value, todo];
-  }
-  
-  getAll() {
-    return this.todos.value;
-  }
+@onMount
+setupSubscriptions() {
+  // Subscribe to events
+  return () => {
+    // Cleanup function (optional)
+  };
 }
+```
 
-// Use in component
-const TodoList = component(() => {
-  const todoService = useService(TodoService);
-  
-  onMount(() => {
-    // Initialize data on mount
-    todoService.loadInitialData();
-  });
-  
-  return (
-    <div>
-      <h1>Todo List</h1>
-      <ul>
-        {todoService.getAll().map(todo => (
-          <li key={todo.id}>{todo.title}</li>
-        ))}
-      </ul>
-    </div>
-  );
-});
+#### `@onUnmount`
+
+Method called when a service is unmounted from a component tree.
+
+```typescript
+@onUnmount
+cleanupSubscriptions() {
+  // Unsubscribe from events
+}
+```
+
+### Component Hooks
+
+#### `useService`
+
+Hook to access services from components.
+
+```typescript
+const userService = useService(UserService)
+```
+
+#### `useViewModel`
+
+Hook to use a ViewModel in a component.
+
+```typescript
+const viewModel = useViewModel(UserViewModel)
+```
+
+## Advanced Usage
+
+### Reactivity Utilities
+
+```typescript
+import { untrack, toRaw, toReadonly } from 'impair'
+
+// Prevent tracking in a reactive context
+untrack(() => {
+  // This won't trigger updates
+})
+
+// Get raw unproxied value
+const rawUsers = toRaw(this.users)
+
+// Create readonly version
+const readonlyUsers = toReadonly(this.users)
 ```
 
 ## License
