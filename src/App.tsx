@@ -1,4 +1,16 @@
-import { component, inject, injectable, onDispose, onInit, onUnmount, Props, provide, state, trigger } from 'impair'
+import {
+  component,
+  inject,
+  injectable,
+  onDispose,
+  onInit,
+  onUnmount,
+  Props,
+  provide,
+  state,
+  trigger,
+  useService,
+} from 'impair'
 import { QueryService } from '../lib/impair-query/src/queryService'
 import { onMount } from 'impair/lifecycle/onMount'
 import { useState } from 'react'
@@ -50,7 +62,7 @@ class PostViewModel {
   constructor(
     @inject(QueryPost) public posts: QueryPost,
     @inject(QueryPost) public posts2: QueryPost,
-    @inject(Props) public props: PostProps
+    @inject(Props) public props: PostProps,
   ) {}
 
   @trigger.async
