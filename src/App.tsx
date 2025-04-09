@@ -1,19 +1,7 @@
-import {
-  component,
-  inject,
-  injectable,
-  onDispose,
-  onInit,
-  onUnmount,
-  Props,
-  provide,
-  state,
-  trigger,
-  useService,
-} from 'impair'
-import { QueryService } from '../lib/impair-query/src/queryService'
+import { component, inject, injectable, onDispose, onInit, onUnmount, Props, provide, state, trigger } from 'impair'
 import { onMount } from 'impair/lifecycle/onMount'
 import { useState } from 'react'
+import { QueryService } from '../lib/impair-query/src/queryService'
 
 type Post = {
   id: number
