@@ -9,15 +9,10 @@ export default defineConfig({
     }),
     tsConfigPaths(),
   ],
-  // esbuild: {
-  //   target: 'es2020',
-  // },
-  optimizeDeps: {
-    esbuildOptions: {
-      tsconfigRaw: {
-        compilerOptions: {
-          experimentalDecorators: true,
-        },
+  esbuild: {
+    tsconfigRaw: {
+      compilerOptions: {
+        experimentalDecorators: true,
       },
     },
   },

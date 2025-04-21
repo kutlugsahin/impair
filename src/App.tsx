@@ -1,7 +1,8 @@
 import { component, inject, injectable, onDispose, onInit, onUnmount, Props, provide, state, trigger } from 'impair'
 import { onMount } from 'impair/lifecycle/onMount'
-import { useState } from 'react'
 import { QueryService } from '../lib/impair-query/src/queryService'
+
+import { useState } from 'react'
 
 type Post = {
   id: number
@@ -13,7 +14,7 @@ type Post = {
 class QueryPost extends QueryService<Post, [id: number]> {
   protected key = 'posts'
 
-  protected async fetch(id: number) {
+  protected override async fetch(id: number) {
     return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json())
   }
 
@@ -22,7 +23,7 @@ class QueryPost extends QueryService<Post, [id: number]> {
     console.log('dispose query')
   }
 
-  @onMount
+  @onUnmount
   onMunt() {
     console.log('onMunt query')
 
@@ -70,7 +71,7 @@ class PostViewModel {
   }
 
   @onMount
-  mounted() {
+  protected mounted() {
     console.log('mounted')
 
     return () => {
@@ -79,17 +80,17 @@ class PostViewModel {
   }
 
   @onUnmount
-  unmount() {
+  protected unmount() {
     console.log('unmount')
   }
 
   @onInit
-  init() {
+  protected init() {
     console.log('init')
   }
 
   @onDispose
-  destroy() {
+  protected destroy() {
     console.log('destroy')
   }
 

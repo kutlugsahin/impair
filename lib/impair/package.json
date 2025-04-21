@@ -1,6 +1,6 @@
 {
   "name": "impair",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "index.cjs",
   "module": "index.js",
   "types": "index.d.ts",
@@ -22,10 +22,12 @@
     "injection"
   ],
   "peerDependencies": {
-    "react": ">=17.0.2",
-    "@vue/reactivity": ">=3.2.0",
-    "tsyringe": ">=4.8.0",
-    "reflect-metadata": ">=0.2.2"
+    "react": "^17.0.2",
+    "reflect-metadata": "^0.2.2"
+  },
+  "dependencies": {
+    "@vue/reactivity": "^3.2.0",
+    "tsyringe": "^4.8.0"
   },
   "license": "MIT"
 }

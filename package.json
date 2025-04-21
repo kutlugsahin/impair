@@ -21,6 +21,7 @@
     "@rollup/plugin-typescript": "^12.1.2",
     "@tailwindcss/vite": "^4.0.15",
     "@vitejs/plugin-react-swc": "^3.8.1",
+    "@vitejs/plugin-react": "4.4.0",
     "@vue/reactivity": "^3.5.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -28,7 +29,8 @@
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.2.1",
     "tsyringe": "^4.8.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "@tanstack/react-query": "5.74.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
