@@ -46,4 +46,7 @@ export interface RendererViewModel {
   render(): ReactElement | null
 }
 
-export type EffectCallback = () => void | (() => void)
+export type EffectCallback = (cleanup: TriggerCleanup) => void
+
+export type Cleanup = () => void
+export type TriggerCleanup = (cleanup: () => void) => void

@@ -3,7 +3,7 @@ import type { DependencyContainer } from 'tsyringe'
 
 import { getOnMountMethods } from '../lifecycle/onMount'
 import { getOnUnmountMethods } from '../lifecycle/onUnmount'
-import type { ServiceInstance } from '../types'
+import type { Cleanup, ServiceInstance } from '../types'
 import { isMounted } from '../utils/symbols'
 import { disposeContainer } from './dispose'
 
@@ -15,7 +15,17 @@ export function useHandleLifecycle(container: DependencyContainer, resolvedServi
 
         const onMounts = getOnMountMethods(service)
 
-        const onMountDisposers = onMounts.map((onMount) => onMount()).filter((p) => typeof p === 'function')
+        const onMountDisposers = onMounts.map((onMount) => {
+          let cleanup: (() => void) | undefined
+
+          onMount((clb: Cleanup) => {
+            cleanup = clb
+          })
+
+          return () => {
+            cleanup?.()
+          }
+        })
 
         return () => {
           if (service[isMounted]) {

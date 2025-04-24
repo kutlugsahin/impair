@@ -6,7 +6,15 @@ export { provide } from './container/provide'
 export { Props } from './injectables/tokens'
 export { ServiceProvider } from './provider/serviceProvider'
 export { derived, state, trigger, untrack } from './reactivity'
-export type { Constructor, InstanceLifecycle, Provider, ProviderProps, Registration, RendererViewModel } from './types'
+export type {
+  Constructor,
+  InstanceLifecycle,
+  Provider,
+  ProviderProps,
+  Registration,
+  RendererViewModel,
+  TriggerCleanup as Cleanup,
+} from './types'
 export { enableTracking, pauseTracking, toRaw, toReadonly } from '@vue/reactivity'
 export { delay, inject } from 'tsyringe'
 export { onDispose } from './lifecycle/onDispose'

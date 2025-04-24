@@ -1,4 +1,4 @@
-import { Dispose } from '../types'
+import { TriggerCleanup } from '../types'
 import { onMountMetadataKey } from '../utils/symbols'
 
 export function onMount(target: any, propertyKey: string) {
@@ -7,7 +7,7 @@ export function onMount(target: any, propertyKey: string) {
   Reflect.metadata(onMountMetadataKey, onMounts)(target)
 }
 
-export function getOnMountMethods(instance: any): (Dispose | (() => Dispose))[] {
+export function getOnMountMethods(instance: any): ((cleanup: TriggerCleanup) => void)[] {
   const onMountProperties: string[] = Reflect.getMetadata(onMountMetadataKey, instance) ?? []
 
   return onMountProperties.map((propName: string) => {

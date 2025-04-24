@@ -1,4 +1,16 @@
-import { component, inject, injectable, onDispose, onInit, onUnmount, Props, provide, state, trigger } from 'impair'
+import {
+  type Cleanup,
+  component,
+  inject,
+  injectable,
+  onDispose,
+  onInit,
+  onUnmount,
+  Props,
+  provide,
+  state,
+  trigger,
+} from 'impair'
 import { onMount } from 'impair/lifecycle/onMount'
 import { QueryService } from '../lib/impair-query/src/queryService'
 
@@ -50,25 +62,31 @@ class PostViewModel {
 
   constructor(
     @inject(QueryPost) public posts: QueryPost,
-    @inject(QueryPost) public posts2: QueryPost,
+    // @inject(QueryPost) public posts2: QueryPost,
     @inject(Props) public props: PostProps,
   ) {}
 
   @trigger.async
-  querySelectedPost() {
+  querySelectedPost(cleanup: Cleanup) {
     this.posts.query(this.selectedId)
+
+    const id = this.selectedId
+
+    cleanup(() => {
+      console.log('cleanup querySelectedPost' + id)
+    })
   }
 
-  @trigger
-  querySelectedPost2() {
-    const id = this.selectedId + 1
+  // @trigger
+  // querySelectedPost2(cleanup: Cleanup) {
+  //   const id = this.selectedId + 1
 
-    this.posts2.query(id)
+  //   this.posts2.query(id)
 
-    return () => {
-      console.log('querySelectedPost2', id)
-    }
-  }
+  //   cleanup(() => {
+  //     console.log('cleanup querySelectedPost2' + id)
+  //   })
+  // }
 
   @onMount
   protected mounted() {
@@ -105,9 +123,6 @@ class PostViewModel {
           <button
             onClick={() => {
               this.selectedId++
-              this.selectedId++
-              this.selectedId++
-              this.selectedId++
             }}
           >
             Inc
@@ -120,10 +135,10 @@ class PostViewModel {
           <p>{this.posts.data?.body}</p>
         </div>
         <hr />
-        <div>
+        {/* <div>
           <h2 className="font-bold">{this.posts2.data?.title}</h2>
           <p>{this.posts2.data?.body}</p>
-        </div>
+        </div> */}
         <hr />
         {this.props.id}
       </div>
