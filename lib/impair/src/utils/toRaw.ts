@@ -7,12 +7,12 @@ export function toRaw<T>(value: T): T {
 
   if (typeof value === 'object' && value !== null) {
     if (Array.isArray(value)) {
-      return value.map(coreToRaw) as unknown as T
+      return value.map(toRaw) as unknown as T
     } else {
       const rawValue: Record<string, unknown> = {}
       for (const key in value) {
         if (Object.prototype.hasOwnProperty.call(value, key)) {
-          rawValue[key] = coreToRaw((value as Record<string, unknown>)[key])
+          rawValue[key] = toRaw((value as Record<string, unknown>)[key])
         }
       }
       return rawValue as T
