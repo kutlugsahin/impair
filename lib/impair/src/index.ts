@@ -9,13 +9,13 @@ export { derived, state, trigger, untrack } from './reactivity'
 export type {
   Constructor,
   InstanceLifecycle,
-  Provider,
   ProviderProps,
   Registration,
   RendererViewModel,
   TriggerCleanup as Cleanup,
 } from './types'
-export { enableTracking, pauseTracking, toRaw, toReadonly } from '@vue/reactivity'
+export { enableTracking, pauseTracking, toReadonly } from '@vue/reactivity'
+export { toRaw } from './utils/toRaw'
 export { delay, inject } from 'tsyringe'
 export { onDispose } from './lifecycle/onDispose'
 export { onInit } from './lifecycle/onInit'

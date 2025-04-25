@@ -10,11 +10,10 @@ import {
   provide,
   state,
   trigger,
+  useViewModel,
 } from 'impair'
 import { onMount } from 'impair/lifecycle/onMount'
 import { QueryService } from '../lib/impair-query/src/queryService'
-
-import { useState } from 'react'
 
 type Post = {
   id: number
@@ -54,7 +53,16 @@ type PostProps = {
   id: number
 }
 
-@provide([[QueryPost, 'transient']])
+@provide([
+  [QueryPost, 'transient'],
+  {
+    token: 't',
+    provider: {
+      useValue: 'test',
+    },
+    lifecycle: 'transient',
+  },
+])
 @injectable()
 class PostViewModel {
   @state
@@ -157,14 +165,37 @@ class PostViewModel {
 
 export const PostsComponent = component.fromViewModel<PostProps>(PostViewModel)
 
-export function Posts() {
-  const [show, setShow] = useState(true)
+// export function Posts() {
+//   const [show, setShow] = useState(true)
+
+//   return (
+//     <div>
+//       <button onClick={() => setShow(!show)}>Toggle</button>
+//       <hr />
+//       {show && <PostsComponent id={6} />}
+//     </div>
+//   )
+// }
+
+@injectable()
+class Service {
+  @state
+  user = {
+    age: 0,
+  }
+
+  inc() {
+    this.user.age++
+  }
+}
+
+export const Posts = component(() => {
+  const { user, inc } = useViewModel(Service)
 
   return (
     <div>
-      <button onClick={() => setShow(!show)}>Toggle</button>
-      <hr />
-      {show && <PostsComponent id={6} />}
+      <h1>{user.age}</h1>
+      <button onClick={inc}>Inc</button>
     </div>
   )
-}
+})

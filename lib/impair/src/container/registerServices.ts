@@ -18,7 +18,9 @@ function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
   }
 }
 
-function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]): Registration {
+function getRegistrationOptions(
+  registration: ProviderProps<any>['provide'][0],
+): Registration & { lifecycle?: InstanceLifecycle } {
   /**
    * If the registration is a function,
    * it means that it is a class to be registered as singleton
@@ -64,13 +66,6 @@ function getRegistrationOptions(registration: ProviderProps<any>['provide'][0]):
    * it means that it is a custom registration
    */
   if (typeof registration === 'object') {
-    if (!registration.lifecycle) {
-      return {
-        ...registration,
-        lifecycle: 'singleton',
-      }
-    }
-
     return registration
   }
 
@@ -82,9 +77,15 @@ export function registerServices(container: DependencyContainer, services: Provi
   services.forEach((serviceInfo) => {
     const { provider, token, lifecycle } = getRegistrationOptions(serviceInfo)
 
-    container.register(token, provider as any, {
-      lifecycle: toLifecycle(lifecycle),
-    })
+    container.register(
+      token,
+      provider as any,
+      lifecycle
+        ? {
+          lifecycle: toLifecycle(lifecycle),
+        }
+        : undefined,
+    )
 
     container.afterResolution(
       token,
