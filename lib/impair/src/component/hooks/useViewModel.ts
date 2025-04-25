@@ -6,7 +6,6 @@ import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { Context } from '../../context/context'
 import { Constructor } from '../../types'
 import { provideMetadataKey } from '../../utils/symbols'
-import { type DeepReadonly } from '@vue/reactivity'
 
 let currentComponentContainerRef: RefObject<DependencyContainer | undefined>
 
@@ -14,10 +13,7 @@ export function setCurrentComponentContainerRef(containerRef: RefObject<Dependen
   currentComponentContainerRef = containerRef
 }
 
-export function useViewModel<T extends Constructor, P extends object>(
-  viewModel: T,
-  props?: P,
-): DeepReadonly<InstanceType<T>> {
+export function useViewModel<T extends Constructor, P extends object>(viewModel: T, props?: P): InstanceType<T> {
   const container = useContext(Context)
 
   if (currentComponentContainerRef && !currentComponentContainerRef.current) {
@@ -33,7 +29,5 @@ export function useViewModel<T extends Constructor, P extends object>(
 
   useRegisteredContainer(props, viewModelProviders, componentContainer)
 
-  const instance = componentContainer.resolve<InstanceType<T>>(viewModel)
-
-  return instance as DeepReadonly<InstanceType<T>>
+  return componentContainer.resolve<InstanceType<T>>(viewModel)
 }
