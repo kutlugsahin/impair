@@ -28,7 +28,7 @@ export function initInstance<T extends Dictionary>(instance: T) {
       initDerived(params)
       initTrigger(params)
       bindMethods(instance)
-      initOnInit(instance)
+      initOnInit(instance, disposers)
       initOnDispose(instance, disposers)
     } catch (error) {
       console.error('Impair Error initializing instance', instance, error)

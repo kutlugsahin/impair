@@ -89,12 +89,12 @@ class PostViewModel {
   // }
 
   @onMount
-  protected mounted() {
+  protected mounted(cleanup: Cleanup) {
     console.log('mounted')
 
-    return () => {
+    cleanup(() => {
       console.log('mounted > unmounted')
-    }
+    })
   }
 
   @onUnmount
@@ -103,8 +103,12 @@ class PostViewModel {
   }
 
   @onInit
-  protected init() {
+  protected init(cleanup: Cleanup) {
     console.log('init')
+
+    cleanup(() => {
+      console.log('init > unmounted')
+    })
   }
 
   @onDispose

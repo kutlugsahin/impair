@@ -1,3 +1,4 @@
+import { Cleanup, Dispose, TriggerCleanup } from '../types'
 import { onInitMetadataKey } from '../utils/symbols'
 
 export function onInit(target: any, propertyKey: string) {
@@ -6,14 +7,22 @@ export function onInit(target: any, propertyKey: string) {
   Reflect.metadata(onInitMetadataKey, onInits)(target)
 }
 
-export function initOnInit(instance: any) {
+export function initOnInit(instance: any, disposers: Dispose[]) {
   const onInitProperties = Reflect.getMetadata(onInitMetadataKey, instance)
 
   if (onInitProperties) {
     onInitProperties.forEach((propName: string) => {
-      const initFn = instance[propName] as () => void
+      const initFn = instance[propName] as (cleanup: TriggerCleanup) => void
 
-      initFn.call(instance)
+      let cleanup: Cleanup | undefined = undefined
+
+      initFn.call(instance, (clb) => {
+        cleanup = clb
+      })
+
+      disposers.push(() => {
+        cleanup?.()
+      })
     })
   }
 }

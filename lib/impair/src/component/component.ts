@@ -24,7 +24,9 @@ export function component<P>(component: FC<P>) {
     const propsRef = useRef<P>(props)
     const isDirty = useRef(false)
     const componentContainer = useRef<DependencyContainer | undefined>(undefined)
+
     propsRef.current = props
+    isDirty.current = false
 
     if (!runner.current) {
       const render = debounceMicrotask(() => {
