@@ -60,6 +60,11 @@ class PostViewModel {
   @state
   selectedId = 1
 
+  @state
+  user = {
+    name: 'kutlu',
+  }
+
   constructor(
     @inject(QueryPost) public posts: QueryPost,
     // @inject(QueryPost) public posts2: QueryPost,
@@ -159,7 +164,7 @@ export function Posts() {
     <div>
       <button onClick={() => setShow(!show)}>Toggle</button>
       <hr />
-      {show && <PostsComponent id={5} />}
+      {show && <PostsComponent id={6} />}
     </div>
   )
 }

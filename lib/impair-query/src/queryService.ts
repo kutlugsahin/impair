@@ -17,22 +17,22 @@ type QueryState<R> = {
 }
 
 export abstract class QueryService<T, P extends QueryKey> implements QueryState<T> {
-  @state.shallow
+  @state.atom
   data: T | undefined
 
-  @state.shallow
+  @state.atom
   status: 'success' | 'error' | 'pending' | undefined
 
-  @state.shallow
+  @state.atom
   error: Error | undefined
 
-  @state.shallow
+  @state.atom
   isLoading = false
 
-  @state.shallow
+  @state.atom
   isError = false
 
-  @state.shallow
+  @state.atom
   isSuccess = false
 
   protected abstract fetch(...params: P): Promise<T>
