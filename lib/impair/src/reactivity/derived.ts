@@ -24,6 +24,10 @@ export function initDerived({ disposers, instance }: InitParams) {
     cachedProperties.forEach(({ propertyKey, descriptor }: any) => {
       const getter = descriptor.get
 
+      if (typeof getter !== 'function') {
+        throw new Error(`@derived property "${propertyKey}" must have a getter function.`)
+      }
+
       let computedValue: ComputedRefImpl
 
       const scope = effectScope()

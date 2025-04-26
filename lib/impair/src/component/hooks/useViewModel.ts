@@ -7,6 +7,7 @@ import { Context } from '../../context/context'
 import { Constructor } from '../../types'
 import { provideMetadataKey } from '../../utils/symbols'
 import { toReadonly } from '@vue/reactivity'
+import { config } from 'src/utils/config'
 
 let currentComponentContainerRef: RefObject<DependencyContainer | undefined>
 
@@ -31,6 +32,7 @@ export function useViewModel<T extends Constructor, P extends object>(viewModel:
   useRegisteredContainer(props, viewModelProviders, componentContainer)
 
   return useMemo(() => {
-    return toReadonly(componentContainer.resolve<InstanceType<T>>(viewModel)) as InstanceType<T>
+    const instance = componentContainer.resolve<InstanceType<T>>(viewModel)
+    return config.readonlyProxiesForView ? (toReadonly(instance) as InstanceType<T>) : instance
   }, [componentContainer, viewModel])
 }

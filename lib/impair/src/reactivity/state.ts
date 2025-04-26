@@ -2,8 +2,9 @@ import { Ref, ref, shallowReactive, shallowRef } from '@vue/reactivity'
 
 import { Dictionary } from '../types'
 import { stateMetadataKey } from '../utils/symbols'
+import { config } from 'src/utils/config'
 
-export type StateType = 'shallow' | 'deep' | 'atom'
+export type StateType = 'shallow' | 'deep' | 'atom' | 'default'
 
 export type StateMetadata = {
   propertyKey: string
@@ -19,7 +20,7 @@ function registerStateMetadata(target: any, metadata: StateMetadata) {
 export function state(target: any, propertyKey: string) {
   return registerStateMetadata(target, {
     propertyKey,
-    type: 'deep',
+    type: 'default',
   })
 }
 
@@ -37,8 +38,16 @@ function atomState(target: any, propertyKey: string) {
   })
 }
 
+function deepState(target: any, propertyKey: string) {
+  return registerStateMetadata(target, {
+    propertyKey,
+    type: 'deep',
+  })
+}
+
 state.shallow = shallowState
 state.atom = atomState
+state.deep = deepState
 
 type InitParams = {
   instance: Dictionary
@@ -70,8 +79,9 @@ export function initState({ instance }: InitParams) {
   const stateProperties: StateMetadata[] = Reflect.getMetadata(stateMetadataKey, instance)
 
   if (stateProperties) {
-    stateProperties.forEach(({ propertyKey, type }) => {
+    stateProperties.forEach(({ propertyKey, type: _type }) => {
       const initialValue = instance[propertyKey]
+      const type = _type === 'default' ? config.defaultStateReactiveLevel : _type
 
       const reactiveState = createReactiveState(initialValue, type)
 
