@@ -14,6 +14,7 @@ export function useRegisteredContainer<P>(
   props: P,
   services: ProviderProps<any>['provide'],
   existingContainer?: DependencyContainer,
+  propsToken = Props,
 ) {
   const parentContainer = useContext(Context)
 
@@ -28,8 +29,8 @@ export function useRegisteredContainer<P>(
       })
     }
 
-    if (!container.isRegistered(Props)) {
-      container.register(Props, {
+    if (!container.isRegistered(propsToken)) {
+      container.register(propsToken, {
         useValue: mappedProps,
       })
     }

@@ -8,6 +8,7 @@ import { Constructor } from '../../types'
 import { provideMetadataKey } from '../../utils/symbols'
 import { toReadonly } from '@vue/reactivity'
 import { config } from 'src/utils/config'
+import { ViewProps } from 'src/injectables/tokens'
 
 let currentComponentContainerRef: RefObject<DependencyContainer | undefined>
 
@@ -29,7 +30,7 @@ export function useViewModel<T extends Constructor, P extends object>(viewModel:
     return [...provided, viewModel]
   }, [viewModel])
 
-  useRegisteredContainer(props, viewModelProviders, componentContainer)
+  useRegisteredContainer(props, viewModelProviders, componentContainer, ViewProps)
 
   return useMemo(() => {
     const instance = componentContainer.resolve<InstanceType<T>>(viewModel)

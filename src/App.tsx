@@ -8,15 +8,15 @@ import {
   onUnmount,
   Props,
   provide,
+  ServiceProvider,
   state,
-  toRaw,
   trigger,
+  useService,
   useViewModel,
+  ViewProps,
 } from 'impair'
 import { onMount } from 'impair/lifecycle/onMount'
 import { QueryService } from '../lib/impair-query/src/queryService'
-import { reactive } from '@vue/reactivity'
-import { useState } from 'react'
 
 type Post = {
   id: number
@@ -202,7 +202,7 @@ class Service {
   }
 }
 
-export const Posts = component(() => {
+export const Posts2 = component(() => {
   const { users, inc, add } = useViewModel(Service)
 
   return (
@@ -214,5 +214,61 @@ export const Posts = component(() => {
         </div>
       ))}
     </div>
+  )
+})
+
+type Props = {
+  id: number
+}
+
+@injectable()
+class State {
+  @state
+  count = 0
+
+  constructor(@inject(Props) public props: Props) {
+    this.count = props.id
+    console.log('State inited', props.id)
+  }
+}
+
+@injectable()
+class StateViewModel {
+  constructor(@inject(State) public state: State, @inject(ViewProps) private props: Props) {
+    console.log('StateViewModel', props.id)
+  }
+}
+
+const C = component(() => {
+  const { state } = useViewModel(StateViewModel, { id: 2 })
+
+  return (
+    <div>
+      <button>{state.count}</button>
+    </div>
+  )
+})
+
+const B = component(() => {
+  const { count } = useService(State)
+
+  return (
+    <div>
+      <button>{count}</button>
+    </div>
+  )
+})
+
+export const Posts = component(() => {
+  return (
+    <ServiceProvider
+      provide={[State]}
+      props={{
+        id: 1,
+      }}
+    >
+      <C />
+      <B />
+    </ServiceProvider>
   )
 })

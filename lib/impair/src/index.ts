@@ -3,7 +3,7 @@ export { useService } from './component/hooks/useService'
 export { useViewModel } from './component/hooks/useViewModel'
 export { injectable } from './container/injectable'
 export { provide } from './container/provide'
-export { Props } from './injectables/tokens'
+export { Props, ViewProps } from './injectables/tokens'
 export { ServiceProvider } from './provider/serviceProvider'
 export { derived, state, trigger, untrack } from './reactivity'
 export type {
