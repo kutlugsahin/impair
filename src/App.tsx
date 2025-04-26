@@ -9,11 +9,14 @@ import {
   Props,
   provide,
   state,
+  toRaw,
   trigger,
   useViewModel,
 } from 'impair'
 import { onMount } from 'impair/lifecycle/onMount'
 import { QueryService } from '../lib/impair-query/src/queryService'
+import { reactive } from '@vue/reactivity'
+import { useState } from 'react'
 
 type Post = {
   id: number
@@ -172,7 +175,7 @@ export const PostsComponent = component.fromViewModel<PostProps>(PostViewModel)
 //     <div>
 //       <button onClick={() => setShow(!show)}>Toggle</button>
 //       <hr />
-//       {show && <PostsComponent id={6} />}
+//       {show && <PostsComponent id={7} />}
 //     </div>
 //   )
 // }
@@ -180,22 +183,36 @@ export const PostsComponent = component.fromViewModel<PostProps>(PostViewModel)
 @injectable()
 class Service {
   @state
-  user = {
-    age: 0,
+  users = [
+    {
+      id: 0,
+      age: 0,
+    },
+  ]
+
+  inc(id: number) {
+    this.users.find((u) => u.id === id)!.age++
   }
 
-  inc() {
-    this.user.age++
+  add() {
+    this.users.push({
+      id: this.users.length,
+      age: 0,
+    })
   }
 }
 
 export const Posts = component(() => {
-  const { user, inc } = useViewModel(Service)
+  const { users, inc, add } = useViewModel(Service)
 
   return (
     <div>
-      <h1>{user.age}</h1>
-      <button onClick={inc}>Inc</button>
+      <button onClick={add}>add</button>
+      {users.map((u) => (
+        <div>
+          <button onClick={() => inc(u.id)}>{u.age}</button>
+        </div>
+      ))}
     </div>
   )
 })
