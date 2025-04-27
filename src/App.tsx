@@ -230,6 +230,10 @@ class State {
     this.count = props.id
     console.log('State inited', props.id)
   }
+
+  inc() {
+    this.count++
+  }
 }
 
 @injectable()
@@ -239,7 +243,7 @@ class StateViewModel {
   }
 }
 
-const C = component(() => {
+const C = () => {
   const { state } = useViewModel(StateViewModel, { id: 2 })
 
   return (
@@ -247,14 +251,14 @@ const C = component(() => {
       <button>{state.count}</button>
     </div>
   )
-})
+}
 
 const B = component(() => {
-  const { count } = useService(State)
+  const { count, inc } = useService(State)
 
   return (
     <div>
-      <button>{count}</button>
+      <button onClick={inc}>{count}</button>
     </div>
   )
 })

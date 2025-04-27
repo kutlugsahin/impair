@@ -1,3 +1,5 @@
+import { useReactiveProps } from './utils/useReactiveProps'
+
 export { component } from './component/component'
 export { useService } from './component/hooks/useService'
 export { useViewModel } from './component/hooks/useViewModel'
@@ -22,3 +24,5 @@ export { onInit } from './lifecycle/onInit'
 export { onMount } from './lifecycle/onMount'
 export { onUnmount } from './lifecycle/onUnmount'
 export { configure } from './utils/config'
+
+export const useReactiveObject = useReactiveProps as <T>(obj: T) => T

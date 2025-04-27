@@ -39,6 +39,7 @@ export function component<P>(component: FC<P>) {
         () => {
           setCurrentComponentContainerRef(componentContainer)
           renderResult.current = component(propsRef.current)
+          setCurrentComponentContainerRef(undefined)
         },
         {
           scheduler() {

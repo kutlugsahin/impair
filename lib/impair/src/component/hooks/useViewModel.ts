@@ -10,9 +10,9 @@ import { toReadonly } from '@vue/reactivity'
 import { config } from 'src/utils/config'
 import { ViewProps } from 'src/injectables/tokens'
 
-let currentComponentContainerRef: RefObject<DependencyContainer | undefined>
+let currentComponentContainerRef: RefObject<DependencyContainer | undefined> | undefined
 
-export function setCurrentComponentContainerRef(containerRef: RefObject<DependencyContainer | undefined>) {
+export function setCurrentComponentContainerRef(containerRef: typeof currentComponentContainerRef) {
   currentComponentContainerRef = containerRef
 }
 
@@ -23,7 +23,7 @@ export function useViewModel<T extends Constructor, P extends object>(viewModel:
     currentComponentContainerRef.current = createChildContainer(container)
   }
 
-  const componentContainer = currentComponentContainerRef.current!
+  const componentContainer = currentComponentContainerRef?.current ?? createChildContainer(container)
 
   const viewModelProviders = useMemo(() => {
     const provided = Reflect.getMetadata(provideMetadataKey, viewModel) ?? []
