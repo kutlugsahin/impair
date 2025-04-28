@@ -20,6 +20,8 @@ export function useRegisteredContainer<P>(
 
   const mappedProps = useReactiveProps(props ?? {})
 
+  const registerProps = props != null
+
   const { container, resolvedServices } = useMemo(() => {
     const container = existingContainer ?? createChildContainer(parentContainer)
 
@@ -29,7 +31,7 @@ export function useRegisteredContainer<P>(
       })
     }
 
-    if (!container.isRegistered(propsToken)) {
+    if (registerProps && !container.isRegistered(propsToken)) {
       container.register(propsToken, {
         useValue: mappedProps,
       })
@@ -41,6 +43,9 @@ export function useRegisteredContainer<P>(
       container,
       resolvedServices,
     }
+    // exclude registerProps from the dependency array
+    // only consider the first value of props to decide register
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [existingContainer, parentContainer])
 
   useHandleLifecycle(container, resolvedServices)

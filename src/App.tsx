@@ -238,7 +238,7 @@ class State {
 
 @injectable()
 class StateViewModel {
-  constructor(@inject(State) public state: State, @inject(ViewProps) private props: Props) {
+  constructor(@inject(State) public state: State, @inject(Props) private props: Props) {
     console.log('StateViewModel', props.id)
   }
 }
@@ -268,11 +268,13 @@ export const Posts = component(() => {
     <ServiceProvider
       provide={[State]}
       props={{
-        id: 1,
+        id: 5,
       }}
     >
-      <C />
-      <B />
+      <ServiceProvider provide={[QueryPost]}>
+        <C />
+      </ServiceProvider>
+      {/* <B /> */}
     </ServiceProvider>
   )
 })

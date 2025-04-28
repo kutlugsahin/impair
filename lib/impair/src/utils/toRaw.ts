@@ -1,30 +1,39 @@
 import { isProxy, toRaw as coreToRaw } from '@vue/reactivity'
 
-export function toRaw<T>(value: T): T {
+export function toRaw<T>(value: T): T
+export function toRaw<T>(value: T, deep: boolean): T
+export function toRaw<T>(value: T, deep: boolean = true): T {
+  if (!deep) {
+    return coreToRaw(value)
+  }
+
   if (isProxy(value)) {
     return coreToRaw(value)
   }
 
   if (typeof value === 'object' && value !== null) {
     if (Array.isArray(value)) {
-      value.forEach((v, i) => {
-        value[i] = toRaw(v)
-      })
+      return value.map(toRaw) as unknown as T
     } else if (Object.getPrototypeOf(value) === Object.prototype) {
+      const rawValue: Record<string, unknown> = {}
       for (const key in value) {
-        value[key] = toRaw(value[key])
+        if (Object.prototype.hasOwnProperty.call(value, key)) {
+          rawValue[key] = toRaw((value as Record<string, unknown>)[key])
+        }
       }
+      return rawValue as T
     } else if (value instanceof Map) {
+      const rawValue = new Map()
       value.forEach((v, k) => {
-        value.set(k, toRaw(v))
+        rawValue.set(k, toRaw(v))
       })
+      return rawValue as T
     } else if (value instanceof Set) {
-      const newSet = [...value].map(toRaw)
-
-      value.clear()
-      newSet.forEach((v) => {
-        value.add(v)
+      const rawValue = new Set()
+      value.forEach((v) => {
+        rawValue.add(toRaw(v))
       })
+      return rawValue as T
     }
   }
 
