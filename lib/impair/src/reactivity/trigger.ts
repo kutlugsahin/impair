@@ -17,10 +17,36 @@ function addTriggerMetadata(target: any, propertyKey: string, flush: 'sync' | 'a
   return Reflect.metadata(triggerMetadataKey, triggerInfoArr)(target)
 }
 
+/***
+ * @trigger decorator
+ * @description This decorator is used to mark a method as a trigger. It will automatically
+ * create a reactive effect that will call the method when the reactive dependencies change.
+ * The method can also accept an optional Cleanup function as a parameter.
+ *
+ * @example
+ * \@trigger
+ *  fetchData(cleanup: Cleanup) {
+ *     const abortController = new AbortController()
+ *     cleanup(() => {
+ *       abortController.abort()
+ *     })
+ *
+ *     const response = await loadData(this.state.id, abortController.signal);
+ *     // do something
+ * }
+ *
+ */
 export function trigger(target: any, propertyKey: string) {
   return addTriggerMetadata(target, propertyKey)
 }
 
+/**
+ * @trigger.async decorator
+ * @description This decorator is used to mark a method as a trigger. It will automatically
+ * create a reactive effect that will call the method when the reactive dependencies change.
+ * Calls will be scheduled in the next tick.
+ * The method can also accept an optional cleanup function as a parameter.
+ */
 trigger.async = function (target: any, propertyKey: string) {
   return addTriggerMetadata(target, propertyKey, 'async')
 }
@@ -36,6 +62,12 @@ export function initTrigger({ instance, disposers }: InitParams) {
   if (triggerProperties) {
     triggerProperties.forEach(({ flush, propertyKey }) => {
       const effectFn = instance[propertyKey] as EffectCallback
+
+      if (typeof effectFn !== 'function') {
+        throw new Error(
+          `@trigger decorator can only be used on methods with optional Cleanup param, not on ${typeof effectFn}`,
+        )
+      }
 
       const effectRunner = flush === 'sync' ? effect : asyncEffect
 

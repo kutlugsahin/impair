@@ -2,6 +2,10 @@ import { shallowReactive, shallowReadonly } from '@vue/reactivity'
 import { useEffect, useMemo } from 'react'
 import { isPlainObject } from './object'
 
+/**
+ * @description A hook that creates a shallow reactive object from source object and updates it when object properties changes.
+ * @returns A referentially stable shallow reactive object that reflects the current state of the props.
+ */
 export function useReactiveProps<P extends object>(props: P) {
   const { state, next } = useMemo(() => {
     if (!isPlainObject(props)) {

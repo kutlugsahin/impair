@@ -1,6 +1,25 @@
 import { Cleanup, Dispose, TriggerCleanup } from '../types'
 import { onInitMetadataKey } from '../utils/symbols'
 
+/**
+ * @onInit decorator
+ * @description This decorator is used to mark a method as an init method.
+ * Init methods are called after the instance is created and all the decorators are processed
+ * Takes an optional cleanup function as a parameter.
+ * The cleanup function will be called when the instance is disposed by the disposal of the parent dependency container.
+ * @example
+ * \@onInit
+ *  init(cleanup: Cleanup) {
+ *     const abortController = new AbortController()
+ *     cleanup(() => {
+ *       abortController.abort()
+ *     })
+ *
+ *     const response = await loadData(this.state.id, abortController.signal);
+ *     // do something
+ *  }
+ *
+ */
 export function onInit(target: any, propertyKey: string) {
   const onInits: string[] = Reflect.getMetadata(onInitMetadataKey, target) ?? []
   onInits.push(propertyKey)

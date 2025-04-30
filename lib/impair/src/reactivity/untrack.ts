@@ -1,8 +1,30 @@
 import { enableTracking, pauseTracking } from '@vue/reactivity'
 
-export function untrack<T extends () => any>(fn: T) {
+/**
+ * Disables dependency tracking within the provided function's execution context.
+ *
+ * Reactive properties accessed inside the function will not be tracked as dependencies,
+ * meaning changes to them will not trigger reactive updates for the current effect scope.
+ * This can be useful in triggers, derived computations, or component renders where
+ * you want to access reactive data without establishing a dependency.
+
+ * @example
+ * ```typescript
+ * \@state firstName = 'John'
+ * \@state lastName = 'Doe'
+ *
+ * \@trigger logFullName() {
+ *   const fullName = this.firstName + untrack(() => this.lastName);
+ *   console.log(fullName); // Will log only when firstName changes
+ * });
+ * ```
+ */
+export function untrack<T extends () => any>(fn: T): ReturnType<T> {
   pauseTracking()
-  const result = fn()
-  enableTracking()
-  return result
+  try {
+    const result = fn()
+    return result
+  } finally {
+    enableTracking()
+  }
 }

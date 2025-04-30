@@ -17,6 +17,11 @@ function registerStateMetadata(target: any, metadata: StateMetadata) {
   return Reflect.metadata(stateMetadataKey, statePropMetadata)(target)
 }
 
+/**
+ * @state decorator
+ * @description This decorator is used to mark a property as a reactive state. reactivity level is 'deep' by default.
+ * you can configure it using the 'configure' function
+ */
 export function state(target: any, propertyKey: string) {
   return registerStateMetadata(target, {
     propertyKey,
@@ -24,6 +29,12 @@ export function state(target: any, propertyKey: string) {
   })
 }
 
+/**
+ * @state.shallow decorator
+ * @description This decorator is used to mark a property as a shallow reactive state. Reactivity by 1st level properties of
+ * object, arrays, maps, sets
+ * @link https://vuejs.org/api/reactivity-advanced.html#shallowreactive
+ */
 function shallowState(target: any, propertyKey: string) {
   return registerStateMetadata(target, {
     propertyKey,
@@ -31,6 +42,11 @@ function shallowState(target: any, propertyKey: string) {
   })
 }
 
+/**
+ * @state.atom decorator
+ * @description This decorator is used to mark a property as an atom reactive state. Reactivity by re-assignment
+ * @link https://vuejs.org/api/reactivity-advanced.html#shallowref
+ */
 function atomState(target: any, propertyKey: string) {
   return registerStateMetadata(target, {
     propertyKey,
@@ -38,6 +54,11 @@ function atomState(target: any, propertyKey: string) {
   })
 }
 
+/**
+ * @state.deep decorator
+ * @description This decorator is used to mark a property as a deep reactive state. Reactive to deep mutations
+ * @link https://vuejs.org/api/reactivity-core.html#ref
+ */
 function deepState(target: any, propertyKey: string) {
   return registerStateMetadata(target, {
     propertyKey,

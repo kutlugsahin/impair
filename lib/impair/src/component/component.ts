@@ -66,7 +66,7 @@ export function component<P>(component: FC<P>) {
           componentContainer.current = undefined
         }
       }
-    }, [])
+    }, [forceUpdate])
 
     if (componentContainer.current) {
       return createElement(

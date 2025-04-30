@@ -1,5 +1,15 @@
 import { onUnmountMetadataKey } from '../utils/symbols'
 
+/**
+ * @onUnmount decorator
+ * @description This decorator is used to mark a method as an onUnmount method.
+ * It will automatically create a unmount function that will be called when the containing ServiceProvider or Component is unmounted
+ * @example
+ * \@onUnmount
+ *  unmount() {
+ *     // do something
+ *  }
+ */
 export function onUnmount(target: any, propertyKey: string) {
   const onUnmounts: string[] = Reflect.getMetadata(onUnmountMetadataKey, target) ?? []
   onUnmounts.push(propertyKey)
