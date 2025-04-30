@@ -15,6 +15,14 @@ export function injectable<T extends Constructor>(scope?: Scope) {
       tInjectable()(target)
     }
 
+    if (!target.prototype.dispose) {
+      Object.defineProperty(target.prototype, 'dispose', {
+        value: function dispose() {},
+        writable: true,
+        configurable: true,
+      })
+    }
+
     Reflect.metadata(injectableMetadataKey, true)(target)
   }
 }

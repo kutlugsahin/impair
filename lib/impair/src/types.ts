@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 import type { ClassProvider, FactoryProvider, InjectionToken, TokenProvider, ValueProvider } from 'tsyringe'
 
-import type { isLifecycleHandled, isMounted } from './utils/symbols'
+import type { isLifecycleHandled, isInitialized } from './utils/symbols'
 
 export type Constructor<T = any> = new (...args: any[]) => T
 
@@ -32,7 +32,7 @@ export type ProviderProps<P extends object> = {
 export type Dispose = () => void
 
 export type ServiceInstance = {
-  [isMounted]: boolean
+  [isInitialized]: boolean
   [isLifecycleHandled]: boolean
 }
 

@@ -43,6 +43,6 @@ function setInitialized(instance: any, value = true) {
   instance[initialized] = value
 }
 
-function isInitialized(instance: any): boolean {
+export function isInitialized(instance: any): boolean {
   return instance[initialized] ?? false
 }

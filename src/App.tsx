@@ -8,14 +8,13 @@ import {
   onUnmount,
   Props,
   provide,
-  ServiceProvider,
   state,
   trigger,
-  useService,
   useViewModel,
   ViewProps,
 } from 'impair'
 import { onMount } from 'impair/lifecycle/onMount'
+import { useState } from 'react'
 import { QueryService } from '../lib/impair-query/src/queryService'
 
 type Post = {
@@ -39,11 +38,16 @@ class QueryPost extends QueryService<Post, [id: number]> {
 
   @onUnmount
   onMunt() {
-    console.log('onMunt query')
+    console.log('onUnmount query')
+  }
 
-    return () => {
-      console.log('onMunt > unmount query')
-    }
+  @onMount
+  onMount(cl: Cleanup) {
+    console.log('onMount query')
+
+    cl(() => {
+      console.log('onMount query > unmount')
+    })
   }
 
   @onInit
@@ -57,7 +61,7 @@ type PostProps = {
 }
 
 @provide([
-  [QueryPost, 'transient'],
+  [QueryPost, 'singleton'],
   {
     token: 't',
     provider: {
@@ -78,8 +82,8 @@ class PostViewModel {
 
   constructor(
     @inject(QueryPost) public posts: QueryPost,
-    // @inject(QueryPost) public posts2: QueryPost,
-    @inject(Props) public props: PostProps,
+    @inject(QueryPost) public posts2: QueryPost,
+    @inject(ViewProps) public props: PostProps,
   ) {}
 
   @trigger.async
@@ -89,20 +93,20 @@ class PostViewModel {
     const id = this.selectedId
 
     cleanup(() => {
-      console.log('cleanup querySelectedPost' + id)
+      console.log('cleanup querySelectedPost ' + id)
     })
   }
 
-  // @trigger
-  // querySelectedPost2(cleanup: Cleanup) {
-  //   const id = this.selectedId + 1
+  @trigger
+  querySelectedPost2(cleanup: Cleanup) {
+    const id = this.selectedId + 1
 
-  //   this.posts2.query(id)
+    this.posts2.query(id)
 
-  //   cleanup(() => {
-  //     console.log('cleanup querySelectedPost2' + id)
-  //   })
-  // }
+    cleanup(() => {
+      console.log('cleanup querySelectedPost2 ' + id)
+    })
+  }
 
   @onMount
   protected mounted(cleanup: Cleanup) {
@@ -155,10 +159,10 @@ class PostViewModel {
           <p>{this.posts.data?.body}</p>
         </div>
         <hr />
-        {/* <div>
+        <div>
           <h2 className="font-bold">{this.posts2.data?.title}</h2>
           <p>{this.posts2.data?.body}</p>
-        </div> */}
+        </div>
         <hr />
         {this.props.id}
       </div>
@@ -168,17 +172,17 @@ class PostViewModel {
 
 export const PostsComponent = component.fromViewModel<PostProps>(PostViewModel)
 
-// export function Posts() {
-//   const [show, setShow] = useState(true)
+export function Posts() {
+  const [show, setShow] = useState(true)
 
-//   return (
-//     <div>
-//       <button onClick={() => setShow(!show)}>Toggle</button>
-//       <hr />
-//       {show && <PostsComponent id={7} />}
-//     </div>
-//   )
-// }
+  return (
+    <div>
+      <button onClick={() => setShow(!show)}>Toggle</button>
+      <hr />
+      {show && <PostsComponent id={4} />}
+    </div>
+  )
+}
 
 @injectable()
 class Service {
@@ -226,11 +230,6 @@ class State {
   @state
   count = 0
 
-  constructor(@inject(Props) public props: Props) {
-    this.count = props.id
-    console.log('State inited', props.id)
-  }
-
   inc() {
     this.count++
   }
@@ -241,40 +240,39 @@ class StateViewModel {
   constructor(@inject(State) public state: State, @inject(Props) private props: Props) {
     console.log('StateViewModel', props.id)
   }
+
+  @trigger
+  logCount() {
+    console.log('logCount', this.state.count)
+  }
+
+  inc() {
+    this.state.inc()
+  }
 }
 
-const C = () => {
-  const { state } = useViewModel(StateViewModel, { id: 2 })
+const C = component(() => {
+  const { state, inc } = useViewModel(StateViewModel, { id: 2 })
 
   return (
     <div>
-      <button>{state.count}</button>
-    </div>
-  )
-}
-
-const B = component(() => {
-  const { count, inc } = useService(State)
-
-  return (
-    <div>
-      <button onClick={inc}>{count}</button>
+      <button onClick={inc}>{state.count}</button>
     </div>
   )
 })
 
-export const Posts = component(() => {
-  return (
-    <ServiceProvider
-      provide={[State]}
-      props={{
-        id: 5,
-      }}
-    >
-      <ServiceProvider provide={[QueryPost]}>
-        <C />
-      </ServiceProvider>
-      {/* <B /> */}
-    </ServiceProvider>
-  )
-})
+// export const Posts = component(() => {
+//   const [show, setShow] = useState(true)
+
+//   return (
+//     <ServiceProvider
+//       provide={[State]}
+//       props={{
+//         id: 5,
+//       }}
+//     >
+//       <div onClick={() => setShow(!show)}>toggle</div>
+//       {show && <C />}
+//     </ServiceProvider>
+//   )
+// })

@@ -1,7 +1,7 @@
 import { DependencyContainer, InjectionToken } from 'tsyringe'
 
 import { injectableMetadataKey } from '../utils/symbols'
-import { initInstance } from './initInstance'
+import { initInstance, isInitialized } from './initInstance'
 
 function isInjectionToken(token: InjectionToken): boolean {
   return typeof token === 'function' || typeof token === 'symbol' || typeof token === 'string'
@@ -12,7 +12,10 @@ function isInjectableClass(instance: any): boolean {
   return typeof constructor === 'function' && Reflect.getMetadata(injectableMetadataKey, constructor)
 }
 
-export function createChildContainer(parentContainer: DependencyContainer): DependencyContainer {
+export function createChildContainer(
+  parentContainer: DependencyContainer,
+  onInstance: (instance: any) => void,
+): DependencyContainer {
   const container = parentContainer.createChildContainer()
 
   const resolve = container.resolve as any
@@ -28,8 +31,10 @@ export function createChildContainer(parentContainer: DependencyContainer): Depe
       container.afterResolution(
         token as InjectionToken,
         (_, instance) => {
-          if (isInjectableClass(instance)) {
-            return initInstance(instance)
+          if (!isInitialized(instance) && isInjectableClass(instance)) {
+            const initializedInstance = initInstance(instance)
+            onInstance(initializedInstance)
+            return initInstance
           }
         },
         {

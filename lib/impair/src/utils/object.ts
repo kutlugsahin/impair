@@ -42,7 +42,7 @@ export function patchClassInstanceMethod(instance: any, methodName: string, call
   const originalMethod = instance[methodName]
 
   if (originalMethod) {
-    Object.defineProperty(instance, methodName, {
+    Object.defineProperty(Object.getPrototypeOf(instance), methodName, {
       value: function (this: any) {
         originalMethod.call(instance)
         callback()
@@ -51,7 +51,7 @@ export function patchClassInstanceMethod(instance: any, methodName: string, call
       writable: true,
     })
   } else {
-    Object.defineProperty(instance, methodName, {
+    Object.defineProperty(Object.getPrototypeOf(instance), methodName, {
       value: function () {
         callback()
       },

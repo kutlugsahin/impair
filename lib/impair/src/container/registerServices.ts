@@ -1,7 +1,6 @@
 import { DependencyContainer, Lifecycle } from 'tsyringe'
 
-import { InstanceLifecycle, ProviderProps, Registration, ServiceInstance } from '../types'
-import { isLifecycleHandled } from '../utils/symbols'
+import { InstanceLifecycle, ProviderProps, Registration } from '../types'
 
 function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
   switch (lifecycle) {
@@ -73,7 +72,6 @@ function getRegistrationOptions(
 }
 
 export function registerServices(container: DependencyContainer, services: ProviderProps<any>['provide']) {
-  const resolvedServices = new Set<ServiceInstance>()
   services.forEach((serviceInfo) => {
     const { provider, token, lifecycle } = getRegistrationOptions(serviceInfo)
 
@@ -86,18 +84,5 @@ export function registerServices(container: DependencyContainer, services: Provi
         }
         : undefined,
     )
-
-    container.afterResolution(
-      token,
-      (_, result) => {
-        if (!result[isLifecycleHandled]) {
-          result[isLifecycleHandled] = true
-          resolvedServices.add(result)
-        }
-      },
-      { frequency: 'Once' },
-    )
   })
-
-  return resolvedServices
 }
