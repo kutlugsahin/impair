@@ -41,24 +41,14 @@ export function bindMethods<T extends object>(instance: T): T {
 export function patchClassInstanceMethod(instance: any, methodName: string, callback: () => void) {
   const originalMethod = instance[methodName]
 
-  if (originalMethod) {
-    Object.defineProperty(Object.getPrototypeOf(instance), methodName, {
-      value: function (this: any) {
-        originalMethod.call(instance)
-        callback()
-      },
-      configurable: true,
-      writable: true,
-    })
-  } else {
-    Object.defineProperty(Object.getPrototypeOf(instance), methodName, {
-      value: function () {
-        callback()
-      },
-      configurable: true,
-      writable: true,
-    })
-  }
+  Object.defineProperty(instance, methodName, {
+    value: function (this: any) {
+      originalMethod?.call(instance)
+      callback()
+    },
+    configurable: true,
+    writable: true,
+  })
 
   return instance
 }
