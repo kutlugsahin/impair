@@ -1,11 +1,11 @@
-import { RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
-import { Context } from '../context/context'
+import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
 import { Props } from '../injectables/tokens'
 import { Dispose, ProviderProps } from '../types'
-import { useReactiveProps } from '../utils/useReactiveProps'
+import { useReactiveObject } from '../utils/useReactiveObject'
 import { createChildContainer } from './createChildContainer'
 import { disposeContainer } from './dispose'
 import { handleOnMounts } from './handleLifecycle'
@@ -17,12 +17,12 @@ export function useRegisteredContainer<P>(
   sharedContainerRef?: RefObject<DependencyContainer | undefined>,
   propsToken = Props,
 ) {
-  const parentContainer = useContext(Context)
+  const parentContainer = useDependencyContainer()
   const [resolvedInstances] = useState(() => new Set<any>())
   const [disposers] = useState(() => new Set<Dispose | undefined>())
   const isMounted = useRef(false)
 
-  const mappedProps = useReactiveProps(props ?? {})
+  const mappedProps = useReactiveObject(props ?? {})
 
   const registerProps = props != null
 

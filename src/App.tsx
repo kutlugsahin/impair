@@ -61,7 +61,7 @@ type PostProps = {
 }
 
 @provide([
-  [QueryPost, 'transient'],
+  // [QueryPost, 'transient'],
   {
     token: 't',
     provider: {

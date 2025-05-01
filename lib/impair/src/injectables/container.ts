@@ -1,16 +1,15 @@
-import { DependencyContainer } from 'tsyringe';
-
-import { initInstance } from '../container/initInstance';
-import { Constructor } from '../types';
+import { DependencyContainer } from 'tsyringe'
 
 export class Container {
   constructor(private container: DependencyContainer) {
-    this.register = this.container.register.bind(this.container);
+    this.resolve = this.container.resolve.bind(container)
+    this.resolveAll = this.container.resolveAll.bind(container)
+    this.register = this.container.register.bind(container)
+    this.isRegistered = this.container.isRegistered.bind(container)
   }
 
-  public register!: DependencyContainer['register'];
-
-  resolve<T extends Constructor>(token: T) {
-    return initInstance(this.container.resolve<InstanceType<T>>(token));
-  }
+  public resolve!: DependencyContainer['resolve']
+  public resolveAll!: DependencyContainer['resolveAll']
+  public register!: DependencyContainer['register']
+  public isRegistered!: DependencyContainer['isRegistered']
 }

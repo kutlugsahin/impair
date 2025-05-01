@@ -4,8 +4,7 @@ import { Dictionary, Dispose } from '../types'
 import { derivedMetadataKey } from '../utils/symbols'
 
 /**
- * @derived decorator
- * @description This decorator is used to mark a property as a derived property. It will automatically
+ * This decorator is used to mark a property as a derived property. It will automatically
  * create a computed property that will be updated when the reactive dependencies change.
  * The property must be a getter function.
  */

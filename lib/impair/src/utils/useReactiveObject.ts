@@ -3,17 +3,17 @@ import { useEffect, useMemo } from 'react'
 import { isPlainObject } from './object'
 
 /**
- * @description A hook that creates a shallow reactive object from source object and updates it when object properties changes.
+ * A hook that creates a shallow reactive object from source object and updates it when object properties changes.
  * @returns A referentially stable shallow reactive object that reflects the current state of the props.
  */
-export function useReactiveProps<P extends object>(props: P) {
+export function useReactiveObject<P extends object>(obj: P) {
   const { state, next } = useMemo(() => {
-    if (!isPlainObject(props)) {
-      throw new Error('[useReactiveProps] props must be a plain js object')
+    if (!isPlainObject(obj)) {
+      throw new Error('[useReactiveObject] props must be a plain js object')
     }
 
     // Use a mutable state internally
-    const state = shallowReactive<P>({ ...props })
+    const state = shallowReactive<P>({ ...obj })
 
     const next = (nextProps: P) => {
       const currentKeys = Object.keys(state) as Array<keyof P>
@@ -43,8 +43,8 @@ export function useReactiveProps<P extends object>(props: P) {
 
   useEffect(() => {
     // Update the reactive state when props change
-    next(props)
-  }, [props, next]) // Rerun effect if props or the stable next function changes
+    next(obj)
+  }, [obj, next]) // Rerun effect if props or the stable next function changes
 
   // Return the readonly reactive props
   return state

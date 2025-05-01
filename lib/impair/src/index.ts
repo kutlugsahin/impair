@@ -1,10 +1,9 @@
-import { useReactiveProps } from './utils/useReactiveProps'
-
 export { component } from './component/component'
 export { useService } from './component/hooks/useService'
 export { useViewModel } from './component/hooks/useViewModel'
 export { injectable } from './container/injectable'
 export { provide } from './container/provide'
+export { Container } from './injectables/container'
 export { Props, ViewProps } from './injectables/tokens'
 export { ServiceProvider } from './provider/serviceProvider'
 export { derived, state, trigger, untrack } from './reactivity'
@@ -24,5 +23,4 @@ export { onInit } from './lifecycle/onInit'
 export { onMount } from './lifecycle/onMount'
 export { onUnmount } from './lifecycle/onUnmount'
 export { configure } from './utils/config'
-
-export const useReactiveObject = useReactiveProps as <T>(obj: T) => T
+export { useReactiveObject } from './utils/useReactiveObject'

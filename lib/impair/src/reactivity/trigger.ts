@@ -17,32 +17,29 @@ function addTriggerMetadata(target: any, propertyKey: string, flush: 'sync' | 'a
   return Reflect.metadata(triggerMetadataKey, triggerInfoArr)(target)
 }
 
-/***
- * @trigger decorator
- * @description This decorator is used to mark a method as a trigger. It will automatically
+/**
+ * This decorator is used to mark a method as a trigger. It will automatically
  * create a reactive effect that will call the method when the reactive dependencies change.
  * The method can also accept an optional Cleanup function as a parameter.
+ *```ts
+ *  @trigger
+ *  public fetchData(cleanup: Cleanup) {
+ *   const abortController = new AbortController()
+ *   cleanup(() => {
+ *     abortController.abort()
+ *   })
  *
- * @example
- * \@trigger
- *  fetchData(cleanup: Cleanup) {
- *     const abortController = new AbortController()
- *     cleanup(() => {
- *       abortController.abort()
- *     })
- *
- *     const response = await loadData(this.state.id, abortController.signal);
- *     // do something
+ *   const response = await loadData(this.state.id, abortController.signal);
+ *   // do something
  * }
- *
+ *```
  */
 export function trigger(target: any, propertyKey: string) {
   return addTriggerMetadata(target, propertyKey)
 }
 
 /**
- * @trigger.async decorator
- * @description This decorator is used to mark a method as a trigger. It will automatically
+ * This decorator is used to mark a method as a trigger. It will automatically
  * create a reactive effect that will call the method when the reactive dependencies change.
  * Calls will be scheduled in the next tick.
  * The method can also accept an optional cleanup function as a parameter.
@@ -69,6 +66,8 @@ export function initTrigger({ instance, disposers }: InitParams) {
         )
       }
 
+      const triggerMethod = effectFn.bind(instance)
+
       const effectRunner = flush === 'sync' ? effect : asyncEffect
 
       let cleanup: Cleanup | undefined = undefined
@@ -76,7 +75,7 @@ export function initTrigger({ instance, disposers }: InitParams) {
       const runner = effectRunner(() => {
         cleanup?.()
         cleanup = undefined
-        return effectFn.call(instance, (clb: Cleanup) => {
+        return triggerMethod((clb: Cleanup) => {
           cleanup = clb
         })
       })
@@ -90,9 +89,7 @@ export function initTrigger({ instance, disposers }: InitParams) {
         enumerable: true,
         configurable: true,
         writable: true,
-        value: () => {
-          runner()
-        },
+        value: triggerMethod,
       })
     })
   }

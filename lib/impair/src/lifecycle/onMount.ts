@@ -2,16 +2,15 @@ import { TriggerCleanup } from '../types'
 import { onMountMetadataKey } from '../utils/symbols'
 
 /**
- * @onMount decorator
- * @description This decorator is used to mark a method as an onMount method.
+ * This decorator is used to mark a method as an onMount method.
  * It will automatically create a mount function that will be called when the containing ServiceProvider or Component is mounted
  * The method can also accept an optional Cleanup function which will be called when containing ServiceProvider or Component is unmounted.
- *
- * @example
+ *```ts
  * \@onMount
- *  mount(cleanup: Cleanup) {
+ *  public mount(cleanup: Cleanup) {
  *     // do something
  *  }
+ * ```
  */
 export function onMount(target: any, propertyKey: string) {
   const onMounts: string[] = Reflect.getMetadata(onMountMetadataKey, target) ?? []

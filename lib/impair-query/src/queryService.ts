@@ -43,27 +43,6 @@ export abstract class QueryService<T, P extends QueryKey> implements QueryState<
 
   private unsubscribe: (() => void) | undefined
 
-  private updateStates(result?: QueryObserverResult<T, Error>) {
-    if (result) {
-      this.data = result.data
-      this.status = result.status
-      this.error = result.error ?? undefined
-      this.isLoading = result.isLoading
-      this.isError = result.isError
-      this.isSuccess = result.isSuccess
-    }
-  }
-
-  protected getQueryOptions(...params: P): QueryObserverOptions<T, Error, T, T, P, never> {
-    const queryFn = () => this.fetch(...params)
-
-    return {
-      queryKey: [this.key, ...params] as any,
-      queryFn,
-      placeholderData: (prev) => prev,
-    }
-  }
-
   public query(...params: P) {
     this.unsubscribe?.()
 
@@ -78,7 +57,29 @@ export abstract class QueryService<T, P extends QueryKey> implements QueryState<
     this.unsubscribe = this.observer.subscribe((result) => this.updateStates(result))
   }
 
+  protected getQueryOptions(...params: P): QueryObserverOptions<T, Error, T, T, P, never> {
+    const queryFn = () => this.fetch(...params)
+
+    return {
+      queryKey: [this.key, ...params] as any,
+      queryFn,
+      placeholderData: (prev) => prev,
+    }
+  }
+
+  private updateStates(result?: QueryObserverResult<T, Error>) {
+    if (result) {
+      this.data = result.data
+      this.status = result.status
+      this.error = result.error ?? undefined
+      this.isLoading = result.isLoading
+      this.isError = result.isError
+      this.isSuccess = result.isSuccess
+    }
+  }
+
   protected dispose() {
+    this.unsubscribe?.()
     this.observer?.destroy()
     this.observer = undefined
   }
