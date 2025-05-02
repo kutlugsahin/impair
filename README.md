@@ -8,11 +8,7 @@ impair is a React framework bringing several programming concepts together in or
 
 After working in many react applications over the years, this framework is my personal solution to the problems and limitations of a conventional react application and react mental model by enabling a layered application structure similar to MVVM and pushing react to actually be the View layer. By doing so, the logic of the application can be managed in the business layer via service classes whose instances are managed by a dependency container enabling a proper dependency injection mechanism in OOP style. The idea is that business layer contains and manages the application state and behavior distributed across the service classes while the view layer (react component) consumes the services. With this approach react components will be mostly stateless (pure) and decoupled from the data and **State** becomes just a field in a class.
 
-You may ask yourself if the components can be stateless now and the state will reside in classes, how will the components render when some data changes in a class. In other words how does the reactivity work? To solve that challenge Impair introduces a simple and seemless way of defining reactive data via decorators keeping the type and shape of the reactive data as is, not converting it into another structure like signals or refs. Reactive values can only be defined as decorated service class fields and nowhere else. This design approach has two benefits. First it helps to keep things in order and easy to find when you need. And second, designing it as a class field makes it possible to preserve the object type as it.
-
-Under the hoods reactive data is managed by a proxy based reactivity system which tracks mutations deeply so that you don’t need to maintain immutability and you can just mutate the parts of your data intuitively.
-
-Using the magic of proxy reactivity, components using any reactive field in a service will get rendered only if the referenced data is actually updated. This leads to a dramatic performance improvement out of the box without any explicit performance optimizations. Additionally, after logic migrates to service layer, react components will remain mostly pure without hooks and every kind of drama related to it.
+You may ask yourself if the components can be stateless now and the state will reside in classes, how will the components render when some data changes in a class. In other words how does the reactivity work? To solve that challenge Impair introduces a simple and seemless way of defining reactive data via decorators keeping the type and shape of the reactive data as is, not converting it into another structure like signals or refs. Under the hoods reactive data is managed by a proxy based reactivity system which tracks mutations deeply so that you don’t need to care about immutable objects and you can just mutate the parts of your data intuitively.
 
 ## Installation and configuration
 
@@ -21,6 +17,7 @@ npm install impair reflect-metadata
 ```
 
 ```json
+
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -225,8 +222,11 @@ You can fine tune the level of reactivity as ‘atom’ | ‘shallow’ | ‘dee
 
 - **@state.atom**: reactive by reference. Deep mutations are not tracked
 - **@state.shallow**: first level properties are tracked. This is meaningful for objects/arrays/maps/sets
+- **@state.deep**: Objects are deeply reactive including arrays maps and sets.
 
-- **@trigger**: Method decorator that runs the method as the ‘effect’ function. Trigger methods will be called automatically and synchronously whenever a referenced reactive value is updated.
+When @state is used the default reactivity level is applied which is equal to @state.deep by default. You can change the default reactivity level globally using **configure** function.
+
+- **@trigger**: Method decorator that runs the method as the ‘effect’ function. Trigger methods will be called automatically and synchronously whenever a referenced reactive value is updated. Trigger method accepts an optional cleanup function so that you can cleanup resources or cancel request etc.
 
 ```tsx
 import { state, trigger, inject, injectable } from 'impair'
@@ -243,8 +243,14 @@ export class TodoService {
   }
 
   @trigger
-  logTodoCount() {
-    console.log(this.todos.length)
+  logTodoCount(cleanup: Cleanup) {
+    const count = this.todos.length
+
+    cleanup(() => {
+      console.log(`Previous count was: ${count}`)
+    })
+
+    console.log(`Current count is: ${count}`)
   }
 }
 ```
@@ -266,32 +272,6 @@ export class TodoService {
   @derived
   get completedTodos() {
     return this.todos.filter((p) => p.isDone)
-  }
-}
-```
-
-### Lifecycle
-
-Thera are lifecycle decorators for services.
-
-- @onMount: called when the ServiceProvider is mounted
-- @onUnmount: called when the ServiceProvider is unmounted
-- @onInit: called when the service class is initialized and all the decorators are initialized
-- @onDispose: called when the parent dependency container is disposed
-
-```tsx
-import { onMount, onUnmount, onInit, onDispose } from 'impair'
-
-@injectable()
-export class TodoService {
-  @state
-  public todos: Todo[] = []
-
-  constructor(@inject(TodoApi) private api: TodoApi) {}
-
-  @onMount
-  async loadTodos() {
-    this.todos = await this.api.loadTodos()
   }
 }
 ```
@@ -339,9 +319,9 @@ export class UserService {
 
 Higher order component that returns a memoized version of the given component. All components that need to consume services has to be wrapped with ‘component’. Resulting component is optimized out of the box getting rendered only if a referenced reactive value is changed
 
-### useService(Class)
+### useService(Class | injectionToken)
 
-Hook to access the given service. Components can use many services.
+Hook to access the given service. Components can use many services. The returned service’s reactive fields will be readonly by default (which can be configured globally using **configure function**) to prevent accidental mutations from the view layer.
 
 ```tsx
 @injectable()
@@ -367,7 +347,11 @@ export const Counter = component(() => {
 
 ### useViewModel(Class, props?)
 
-So far we have discussed the service layer, creating services shared across the components descendent to the ServiceProvider. But what if we want to create a service exclusive to a component which will be created when the component is mounted and destroyed when unmounted. useViewModel is there to achieve this behavior. Conceptually these kind of services are called view models. When a viewModel is used in a component, a dependency container is created for that component as the child of parent container and given viewModel is registered by default. ViewModels can inject services and Props (component props) as well. If you want to access the component props from viewModel you should pass props as the second parameter to useViewModel and then inject it using Props injection token.
+So far we have discussed the service layer, creating services shared across the components descendent to the ServiceProvider. But what if we want to create a service exclusive to a component which will be created when the component is mounted and destroyed when unmounted. useViewModel is there to achieve this behavior. Conceptually these kind of services are called view models. When a viewModel is used in a component, a dependency container is created for that component as the child of parent container and given viewModel is registered by default. ViewModels can inject services and ViewProps (component props via ViewProps token) as well. A component can use many view models with multiple useViewModel. All the viewModels are registered in the same dependency container so that they can inject each other as well as the services from ancestor dependency containers.
+
+### ViewProps (Injection Token)
+
+If you want to access the component props from viewModel you should pass props as the second parameter to useViewModel and then inject it using ViewProps injection token. injected object will be shallow reactive.
 
 ```tsx
 @injectable()
@@ -380,6 +364,8 @@ export class AutoCompleteViewModel {
 
   @state
   isLoading = false
+
+  constructor(@inject(ViewProps) props: AutoCompleteProps) {}
 
   setQuery(query: string) {
     this.query = query
@@ -415,4 +401,103 @@ const AutoComplete = component((props: AutoCompleteProps) => {
     </div>
   )
 })
+```
+
+### @provide(registrations: Registration[])
+
+When component uses one or more view models a dependency container will be created exclusive to that component. If you want to register some services to that container you can add @provide(registrations: Registration[]) class decorator to the view model class. The parameter type has the same type of ServiceProvider’s provide property.
+
+```tsx
+@injectable()
+@provide([[SearchApi, 'transient']])
+export class AutoCompleteViewModel {
+  constructor(@inject(SearchApi) private api: SearchApi) {}
+}
+```
+
+### component.fromViewModel(viewModel: Class)
+
+View models can be converted to components by implementing a render function in view model. It’s like a shorthand of declaring view mode class and its components in one class. This may sound like a violation of separation of concerns but it is not. View models are actually belong to the view layer and view dependent logic is expected in the view models. Here is how it looks like.
+
+```tsx
+type AutoCompleteProps = {
+  someProp: string
+}
+
+@injectable()
+export class AutoCompleteViewModel {
+  @state
+  query = ''
+
+  @state
+  items: Item[] = []
+
+  @state
+  isLoading = false
+
+  constructor(@inject(ViewProps) props: AutoCompleteProps) {}
+
+  @trigger
+  async loadResults() {
+    this.isLoading = true
+    this.items = await loadItems(this.query)
+    this.isLoading = false
+  }
+
+  render() {
+    return (
+      <div>
+        <input
+          value={this.query}
+          onChange={(e) => {
+            this.query = e.target.value
+          }}
+        />
+        <ul>
+          {this.items.map((item) => (
+            <li>{item.name}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+}
+
+export const AutoComplete = component.fromViewModel<AutoCompleteProps>(AutoCompleteViewModel)
+```
+
+### Lifecycles
+
+Thera are lifecycle decorators for services and view models. Decorated methods will reflect the actual component lifecycles. When they are used in a service they reflect the lifecycle of the ServiceProvider component. When used in a view model that view model’s component will be reflected.
+
+- **@onMount**: called when the component is mounted
+- **@onUnmount**: called when the component is unmounted
+- **@onInit**: called when the service/viewModel class is constructed and all the decorators are initialized
+- **@onDispose**: called when the parent dependency container is disposed
+
+Methods with onMount/onInit decorators accept a cleanup function as parameter (as well as @trigger methods). Function passed to cleanup will be called when the component is unmounted/disposed.
+
+```tsx
+import { onMount, onUnmount, onInit, onDispose, type Cleanup } from 'impair'
+
+@injectable()
+export class TodoService {
+  @state
+  public todos: Todo[] = []
+
+  @onMount
+  async loadTodos(cleanup: Cleanup) {
+    controller = new AbortController()
+
+    const signal = controller.signal
+
+    // the function passed to cleanup will be called
+    // when the component is unmounted
+    cleanup(() => controller.abort())
+
+    const response = await fetch('/Todos', { signal: controller.signal })
+
+    this.todos = await response.json()
+  }
+}
 ```

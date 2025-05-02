@@ -7,7 +7,7 @@ export type Constructor<T = any> = new (...args: any[]) => T
 
 export type InstanceLifecycle = 'singleton' | 'transient' | 'container' | 'resolution'
 
-export type Registration<T = any> =
+export type RegistrationObject<T = any> =
   | {
       token: InjectionToken<T>
       provider: ClassProvider<T> | TokenProvider<T>
@@ -18,14 +18,15 @@ export type Registration<T = any> =
       provider: FactoryProvider<T> | ValueProvider<T>
     }
 
+export type Registration =
+  | Constructor
+  | RegistrationObject
+  | [Constructor, InstanceLifecycle]
+  | [InjectionToken, ClassProvider<any>['useClass']]
+  | [InjectionToken, ClassProvider<any>['useClass'], InstanceLifecycle]
+
 export type ProviderProps<P extends object> = {
-  readonly provide: readonly (
-    | Constructor
-    | Registration
-    | [Constructor, InstanceLifecycle]
-    | [InjectionToken, ClassProvider<any>['useClass']]
-    | [InjectionToken, ClassProvider<any>['useClass'], InstanceLifecycle]
-  )[]
+  provide: Registration[]
   props?: P
 }
 

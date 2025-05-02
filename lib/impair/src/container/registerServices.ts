@@ -1,6 +1,6 @@
 import { DependencyContainer, Lifecycle } from 'tsyringe'
 
-import { InstanceLifecycle, ProviderProps, Registration } from '../types'
+import { InstanceLifecycle, ProviderProps, Registration, RegistrationObject } from '../types'
 
 function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
   switch (lifecycle) {
@@ -17,9 +17,7 @@ function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
   }
 }
 
-function getRegistrationOptions(
-  registration: ProviderProps<any>['provide'][0],
-): Registration & { lifecycle?: InstanceLifecycle } {
+function getRegistrationOptions(registration: Registration): RegistrationObject & { lifecycle?: InstanceLifecycle } {
   /**
    * If the registration is a function,
    * it means that it is a class to be registered as singleton

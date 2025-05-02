@@ -4,7 +4,7 @@ import { DependencyContainer } from 'tsyringe'
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
 import { Props } from '../injectables/tokens'
-import { Dispose, ProviderProps } from '../types'
+import { Dispose, Registration } from '../types'
 import { useReactiveObject } from '../utils/useReactiveObject'
 import { createChildContainer } from './createChildContainer'
 import { disposeContainer } from './dispose'
@@ -13,7 +13,7 @@ import { registerServices } from './registerServices'
 
 export function useRegisteredContainer<P>(
   props: P,
-  services: ProviderProps<any>['provide'],
+  services: Registration[],
   sharedContainerRef?: RefObject<DependencyContainer | undefined>,
   propsToken = Props,
 ) {
