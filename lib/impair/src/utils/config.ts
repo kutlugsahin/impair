@@ -9,7 +9,7 @@ export const config = {
    * @description: The default reactive level for state properties.
    * @default 'deep'
    */
-  defaultStateReactiveLevel: 'deep' as StateType,
+  defaultStateReactiveLevel: 'deep' as Exclude<StateType, 'default'>,
 }
 
 export function configure(options: Partial<typeof config>) {

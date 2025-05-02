@@ -8,7 +8,7 @@ impair is a React framework bringing several programming concepts together in or
 
 After working in many react applications over the years, this framework is my personal solution to the problems and limitations of a conventional react application and react mental model by enabling a layered application structure similar to MVVM and pushing react to actually be the View layer. By doing so, the logic of the application can be managed in the business layer via service classes whose instances are managed by a dependency container enabling a proper dependency injection mechanism in OOP style. The idea is that business layer contains and manages the application state and behavior distributed across the service classes while the view layer (react component) consumes the services. With this approach react components will be mostly stateless (pure) and decoupled from the data and **State** becomes just a field in a class.
 
-You may ask yourself if the components can be stateless now and the state will reside in classes, how will the components render when some data changes in a class. In other words how does the reactivity work? To solve that challenge Impair introduces a simple and seemless way of defining reactive data via decorators keeping the type and shape of the reactive data as is, not converting it into another structure like signals or refs. Under the hoods reactive data is managed by a proxy based reactivity system which tracks mutations deeply so that you don’t need to care about immutable objects and you can just mutate the parts of your data intuitively.
+You may ask yourself if the components can be stateless now and the state will reside in classes, how will the components render when some data changes in a class. In other words how does the reactivity work? To solve that challenge Impair introduces a simple and seamless way of defining reactive data via decorators keeping the type and shape of the reactive data as is, not converting it into another structure like signals or refs. Under the hoods reactive data is managed by a proxy based reactivity system which tracks mutations deeply so that you don’t need to care about immutable objects and you can just mutate the parts of your data intuitively.
 
 ## Installation and configuration
 
@@ -17,7 +17,6 @@ npm install impair reflect-metadata
 ```
 
 ```json
-
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -181,7 +180,7 @@ class ServiceB {
 }
 ```
 
-This would lead to infinite loop of constructing ServiceA and ServiceB. To avoid that inject decorator accepts DelayedConstuctor. When a delayed constructor is injected a proxy object is created and injected instead of the actual object.
+This would lead to infinite loop of constructing ServiceA and ServiceB. To avoid that inject decorator accepts DelayedConstructor. When a delayed constructor is injected a proxy object is created and injected instead of the actual object.
 
 - @inject(delay(() ⇒ Class))
 
@@ -329,7 +328,7 @@ export class CounterService {
   @state
   count = 0
 
-  inrement() {
+  increment() {
     this.count++
   }
 }
@@ -417,15 +416,15 @@ export class AutoCompleteViewModel {
 
 ### component.fromViewModel(viewModel: Class)
 
-View models can be converted to components by implementing a render function in view model. It’s like a shorthand of declaring view mode class and its components in one class. This may sound like a violation of separation of concerns but it is not. View models are actually belong to the view layer and view dependent logic is expected in the view models. Here is how it looks like.
+View models can be converted to components by implementing a render function in view model. It’s like a shorthand of declaring view model class and its component in one class. This may sound like a violation of separation of concerns but it is not. View models are actually belong to the view layer and view dependent logic is expected in the view models. Here is how it looks like.
 
 ```tsx
-type AutoCompleteProps = {
+export type AutoCompleteProps = {
   someProp: string
 }
 
 @injectable()
-export class AutoCompleteViewModel {
+class AutoCompleteViewModel {
   @state
   query = ''
 
@@ -466,9 +465,9 @@ export class AutoCompleteViewModel {
 export const AutoComplete = component.fromViewModel<AutoCompleteProps>(AutoCompleteViewModel)
 ```
 
-### Lifecycles
+### Lifecycle
 
-Thera are lifecycle decorators for services and view models. Decorated methods will reflect the actual component lifecycles. When they are used in a service they reflect the lifecycle of the ServiceProvider component. When used in a view model that view model’s component will be reflected.
+Thera are lifecycle decorators for services and view models. Decorated methods will reflect the actual component lifecycle. When they are used in a service they reflect the lifecycle of the ServiceProvider component. When used in a view model that view model’s component will be reflected.
 
 - **@onMount**: called when the component is mounted
 - **@onUnmount**: called when the component is unmounted
@@ -500,4 +499,39 @@ export class TodoService {
     this.todos = await response.json()
   }
 }
+```
+
+### Container (Injection Token)
+
+You can inject the dependency container instance by injecting the **Container** injection token.
+
+With container instance you can register or inject services on demand with **resolve** and register functions.
+
+```tsx
+import { Container, inject, injectable } from 'impair'
+
+@injectable()
+class Service {
+  constructor(@inject(Container) container: Container) {
+    const service = container.resolve('someToken')
+  }
+}
+```
+
+### configure(options)
+
+This is a global configuration api to control some behaviors of the framework. If necessary this must be called once on the top of your application code.
+
+- **readonlyProxiesForView** (bool) - default: true
+  By default the reactive data passed to component will be marked as readonly and throw a warning if you mutate it in component scope. You can change it by setting **readonlyProxiesForView** to false.
+- defaultStateReactiveLevel: ('shallow' | 'deep' | 'atom’) - default: ‘deep’
+  Global reactivity level of @state field is determined by this property. You can always explicitly declare the reactivity level on fields with @state.atom, @state.shallow and @state.deep decorators.
+
+```tsx
+import { configure } from 'impair'
+
+configure({
+	readonlyProxiesForView: false
+	defaultStateReactiveLevel: 'atom'
+})
 ```

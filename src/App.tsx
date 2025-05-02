@@ -1,6 +1,7 @@
 import {
   type Cleanup,
   component,
+  Container,
   inject,
   injectable,
   onDispose,
@@ -16,6 +17,7 @@ import {
 import { onMount } from 'impair/lifecycle/onMount'
 import { useState } from 'react'
 import { QueryService } from '../lib/impair-query/src/queryService'
+import { reactive, readonly } from '@vue/reactivity'
 
 type Post = {
   id: number
@@ -84,7 +86,10 @@ class PostViewModel {
     @inject(QueryPost) public posts: QueryPost,
     @inject(QueryPost) public posts2: QueryPost,
     @inject(ViewProps) public props: PostProps,
-  ) {}
+    @inject(Container) public container: Container,
+  ) {
+    console.log(this.container)
+  }
 
   @trigger.async
   querySelectedPost(cleanup: Cleanup) {
