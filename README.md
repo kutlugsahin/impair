@@ -8,7 +8,7 @@ impair is a React framework bringing several programming concepts together in or
 
 After working in many react applications over the years, this framework is my personal solution to the problems and limitations of a conventional react application and react mental model by enabling a layered application structure similar to MVVM and pushing react to actually be the View layer. By doing so, the logic of the application can be managed in the business layer via service classes whose instances are managed by a dependency container enabling a proper dependency injection mechanism in OOP style. The idea is that business layer contains and manages the application state and behavior distributed across the service classes while the view layer (react component) consumes the services. With this approach react components will be mostly stateless (pure) and decoupled from the data and **State** becomes just a field in a class.
 
-You may ask yourself if the components can be stateless now and the state will reside in classes, how will the components render when some data changes in a class. In other words how does the reactivity work? To solve that challenge Impair introduces a simple and seamless way of defining reactive data via decorators keeping the type and shape of the reactive data as is, not converting it into another structure like signals or refs. Under the hoods reactive data is managed by a proxy based reactivity system which tracks mutations deeply so that you don’t need to care about immutable objects and you can just mutate the parts of your data intuitively.
+You may ask yourself if the components can be stateless now and the state will reside in classes, how will the components render when some data changes in a class. In other words how does the reactivity work? To solve that challenge Impair introduces a simple and seamless way of defining reactive data via decorators keeping the type and shape of the reactive data as is, not converting it into another structure like signals or refs. Under the hood reactive data is managed by a proxy based reactivity system which tracks mutations deeply so that you don’t need to care about immutable objects and you can just mutate the parts of your data intuitively.
 
 ## Installation and configuration
 
@@ -17,13 +17,18 @@ npm install impair reflect-metadata
 ```
 
 ```json
+
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
   }
 ```
 
-- Vite config with **plugin-react-swc**
+**A )** Vite config with **plugin-react-swc**
+
+```bash
+npm i -D @vitejs/plugin-react-swc
+```
 
 ```tsx
 import react from '@vitejs/plugin-react-swc'
@@ -45,7 +50,11 @@ export default defineConfig({
 })
 ```
 
-- vite config with **plugin-react**
+**B )** Vite config with **plugin-react**
+
+```bash
+npm i @babel/plugin-syntax-decorators
+```
 
 ```tsx
 import react from '@vitejs/plugin-react'
@@ -84,7 +93,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(<App />)
 
 ### ServiceProvider
 
-Impair provides **ServiceProvider** component to define a service layer. Each **ServiceProvider** accepts a set of Service classes to be registered to the dependency container created by the ServiceProvider. Across the application code there can be many ServiceProvider components. Their dependency containers will be constructed hierarchically in parent child relation. For example if ServiceProviderA is a descendent of ServiceProviderB in the component tree, the container of ServiceProviderA will be the child container of ServiceProviderB. That means if some token resolved in A is not registered it will try to resolve it in the container B and it goes up like this.
+Impair provides **ServiceProvider** component to define a service layer. Each **ServiceProvider** accepts a set of Service classes to be registered to the dependency container created by the ServiceProvider. Across the application code there can be many ServiceProvider components. Their dependency containers will be constructed hierarchically in parent child relation using context api under the hood. For example if ServiceProviderA is a descendent of ServiceProviderB in the component tree, the container of ServiceProviderA will be the child container of ServiceProviderB. That means if some token resolved in A is not registered it will try to resolve it in the container B and it goes up like this.
 
 ```tsx
 import { ServiceProvider } from 'impair'
@@ -139,10 +148,10 @@ Service classes are ordinary decorated classes (@injectable) to be resolved by t
 
 ### Dependency Injection
 
-There are two decorators provided by Impair to decorate classes and constructor parameters to be resolved.
+There are two decorators provided by Impair to decorate classes and constructor parameters in order to be managed by the dependency container.
 
-- @injectable() decorated the class to be a service to be resolved by dependency containers.
-- @inject(token: string | Symbol | Class ): Parameter decorator which takes a token as argument
+- **@injectable()**: All the service classes have to be decorated with @injectable decorator
+- **@inject(**token: string | Symbol | Class**)**: Constructor parameter decorator which takes a token as argument to be resolved by dependency container to construct the class instance.
 
 ```tsx
 import { injectable, inject } from 'impair'
@@ -257,7 +266,6 @@ export class TodoService {
 By default triggers will run synchronously but you can make it run async too.
 
 - @trigger.async: method will be triggered in the next tick debouncing frequent sync state changes.
-
 - **@derived**: property getter decorator for aggregated reactive values
 
 ```tsx
