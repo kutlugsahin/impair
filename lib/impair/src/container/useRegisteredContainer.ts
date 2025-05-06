@@ -80,7 +80,7 @@ export function useRegisteredContainer<P>(
       disposeContainer(container)
       isMounted.current = false
       resolvedInstances.clear()
-      resolvedInstances.clear()
+      disposers.clear()
     }
   }, [container, disposers, resolvedInstances])
 
