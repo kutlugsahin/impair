@@ -2,6 +2,8 @@ import {
   type Cleanup,
   component,
   Container,
+  createDecorator,
+  derived,
   inject,
   injectable,
   onDispose,
@@ -17,7 +19,6 @@ import {
 import { onMount } from 'impair/lifecycle/onMount'
 import { useState } from 'react'
 import { QueryService } from '../lib/impair-query/src/queryService'
-import { reactive, readonly } from '@vue/reactivity'
 
 type Post = {
   id: number
@@ -240,11 +241,64 @@ class State {
   }
 }
 
+const obs = createDecorator((instance, key, { shallowRef }) => {
+  const val = shallowRef(instance[key])
+
+  setInterval(() => {
+    val.value++
+  }, 1000)
+
+  Object.defineProperty(instance, key, {
+    get() {
+      return val.value
+    },
+    set(newValue) {
+      val.value = newValue
+    },
+  })
+})
+
+function obs2() {
+  return createDecorator((instance, key, { shallowRef }) => {
+    const val = shallowRef(instance[key])
+
+    setInterval(() => {
+      val.value++
+    }, 1000)
+
+    Object.defineProperty(instance, key, {
+      get() {
+        return val.value
+      },
+      set(newValue) {
+        val.value = newValue
+      },
+    })
+  })
+}
+
 @injectable()
 class StateViewModel {
-  constructor(@inject(State) public state: State, @inject(Props) private props: Props) {
-    console.log('StateViewModel', props.id)
+  @state
+  age = 0
+
+  constructor(@inject(State) public state: State, @inject(ViewProps) private props: Props) {
+    // console.log('StateViewModel', props.id)
   }
+
+  @derived get age2() {
+    return this.age1 + 2
+  }
+
+  @derived get age1() {
+    return this.age + 1
+  }
+
+  @obs
+  num = 10
+
+  @obs2()
+  num2 = 5
 
   @trigger
   logCount() {
@@ -253,15 +307,18 @@ class StateViewModel {
 
   inc() {
     this.state.inc()
+    this.age++
   }
 }
 
-const C = component(() => {
-  const { state, inc } = useViewModel(StateViewModel, { id: 2 })
+export const C = component(() => {
+  const { state, inc, age1, age2, num, num2 } = useViewModel(StateViewModel, { id: 2 })
 
   return (
     <div>
-      <button onClick={inc}>{state.count}</button>
+      <button onClick={inc}>{age2}</button>
+      <button>{num}</button>
+      <button>{num2}</button>
     </div>
   )
 })
@@ -281,3 +338,51 @@ const C = component(() => {
 //     </ServiceProvider>
 //   )
 // })
+
+// const map = new Map([
+//   [1, 2],
+//   [2, 3],
+//   [3, 4],
+// ])
+
+// const set = new Set([1, 2, 3, 4])
+
+// const obj = {
+//   a: reactive(set),
+//   b: reactive(map),
+// }
+// const obj2 = [reactive(set), reactive(map)]
+
+// const obj3 = reactive(obj)
+
+// const obj4 = reactive({
+//   a: reactive(set),
+//   b: reactive(map),
+// })
+
+// const a = toRaw(obj)
+
+// console.log(obj)
+
+// const b = toRaw(obj2)
+// const c = toRaw(obj3)
+// const d = toRaw(obj4)
+
+// console.log(a === obj)
+// console.log(set === obj.a)
+// console.log(map === obj.b)
+// console.log(a.a === obj.a)
+// console.log(a.b === obj.b)
+
+// console.log(b[0] === obj2[0])
+// console.log(b[1] === obj2[1])
+// console.log(b === obj2)
+
+// console.log(c === obj3)
+// console.log(c.a === obj3.a)
+// console.log(c.b === obj3.b)
+
+// console.log(d === obj4)
+// console.log(d.a === obj4.a)
+// console.log(d.b === obj4.b)
+// console.log(d.a === obj4.a)

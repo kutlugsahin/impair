@@ -18,7 +18,7 @@ export function useRegisteredContainer<P>(
   propsToken = Props,
 ) {
   const parentContainer = useDependencyContainer()
-  const [resolvedInstances] = useState(() => new Set<any>())
+  const [resolvedInstances] = useState(() => new Set())
   const [disposers] = useState(() => new Set<Dispose | undefined>())
   const isMounted = useRef(false)
 
@@ -27,35 +27,33 @@ export function useRegisteredContainer<P>(
   const registerProps = props != null
 
   const container = useMemo(() => {
-    let container!: DependencyContainer
+    if (sharedContainerRef?.current) {
+      return sharedContainerRef.current
+    }
 
-    if (!sharedContainerRef || !sharedContainerRef.current) {
-      container = createChildContainer(parentContainer, (instance) => {
-        resolvedInstances.add(instance)
-        if (isMounted.current) {
-          disposers.add(handleOnMounts(instance))
-        }
+    const container = createChildContainer(parentContainer, (instance) => {
+      resolvedInstances.add(instance)
+      if (isMounted.current) {
+        disposers.add(handleOnMounts(instance))
+      }
+    })
+
+    if (!container.isRegistered(Container)) {
+      container.register(Container, {
+        useValue: new Container(container),
       })
+    }
 
-      if (!container.isRegistered(Container)) {
-        container.register(Container, {
-          useValue: new Container(container),
-        })
-      }
+    if (registerProps && !container.isRegistered(propsToken)) {
+      container.register(propsToken, {
+        useValue: mappedProps,
+      })
+    }
 
-      if (registerProps && !container.isRegistered(propsToken)) {
-        container.register(propsToken, {
-          useValue: mappedProps,
-        })
-      }
+    registerServices(container, services)
 
-      registerServices(container, services)
-
-      if (sharedContainerRef) {
-        sharedContainerRef.current = container
-      }
-    } else {
-      container = sharedContainerRef.current
+    if (sharedContainerRef) {
+      sharedContainerRef.current = container
     }
 
     return container

@@ -1,3 +1,4 @@
+import { initCustomDecorators } from 'src/utils/createDecorator'
 import { initOnDispose } from '../lifecycle/onDispose'
 import { initOnInit } from '../lifecycle/onInit'
 import { initState } from '../reactivity'
@@ -26,6 +27,7 @@ export function initInstance<T extends Dictionary>(instance: T) {
 
       initState(params)
       initDerived(params)
+      initCustomDecorators(instance, disposers)
       initTrigger(params)
       bindMethods(instance)
       initOnInit(instance, disposers)
