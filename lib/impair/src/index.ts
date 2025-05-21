@@ -1,6 +1,7 @@
 export { component } from './component/component'
 export { useService } from './component/hooks/useService'
 export { useViewModel } from './component/hooks/useViewModel'
+export { useResolve } from './component/hooks/useResolve'
 export { injectable } from './container/injectable'
 export { provide } from './container/provide'
 export { Container } from './injectables/container'

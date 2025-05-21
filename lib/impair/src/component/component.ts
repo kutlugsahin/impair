@@ -6,7 +6,8 @@ import { disposeContainer } from '../container/dispose'
 import { Context } from '../context/context'
 import { Constructor, RendererViewModel } from '../types'
 import { debounceMicrotask } from '../utils/debounceMicrotask'
-import { setCurrentComponentContainerRef, useViewModel } from './hooks/useViewModel'
+import { setCurrentComponentContainerRef, setCurrentComponentPropsRef } from './current-component'
+import { useViewModel } from './hooks/useViewModel'
 
 function useForceUpdate() {
   const [_, setVal] = useState({})
@@ -38,8 +39,10 @@ export function component<P>(component: FC<P>) {
       runner.current = effect(
         () => {
           setCurrentComponentContainerRef(componentContainer)
+          setCurrentComponentPropsRef(propsRef)
           renderResult.current = component(propsRef.current)
           setCurrentComponentContainerRef(undefined)
+          setCurrentComponentPropsRef(undefined)
         },
         {
           scheduler() {
@@ -81,7 +84,7 @@ export function component<P>(component: FC<P>) {
 }
 
 component.fromViewModel = <P extends object>(viewModel: Constructor<RendererViewModel>) => {
-  const comp = component<P>((props) => useViewModel(viewModel, props).render())
+  const comp = component<P>(() => useViewModel(viewModel).render())
   comp.displayName = viewModel.name.replace('ViewModel', '')
   return comp
 }

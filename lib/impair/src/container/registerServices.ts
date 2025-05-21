@@ -73,14 +73,16 @@ export function registerServices(container: DependencyContainer, services: Provi
   services.forEach((serviceInfo) => {
     const { provider, token, lifecycle } = getRegistrationOptions(serviceInfo)
 
-    container.register(
-      token,
-      provider as any,
-      lifecycle
-        ? {
-          lifecycle: toLifecycle(lifecycle),
-        }
-        : undefined,
-    )
+    if (!container.isRegistered(token)) {
+      container.register(
+        token,
+        provider as any,
+        lifecycle
+          ? {
+            lifecycle: toLifecycle(lifecycle),
+          }
+          : undefined,
+      )
+    }
   })
 }

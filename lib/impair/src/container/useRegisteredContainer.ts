@@ -28,6 +28,7 @@ export function useRegisteredContainer<P>(
 
   const container = useMemo(() => {
     if (sharedContainerRef?.current) {
+      registerServices(sharedContainerRef.current, services)
       return sharedContainerRef.current
     }
 

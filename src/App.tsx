@@ -8,6 +8,7 @@ import {
   injectable,
   onDispose,
   onInit,
+  onMount,
   onUnmount,
   Props,
   provide,
@@ -16,7 +17,7 @@ import {
   useViewModel,
   ViewProps,
 } from 'impair'
-import { onMount } from 'impair/lifecycle/onMount'
+
 import { useState } from 'react'
 import { QueryService } from '../lib/impair-query/src/queryService'
 
@@ -283,7 +284,7 @@ class StateViewModel {
   age = 0
 
   constructor(@inject(State) public state: State, @inject(ViewProps) private props: Props) {
-    // console.log('StateViewModel', props.id)
+    console.log('StateViewModel', props.id)
   }
 
   @derived get age2() {
@@ -305,20 +306,32 @@ class StateViewModel {
     console.log('logCount', this.state.count)
   }
 
+  @onMount
+  onMount() {
+    console.log('onMount', this.state.count)
+  }
+
   inc() {
     this.state.inc()
     this.age++
   }
 }
 
-export const C = component(() => {
-  const { state, inc, age1, age2, num, num2 } = useViewModel(StateViewModel, { id: 2 })
+export const C = component(({ id }: { id: number }) => {
+  // useViewModel(PostViewModel)
+  const { state, inc, age1, age2, num, num2 } = useViewModel(StateViewModel)
+  const vm = useViewModel(StateViewModel)
 
   return (
     <div>
       <button onClick={inc}>{age2}</button>
-      <button>{num}</button>
-      <button>{num2}</button>
+      <button onClick={vm.inc}>{vm.age2}</button>
+      <button>
+        {num} / {vm.num}
+      </button>
+      <button>
+        {num2} / {vm.num2}
+      </button>
     </div>
   )
 })

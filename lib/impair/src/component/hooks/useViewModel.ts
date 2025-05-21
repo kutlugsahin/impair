@@ -1,21 +1,18 @@
-import { RefObject, useMemo } from 'react'
-import { DependencyContainer } from 'tsyringe'
+import { useMemo } from 'react'
 
 import { toReadonly } from '@vue/reactivity'
-import { ViewProps } from 'src/injectables/tokens'
-import { config } from 'src/utils/config'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
+import { ViewProps } from '../../injectables/tokens'
 import { Constructor } from '../../types'
+import { config } from '../../utils/config'
 import { provideMetadataKey } from '../../utils/symbols'
+import { getCurrentComponentContainerRef, getCurrentComponentPropsRef } from '../current-component'
 
-let currentComponentContainerRef: RefObject<DependencyContainer | undefined> | undefined
+export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<T> {
+  const currentComponentContainerRef = getCurrentComponentContainerRef()
+  const currentComponentPropsRef = getCurrentComponentPropsRef()
 
-export function setCurrentComponentContainerRef(containerRef: typeof currentComponentContainerRef) {
-  currentComponentContainerRef = containerRef
-}
-
-export function useViewModel<T extends Constructor, P extends object>(viewModel: T, props?: P): InstanceType<T> {
-  if (!currentComponentContainerRef) {
+  if (!currentComponentContainerRef || !currentComponentPropsRef) {
     throw new Error('useViewModel must be used within a component')
   }
 
@@ -24,7 +21,7 @@ export function useViewModel<T extends Constructor, P extends object>(viewModel:
     return [...provided, viewModel]
   }, [viewModel])
 
-  useRegisteredContainer(props, viewModelProviders, currentComponentContainerRef, ViewProps)
+  useRegisteredContainer(currentComponentPropsRef.current, viewModelProviders, currentComponentContainerRef, ViewProps)
 
   const componentContainer = currentComponentContainerRef.current!
 
