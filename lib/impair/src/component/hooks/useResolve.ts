@@ -4,7 +4,7 @@ import { InjectionToken } from 'tsyringe'
 import { toReadonly } from '@vue/reactivity'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { ViewProps } from '../../injectables/tokens'
-import { Constructor } from '../../types'
+import { Constructor, Registration } from '../../types'
 import { config } from '../../utils/config'
 import { getCurrentComponentPropsRef } from '../current-component'
 
@@ -17,7 +17,9 @@ export function useResolve(token: InjectionToken) {
     throw new Error('useResolve must be used within a component')
   }
 
-  const container = useRegisteredContainer(currentComponentPropsRef?.current, [], undefined, ViewProps)
+  const provide: Registration[] = typeof token === 'function' ? [[token, 'transient']] : []
+
+  const container = useRegisteredContainer(currentComponentPropsRef?.current, provide, undefined, ViewProps)
 
   return useMemo(() => {
     const instance = container.resolve(token)
