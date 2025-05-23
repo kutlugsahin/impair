@@ -20,8 +20,7 @@ import { enableTracking, pauseTracking } from '@vue/reactivity'
 export function untrack<T extends () => any>(fn: T): ReturnType<T> {
   pauseTracking()
   try {
-    const result = fn()
-    return result
+    return fn()
   } finally {
     enableTracking()
   }

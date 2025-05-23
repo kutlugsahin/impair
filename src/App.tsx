@@ -279,7 +279,7 @@ function obs2() {
 }
 
 @injectable()
-class StateViewModel {
+class StateViewModel<T> {
   @state
   age = 0
 
@@ -317,21 +317,49 @@ class StateViewModel {
   }
 }
 
+@injectable()
+class Base {
+  @state
+  count = 0
+
+  @trigger
+  logCount() {
+    console.log('logCount', this.count)
+  }
+}
+
+@injectable()
+class Derived extends Base {
+  inc() {
+    this.count++
+  }
+
+  @trigger.async
+  logCount2() {
+    console.log('Derived logCount', this.count)
+  }
+}
+
 export const C = component(({ id }: { id: number }) => {
   // useViewModel(PostViewModel)
-  const { state, inc, age1, age2, num, num2 } = useViewModel(StateViewModel)
-  const vm = useViewModel(StateViewModel)
+  // const { state, inc, age1, age2, num, num2 } = useViewModel(StateViewModel)
+  // const vm = useViewModel(StateViewModel)
+
+  const derived = useViewModel(Derived)
 
   return (
     <div>
-      <button onClick={inc}>{age2}</button>
+      {/* <button onClick={inc}>{age2}</button>
       <button onClick={vm.inc}>{vm.age2}</button>
       <button>
         {num} / {vm.num}
       </button>
       <button>
         {num2} / {vm.num2}
-      </button>
+      </button> */}
+      <div>
+        <button onClick={derived.inc}>{derived.count}</button>
+      </div>
     </div>
   )
 })

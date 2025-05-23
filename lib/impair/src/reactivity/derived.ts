@@ -3,6 +3,11 @@ import { computed, ComputedRefImpl, effectScope } from '@vue/reactivity'
 import { Dictionary, Dispose } from '../types'
 import { derivedMetadataKey } from '../utils/symbols'
 
+type DerivedInfo = {
+  propertyKey: string
+  descriptor: PropertyDescriptor
+}
+
 /**
  * This decorator is used to mark a property as a derived property. It will automatically
  * create a computed property that will be updated when the reactive dependencies change.
@@ -23,10 +28,18 @@ type InitParams = {
 }
 
 export function initDerived({ disposers, instance }: InitParams) {
-  const cachedProperties = Reflect.getMetadata(derivedMetadataKey, instance)
+  const cachedProperties: DerivedInfo[] = Reflect.getMetadata(derivedMetadataKey, instance)
+
+  const propertyMap = new Map<string, DerivedInfo>()
 
   if (cachedProperties) {
-    cachedProperties.forEach(({ propertyKey, descriptor }: any) => {
+    cachedProperties.forEach((derivedInfo) => {
+      propertyMap.set(derivedInfo.propertyKey, derivedInfo)
+    })
+  }
+
+  if (propertyMap) {
+    propertyMap.forEach(({ propertyKey, descriptor }: any) => {
       const getter = descriptor.get
 
       if (typeof getter !== 'function') {
