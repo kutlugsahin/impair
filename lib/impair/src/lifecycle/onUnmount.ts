@@ -17,9 +17,9 @@ export function onUnmount(target: any, propertyKey: string) {
 }
 
 export function getOnUnmountMethods(instance: any): (() => void)[] {
-  const onUnmountProperties: string[] = Reflect.getMetadata(onUnmountMetadataKey, instance) ?? []
+  const onUnmountProperties = new Set<string>(Reflect.getMetadata(onUnmountMetadataKey, instance) ?? [])
 
-  return onUnmountProperties.map((propName: string) => {
+  return [...onUnmountProperties].map((propName: string) => {
     const unmountFn = instance[propName] as () => void
 
     return unmountFn.bind(instance)

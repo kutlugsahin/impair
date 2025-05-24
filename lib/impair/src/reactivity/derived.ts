@@ -30,15 +30,13 @@ type InitParams = {
 export function initDerived({ disposers, instance }: InitParams) {
   const cachedProperties: DerivedInfo[] = Reflect.getMetadata(derivedMetadataKey, instance)
 
-  const propertyMap = new Map<string, DerivedInfo>()
-
   if (cachedProperties) {
+    const propertyMap = new Map<string, DerivedInfo>()
+
     cachedProperties.forEach((derivedInfo) => {
       propertyMap.set(derivedInfo.propertyKey, derivedInfo)
     })
-  }
 
-  if (propertyMap) {
     propertyMap.forEach(({ propertyKey, descriptor }: any) => {
       const getter = descriptor.get
 

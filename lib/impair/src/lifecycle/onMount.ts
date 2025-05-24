@@ -19,9 +19,9 @@ export function onMount(target: any, propertyKey: string) {
 }
 
 export function getOnMountMethods(instance: any): ((cleanup: TriggerCleanup) => void)[] {
-  const onMountProperties: string[] = Reflect.getMetadata(onMountMetadataKey, instance) ?? []
+  const onMountProperties = new Set<string>(Reflect.getMetadata(onMountMetadataKey, instance) ?? [])
 
-  return onMountProperties.map((propName: string) => {
+  return [...onMountProperties].map((propName: string) => {
     const mountFn = instance[propName] as () => void
 
     return mountFn.bind(instance)

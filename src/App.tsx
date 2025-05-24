@@ -326,6 +326,11 @@ class Base {
   logCount() {
     console.log('logCount', this.count)
   }
+
+  @onInit
+  onInit() {
+    console.log('onInit', this.count)
+  }
 }
 
 @injectable()
@@ -335,8 +340,13 @@ class Derived extends Base {
   }
 
   @trigger.async
-  logCount2() {
+  logCount() {
     console.log('Derived logCount', this.count)
+  }
+
+  @onInit
+  onInit() {
+    console.log('Derived onInit', this.count)
   }
 }
 

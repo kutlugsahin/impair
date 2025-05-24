@@ -31,7 +31,7 @@ export function onDispose(target: any, propertyKey: string) {
 }
 
 export function initOnDispose(instance: any, disposers: Dispose[]) {
-  const onDisposeProperties: string[] = Reflect.getMetadata(onDestroyMetadataKey, instance) ?? []
+  const onDisposeProperties = new Set<string>(Reflect.getMetadata(onDestroyMetadataKey, instance) ?? [])
 
   onDisposeProperties.forEach((propName: string) => {
     const disposeFn = instance[propName] as () => void

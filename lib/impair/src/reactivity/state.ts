@@ -99,15 +99,13 @@ export function initState({ instance }: InitParams) {
 
   const stateProperties: StateMetadata[] = Reflect.getMetadata(stateMetadataKey, instance)
 
-  const propertyMap = new Map<string, StateMetadata>()
-
   if (stateProperties) {
+    const propertyMap = new Map<string, StateMetadata>()
+
     stateProperties.forEach((stateInfo) => {
       propertyMap.set(stateInfo.propertyKey, stateInfo)
     })
-  }
 
-  if (propertyMap) {
     propertyMap.forEach(({ propertyKey, type: _type }) => {
       const initialValue = instance[propertyKey]
       const type = _type === 'default' ? config.defaultStateReactiveLevel : _type

@@ -56,15 +56,13 @@ type InitParams = {
 export function initTrigger({ instance, disposers }: InitParams) {
   const triggerProperties: TriggerInfo[] = Reflect.getMetadata(triggerMetadataKey, instance)
 
-  const propertyMap = new Map<string, TriggerInfo>()
-
   if (triggerProperties) {
+    const propertyMap = new Map<string, TriggerInfo>()
+
     triggerProperties.forEach((triggerInfo) => {
       propertyMap.set(triggerInfo.propertyKey, triggerInfo)
     })
-  }
 
-  if (propertyMap) {
     propertyMap.forEach(({ flush, propertyKey }) => {
       const effectFn = instance[propertyKey] as EffectCallback
 

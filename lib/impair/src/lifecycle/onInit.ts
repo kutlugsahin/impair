@@ -26,21 +26,19 @@ export function onInit(target: any, propertyKey: string) {
 }
 
 export function initOnInit(instance: any, disposers: Dispose[]) {
-  const onInitProperties = Reflect.getMetadata(onInitMetadataKey, instance)
+  const onInitProperties = new Set<string>(Reflect.getMetadata(onInitMetadataKey, instance) ?? [])
 
-  if (onInitProperties) {
-    onInitProperties.forEach((propName: string) => {
-      const initFn = instance[propName] as (cleanup: TriggerCleanup) => void
+  onInitProperties.forEach((propName: string) => {
+    const initFn = instance[propName] as (cleanup: TriggerCleanup) => void
 
-      let cleanup: Cleanup | undefined = undefined
+    let cleanup: Cleanup | undefined = undefined
 
-      initFn.call(instance, (clb) => {
-        cleanup = clb
-      })
-
-      disposers.push(() => {
-        cleanup?.()
-      })
+    initFn.call(instance, (clb) => {
+      cleanup = clb
     })
-  }
+
+    disposers.push(() => {
+      cleanup?.()
+    })
+  })
 }
