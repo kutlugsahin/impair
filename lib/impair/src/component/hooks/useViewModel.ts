@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 
 import { toReadonly } from '@vue/reactivity'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
-import { ViewProps } from '../../injectables/tokens'
 import { Constructor } from '../../types'
 import { config } from '../../utils/config'
 import { provideMetadataKey } from '../../utils/symbols'
@@ -21,7 +20,7 @@ export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<
     return [...provided, viewModel]
   }, [viewModel])
 
-  useRegisteredContainer(currentComponentPropsRef.current, viewModelProviders, currentComponentContainerRef, ViewProps)
+  useRegisteredContainer(viewModelProviders, currentComponentContainerRef, undefined, currentComponentPropsRef.current)
 
   const componentContainer = currentComponentContainerRef.current!
 

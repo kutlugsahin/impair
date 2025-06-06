@@ -14,6 +14,7 @@ import {
   provide,
   state,
   trigger,
+  useResolve,
   useViewModel,
   ViewProps,
 } from 'impair'
@@ -88,7 +89,7 @@ class PostViewModel {
     @inject(QueryPost) public posts: QueryPost,
     @inject(QueryPost) public posts2: QueryPost,
     @inject(ViewProps) public props: PostProps,
-    @inject(Container) public container: Container,
+    @inject(Container) public container: Container
   ) {
     console.log(this.container)
   }
@@ -339,6 +340,11 @@ class Derived extends Base {
     this.count++
   }
 
+  constructor(@inject(Props) public props: any, @inject(ViewProps) public viewprops: any) {
+    super()
+    console.log('Derived constructor', this.props, this.viewprops)
+  }
+
   @trigger.async
   logCount() {
     console.log('Derived logCount', this.count)
@@ -355,7 +361,9 @@ export const C = component(({ id }: { id: number }) => {
   // const { state, inc, age1, age2, num, num2 } = useViewModel(StateViewModel)
   // const vm = useViewModel(StateViewModel)
 
-  const derived = useViewModel(Derived)
+  // const derived = useViewModel(Derived)
+  const derived = useResolve(Derived, { asdasd: 213 })
+  useResolve(Derived, { qweqweq: 'asdsad' })
 
   return (
     <div>

@@ -1,16 +1,14 @@
 import { useMemo } from 'react'
-import { InjectionToken } from 'tsyringe'
 
 import { toReadonly } from '@vue/reactivity'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
-import { ViewProps } from '../../injectables/tokens'
 import { Constructor, Registration } from '../../types'
 import { config } from '../../utils/config'
 import { getCurrentComponentPropsRef } from '../current-component'
 
 export function useResolve<T extends Constructor>(token: T): InstanceType<T>
-export function useResolve<T>(token: InjectionToken): T
-export function useResolve(token: InjectionToken) {
+export function useResolve<T extends Constructor>(token: T, props: object): InstanceType<T>
+export function useResolve(token: Constructor, props?: object) {
   const currentComponentPropsRef = getCurrentComponentPropsRef()
 
   if (!currentComponentPropsRef) {
@@ -19,7 +17,7 @@ export function useResolve(token: InjectionToken) {
 
   const provide: Registration[] = typeof token === 'function' ? [[token, 'transient']] : []
 
-  const container = useRegisteredContainer(currentComponentPropsRef?.current, provide, undefined, ViewProps)
+  const container = useRegisteredContainer(provide, undefined, props, currentComponentPropsRef.current)
 
   return useMemo(() => {
     const instance = container.resolve(token)

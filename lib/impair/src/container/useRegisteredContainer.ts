@@ -3,7 +3,7 @@ import { DependencyContainer } from 'tsyringe'
 
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
-import { Props } from '../injectables/tokens'
+import { Props, ViewProps } from '../injectables/tokens'
 import { Dispose, Registration } from '../types'
 import { useReactiveObject } from '../utils/useReactiveObject'
 import { createChildContainer } from './createChildContainer'
@@ -11,20 +11,22 @@ import { disposeContainer } from './dispose'
 import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
 
-export function useRegisteredContainer<P>(
-  props: P,
+export function useRegisteredContainer(
   services: Registration[],
   sharedContainerRef?: RefObject<DependencyContainer | undefined>,
-  propsToken = Props,
+  props?: object,
+  viewProps?: object,
 ) {
   const parentContainer = useDependencyContainer()
   const [resolvedInstances] = useState(() => new Set())
   const [disposers] = useState(() => new Set<Dispose | undefined>())
   const isMounted = useRef(false)
 
-  const mappedProps = useReactiveObject(props ?? {})
+  const mappedProps = useReactiveObject(props)
+  const mappedViewProps = useReactiveObject(viewProps)
 
   const registerProps = props != null
+  const registerViewProps = viewProps != null
 
   const container = useMemo(() => {
     if (sharedContainerRef?.current) {
@@ -45,9 +47,15 @@ export function useRegisteredContainer<P>(
       })
     }
 
-    if (registerProps && !container.isRegistered(propsToken)) {
-      container.register(propsToken, {
+    if (registerProps && !container.isRegistered(Props)) {
+      container.register(Props, {
         useValue: mappedProps,
+      })
+    }
+
+    if (registerViewProps && !container.isRegistered(ViewProps)) {
+      container.register(ViewProps, {
+        useValue: mappedViewProps,
       })
     }
 
