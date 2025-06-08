@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
 import { useDependencyContainer } from '../context/context'
@@ -28,7 +28,9 @@ export function useRegisteredContainer(
   const registerProps = props != null
   const registerViewProps = viewProps != null
 
-  const container = useMemo(() => {
+  const containerRef = useRef<DependencyContainer | undefined>(undefined)
+
+  function createContainer() {
     if (sharedContainerRef?.current) {
       registerServices(sharedContainerRef.current, services)
       return sharedContainerRef.current
@@ -66,11 +68,11 @@ export function useRegisteredContainer(
     }
 
     return container
+  }
 
-    // exclude registerProps from the dependency array
-    // only consider the first value of props to decide register
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sharedContainerRef?.current, parentContainer])
+  if (!containerRef.current) {
+    containerRef.current = createContainer()
+  }
 
   useEffect(() => {
     isMounted.current = true
@@ -84,12 +86,13 @@ export function useRegisteredContainer(
         dispose?.()
       })
 
-      disposeContainer(container)
+      disposeContainer(containerRef.current!)
+      containerRef.current = undefined
       isMounted.current = false
       resolvedInstances.clear()
       disposers.clear()
     }
-  }, [container, disposers, resolvedInstances])
+  }, [disposers, resolvedInstances, parentContainer])
 
-  return container
+  return containerRef.current
 }

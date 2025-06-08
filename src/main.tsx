@@ -18,6 +18,6 @@ configure({
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={client}>
-    <C id={17} />
+    <Posts />
   </QueryClientProvider>,
 )
