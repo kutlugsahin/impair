@@ -17,10 +17,18 @@ import {
 } from 'impair'
 
 import { useEffect, useState } from 'react'
-import { PostProps, PostViewModel } from './vm'
+import { PostProps, PostViewModel, QueryPost } from './vm'
+import { Vm2 } from './vm2'
 
 export const PostsComponent = component<PostProps>(() => {
   const { selectedId, setSelectedId, posts, posts2, props } = useService(PostViewModel)
+
+  useEffect(() => {
+    console.log('PostsComponent mounted')
+    return () => {
+      console.log('PostsComponent unmounted')
+    }
+  }, [])
 
   return (
     <div>
@@ -67,11 +75,15 @@ export function Posts() {
   }, [])
 
   return (
-    <ServiceProvider provide={[PostViewModel]} props={{ id: 44 }}>
+    <ServiceProvider provide={[PostViewModel, Vm2, [QueryPost, 'transient']]} props={{ id: 44 }}>
       <div>
         <button onClick={() => setShow(!show)}>Toggle</button>
         <hr />
-        {show && <PostsComponent id={40} />}
+        {show && (
+          <div>
+            <PostsComponent id={40} />
+          </div>
+        )}
       </div>
     </ServiceProvider>
   )

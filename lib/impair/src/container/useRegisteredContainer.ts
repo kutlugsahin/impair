@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
-import { getRegistrationDependencyArray } from 'src/utils/getServiceConstructorArray'
+import { useIsRegistrationStableRef } from 'src/utils/getServiceConstructorArray'
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
 import { Props, ViewProps } from '../injectables/tokens'
@@ -20,7 +20,7 @@ export function useRegisteredContainer(
 ) {
   const parentContainer = useDependencyContainer()
   const [resolvedInstances] = useState(() => new Set())
-  const [disposers] = useState(() => new Set<Dispose | undefined>())
+  // const [disposers] = useState(() => new Set<Dispose | undefined>())
   const isMounted = useRef(false)
 
   const mappedProps = useReactiveObject(props)
@@ -29,12 +29,17 @@ export function useRegisteredContainer(
   const registerProps = props != null
   const registerViewProps = viewProps != null
 
-  const registrationDeps = getRegistrationDependencyArray(services)
+  const registrationStability = useIsRegistrationStableRef(services)
 
-  const container = useMemo(() => {
+  const { container, disposers } = useMemo(() => {
+    const disposers = new Set<Dispose | undefined>()
+
     if (sharedContainerRef?.current) {
       registerServices(sharedContainerRef.current, services)
-      return sharedContainerRef.current
+      return {
+        container: sharedContainerRef.current,
+        disposers,
+      }
     }
 
     const container = createChildContainer(parentContainer, (instance) => {
@@ -68,9 +73,9 @@ export function useRegisteredContainer(
       sharedContainerRef.current = container
     }
 
-    return container
+    return { container, disposers }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parentContainer, resolvedInstances, disposers, sharedContainerRef?.current, ...registrationDeps])
+  }, [parentContainer, resolvedInstances, sharedContainerRef?.current, registrationStability])
 
   useEffect(() => {
     isMounted.current = true

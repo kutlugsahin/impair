@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Registration } from 'src/types'
 import { ClassProvider } from 'tsyringe'
 
@@ -6,7 +7,7 @@ import { ClassProvider } from 'tsyringe'
  * But in some cases like HMR, service classes can be changed.
  * This function creates a dependency array to determine if the container needs to be re created
  */
-export function getRegistrationDependencyArray(registrations: Registration[]) {
+function getRegistrationDependencyArray(registrations: Registration[]) {
   const depsArray = []
 
   for (const registration of registrations) {
@@ -27,4 +28,24 @@ export function getRegistrationDependencyArray(registrations: Registration[]) {
   }
 
   return depsArray
+}
+
+/**
+ * This hook returns a stable reference object that can be used to determine
+ * if the registrations have changed.
+ */
+export function useIsRegistrationStableRef(registrations: Registration[]) {
+  const prevDepsArray = useRef<unknown[]>([])
+  const stableRef = useRef({})
+
+  const depsArray = getRegistrationDependencyArray(registrations)
+
+  if (
+    depsArray.length !== prevDepsArray.current.length ||
+    depsArray.some((dep, index) => dep !== prevDepsArray.current[index])
+  ) {
+    stableRef.current = {}
+  }
+
+  return stableRef.current
 }
