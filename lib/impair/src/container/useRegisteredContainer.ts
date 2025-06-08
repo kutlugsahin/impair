@@ -1,6 +1,7 @@
-import { RefObject, useEffect, useRef, useState } from 'react'
+import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
+import { getRegistrationDependencyArray } from 'src/utils/getServiceConstructorArray'
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
 import { Props, ViewProps } from '../injectables/tokens'
@@ -28,9 +29,9 @@ export function useRegisteredContainer(
   const registerProps = props != null
   const registerViewProps = viewProps != null
 
-  const containerRef = useRef<DependencyContainer | undefined>(undefined)
+  const registrationDeps = getRegistrationDependencyArray(services)
 
-  function createContainer() {
+  const container = useMemo(() => {
     if (sharedContainerRef?.current) {
       registerServices(sharedContainerRef.current, services)
       return sharedContainerRef.current
@@ -68,11 +69,8 @@ export function useRegisteredContainer(
     }
 
     return container
-  }
-
-  if (!containerRef.current) {
-    containerRef.current = createContainer()
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parentContainer, resolvedInstances, disposers, sharedContainerRef?.current, ...registrationDeps])
 
   useEffect(() => {
     isMounted.current = true
@@ -86,13 +84,15 @@ export function useRegisteredContainer(
         dispose?.()
       })
 
-      disposeContainer(containerRef.current!)
-      containerRef.current = undefined
+      if (container) {
+        disposeContainer(container)
+      }
+
       isMounted.current = false
       resolvedInstances.clear()
       disposers.clear()
     }
-  }, [disposers, resolvedInstances, parentContainer])
+  }, [disposers, resolvedInstances, container])
 
-  return containerRef.current
+  return container
 }

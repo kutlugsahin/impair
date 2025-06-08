@@ -7,27 +7,73 @@ import {
   onInit,
   onMount,
   Props,
+  ServiceProvider,
   state,
   trigger,
   useResolve,
+  useService,
   useViewModel,
   ViewProps,
 } from 'impair'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PostProps, PostViewModel } from './vm'
 
-export const PostsComponent = component.fromViewModel<PostProps>(PostViewModel)
+export const PostsComponent = component<PostProps>(() => {
+  const { selectedId, setSelectedId, posts, posts2, props } = useService(PostViewModel)
+
+  return (
+    <div>
+      <div>
+        <button
+          onClick={() => {
+            setSelectedId(selectedId + 1)
+          }}
+        >
+          Inc2
+        </button>
+        <button
+          onClick={() => {
+            setSelectedId(selectedId - 1)
+          }}
+        >
+          Dec
+        </button>
+      </div>
+      <hr />
+      <div>
+        <h2 className="font-bold">{posts.data?.title}</h2>
+        <p>{posts.data?.body}</p>
+      </div>
+      <hr />
+      <div>
+        <h2 className="font-bold">{posts2.data?.title}</h2>
+        <p>{posts2.data?.body}</p>
+      </div>
+      <hr />
+      {props.id}
+    </div>
+  )
+})
 
 export function Posts() {
   const [show, setShow] = useState(true)
 
+  useEffect(() => {
+    console.log('Posts mounted')
+    return () => {
+      console.log('Posts unmounted')
+    }
+  }, [])
+
   return (
-    <div>
-      <button onClick={() => setShow(!show)}>Toggle</button>
-      <hr />
-      {show && <PostsComponent id={4} />}
-    </div>
+    <ServiceProvider provide={[PostViewModel]} props={{ id: 44 }}>
+      <div>
+        <button onClick={() => setShow(!show)}>Toggle</button>
+        <hr />
+        {show && <PostsComponent id={40} />}
+      </div>
+    </ServiceProvider>
   )
 }
 

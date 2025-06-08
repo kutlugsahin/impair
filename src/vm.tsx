@@ -1,9 +1,6 @@
 import {
   type Cleanup,
-  component,
   Container,
-  createDecorator,
-  derived,
   inject,
   injectable,
   onDispose,
@@ -14,12 +11,8 @@ import {
   provide,
   state,
   trigger,
-  useResolve,
-  useViewModel,
-  ViewProps,
 } from 'impair'
 
-import { useState } from 'react'
 import { QueryService } from '../lib/impair-query/src/queryService'
 
 export type Post = {
@@ -88,7 +81,7 @@ export class PostViewModel {
   constructor(
     @inject(QueryPost) public posts: QueryPost,
     @inject(QueryPost) public posts2: QueryPost,
-    @inject(ViewProps) public props: PostProps,
+    @inject(Props) public props: PostProps,
     @inject(Container) public container: Container,
   ) {
     console.log(this.container)
@@ -114,6 +107,10 @@ export class PostViewModel {
     cleanup(() => {
       console.log('cleanup querySelectedPost2 ' + id)
     })
+  }
+
+  public setSelectedId(id: number) {
+    this.selectedId = id
   }
 
   @onMount
@@ -146,34 +143,5 @@ export class PostViewModel {
 
   dispose() {
     console.log('dispose')
-  }
-
-  render() {
-    return (
-      <div>
-        <div>
-          <button
-            onClick={() => {
-              this.selectedId++
-            }}
-          >
-            Inc3
-          </button>
-          <button onClick={() => this.selectedId--}>Dec</button>
-        </div>
-        <hr />
-        <div>
-          <h2 className="font-bold">{this.posts.data?.title}</h2>
-          <p>{this.posts.data?.body}</p>
-        </div>
-        <hr />
-        <div>
-          <h2 className="font-bold">{this.posts2.data?.title}</h2>
-          <p>{this.posts2.data?.body}</p>
-        </div>
-        <hr />
-        {this.props.id}
-      </div>
-    )
   }
 }
