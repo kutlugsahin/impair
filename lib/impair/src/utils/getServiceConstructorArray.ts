@@ -44,6 +44,7 @@ export function useIsRegistrationStableRef(registrations: Registration[]) {
     depsArray.length !== prevDepsArray.current.length ||
     depsArray.some((dep, index) => dep !== prevDepsArray.current[index])
   ) {
+    prevDepsArray.current = depsArray
     stableRef.current = {}
   }
 
