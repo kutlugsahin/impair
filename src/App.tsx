@@ -11,7 +11,6 @@ import {
   state,
   trigger,
   useResolve,
-  useService,
   useViewModel,
   ViewProps,
 } from 'impair'
@@ -21,14 +20,7 @@ import { PostProps, PostViewModel, QueryPost } from './vm'
 import { Vm2 } from './vm2'
 
 export const PostsComponent = component<PostProps>(() => {
-  const { selectedId, setSelectedId, posts, posts2, props } = useService(PostViewModel)
-
-  useEffect(() => {
-    console.log('PostsComponent mounted')
-    return () => {
-      console.log('PostsComponent unmounted')
-    }
-  }, [])
+  const { selectedId, setSelectedId, posts, posts2, props } = useViewModel(PostViewModel)
 
   return (
     <div>

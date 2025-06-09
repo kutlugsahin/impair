@@ -7,3 +7,7 @@ export function disposeContainer(container: DependencyContainer) {
     container.dispose()
   }
 }
+
+export function isDisposed(container: DependencyContainer): boolean {
+  return !!(container as any)[isContainerDisposed]
+}

@@ -8,7 +8,7 @@ import { Props, ViewProps } from '../injectables/tokens'
 import { Dispose, Registration } from '../types'
 import { useReactiveObject } from '../utils/useReactiveObject'
 import { createChildContainer } from './createChildContainer'
-import { disposeContainer } from './dispose'
+import { disposeContainer, isDisposed } from './dispose'
 import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
 
@@ -20,7 +20,7 @@ export function useRegisteredContainer(
 ) {
   const parentContainer = useDependencyContainer()
   const [resolvedInstances] = useState(() => new Set())
-  // const [disposers] = useState(() => new Set<Dispose | undefined>())
+  const [disposers] = useState(() => new Set<Dispose | undefined>())
   const isMounted = useRef(false)
 
   const mappedProps = useReactiveObject(props)
@@ -31,10 +31,8 @@ export function useRegisteredContainer(
 
   const registrationStability = useIsRegistrationStableRef(services)
 
-  const { container, disposers } = useMemo(() => {
-    const disposers = new Set<Dispose | undefined>()
-
-    if (sharedContainerRef?.current) {
+  const { container } = useMemo(() => {
+    if (sharedContainerRef?.current && !isDisposed(sharedContainerRef.current)) {
       registerServices(sharedContainerRef.current, services)
       return {
         container: sharedContainerRef.current,

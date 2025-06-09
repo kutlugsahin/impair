@@ -11,6 +11,7 @@ import {
   provide,
   state,
   trigger,
+  ViewProps,
 } from 'impair'
 
 import { QueryService } from '../lib/impair-query/src/queryService'
@@ -81,7 +82,7 @@ export class PostViewModel {
   constructor(
     @inject(QueryPost) public posts: QueryPost,
     @inject(QueryPost) public posts2: QueryPost,
-    @inject(Props) public props: PostProps,
+    @inject(ViewProps) public props: PostProps,
     @inject(Container) public container: Container,
   ) {
     console.log(this.container)

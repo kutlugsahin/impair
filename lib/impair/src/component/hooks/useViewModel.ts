@@ -20,12 +20,15 @@ export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<
     return [...provided, viewModel]
   }, [viewModel])
 
-  useRegisteredContainer(viewModelProviders, currentComponentContainerRef, undefined, currentComponentPropsRef.current)
-
-  const componentContainer = currentComponentContainerRef.current!
+  const container = useRegisteredContainer(
+    viewModelProviders,
+    currentComponentContainerRef,
+    undefined,
+    currentComponentPropsRef.current,
+  )
 
   return useMemo(() => {
-    const instance = componentContainer.resolve<InstanceType<T>>(viewModel)
+    const instance = container.resolve<InstanceType<T>>(viewModel)
     return config.readonlyProxiesForView ? (toReadonly(instance) as InstanceType<T>) : instance
-  }, [componentContainer, viewModel])
+  }, [container, viewModel])
 }
