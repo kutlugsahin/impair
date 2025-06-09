@@ -28,6 +28,7 @@ export type Registration =
 export type ProviderProps<P extends object> = {
   provide: Registration[]
   props?: P
+  initializeSingletons?: boolean
 }
 
 export type Dispose = () => void

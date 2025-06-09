@@ -12,12 +12,21 @@ import { disposeContainer, isDisposed } from './dispose'
 import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
 
-export function useRegisteredContainer(
-  services: Registration[],
-  sharedContainerRef?: RefObject<DependencyContainer | undefined>,
-  props?: object,
-  viewProps?: object,
-) {
+type RegisteredContainerParams = {
+  services: Registration[]
+  sharedContainerRef?: RefObject<DependencyContainer | undefined>
+  props?: object
+  viewProps?: object
+  initializeSingletons?: boolean
+}
+
+export function useRegisteredContainer({
+  services,
+  sharedContainerRef,
+  props,
+  viewProps,
+  initializeSingletons,
+}: RegisteredContainerParams) {
   const parentContainer = useDependencyContainer()
   const [resolvedInstances] = useState(() => new Set())
   const [disposers] = useState(() => new Set<Dispose | undefined>())
@@ -33,7 +42,7 @@ export function useRegisteredContainer(
 
   const { container } = useMemo(() => {
     if (sharedContainerRef?.current && !isDisposed(sharedContainerRef.current)) {
-      registerServices(sharedContainerRef.current, services)
+      registerServices(sharedContainerRef.current, services, initializeSingletons)
       return {
         container: sharedContainerRef.current,
         disposers,
@@ -65,7 +74,7 @@ export function useRegisteredContainer(
       })
     }
 
-    registerServices(container, services)
+    registerServices(container, services, initializeSingletons)
 
     if (sharedContainerRef) {
       sharedContainerRef.current = container

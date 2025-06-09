@@ -1,4 +1,4 @@
-import { DependencyContainer, Lifecycle } from 'tsyringe'
+import { DependencyContainer, InjectionToken, Lifecycle } from 'tsyringe'
 
 import { InstanceLifecycle, ProviderProps, Registration, RegistrationObject } from '../types'
 
@@ -69,7 +69,13 @@ function getRegistrationOptions(registration: Registration): RegistrationObject 
   throw new Error('Invalid service provider registration')
 }
 
-export function registerServices(container: DependencyContainer, services: ProviderProps<any>['provide']) {
+export function registerServices(
+  container: DependencyContainer,
+  services: ProviderProps<any>['provide'],
+  initializeSingletons?: boolean,
+) {
+  const singletonTokens: InjectionToken[] = []
+
   services.forEach((serviceInfo) => {
     const { provider, token, lifecycle } = getRegistrationOptions(serviceInfo)
 
@@ -83,6 +89,16 @@ export function registerServices(container: DependencyContainer, services: Provi
           }
           : undefined,
       )
+
+      if (initializeSingletons && lifecycle === 'singleton') {
+        singletonTokens.push(token)
+      }
     }
   })
+
+  if (initializeSingletons) {
+    singletonTokens.forEach((token) => {
+      container.resolve(token)
+    })
+  }
 }

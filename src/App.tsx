@@ -67,7 +67,7 @@ export function Posts() {
   }, [])
 
   return (
-    <ServiceProvider provide={[PostViewModel, Vm2, [QueryPost, 'transient']]} props={{ id: 44 }}>
+    <ServiceProvider initializeSingletons provide={[Vm2, [QueryPost, 'transient']]} props={{ id: 44 }}>
       <div>
         <button onClick={() => setShow(!show)}>Toggle</button>
         <hr />

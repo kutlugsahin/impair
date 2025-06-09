@@ -20,12 +20,11 @@ export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<
     return [...provided, viewModel]
   }, [viewModel])
 
-  const container = useRegisteredContainer(
-    viewModelProviders,
-    currentComponentContainerRef,
-    undefined,
-    currentComponentPropsRef.current,
-  )
+  const container = useRegisteredContainer({
+    services: viewModelProviders,
+    viewProps: currentComponentPropsRef.current,
+    sharedContainerRef: currentComponentContainerRef,
+  })
 
   return useMemo(() => {
     const instance = container.resolve<InstanceType<T>>(viewModel)

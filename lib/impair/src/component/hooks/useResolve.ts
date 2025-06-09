@@ -17,7 +17,11 @@ export function useResolve(token: Constructor, props?: object) {
 
   const provide: Registration[] = typeof token === 'function' ? [[token, 'transient']] : []
 
-  const container = useRegisteredContainer(provide, undefined, props, currentComponentPropsRef.current)
+  const container = useRegisteredContainer({
+    services: provide,
+    viewProps: currentComponentPropsRef.current,
+    props,
+  })
 
   return useMemo(() => {
     const instance = container.resolve(token)
