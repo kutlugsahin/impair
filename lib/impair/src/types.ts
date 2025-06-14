@@ -25,9 +25,17 @@ export type Registration =
   | [InjectionToken, ClassProvider<any>['useClass']]
   | [InjectionToken, ClassProvider<any>['useClass'], InstanceLifecycle]
 
+/**
+ * @deprecated Use `RegistrationObject` instead.
+ */
 export type ProviderProps<P extends object> = {
   provide: Registration[]
   props?: P
+
+  /**
+   * Normally provided services are created lazily when they are first resolved.
+   * If this option is set to true, all provided singleton services will be created immediately.
+   */
   initializeSingletons?: boolean
 }
 

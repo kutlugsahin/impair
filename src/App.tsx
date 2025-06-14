@@ -67,16 +67,18 @@ export function Posts() {
   }, [])
 
   return (
-    <ServiceProvider initializeSingletons provide={[Vm2, [QueryPost, 'transient']]} props={{ id: 44 }}>
-      <div>
-        <button onClick={() => setShow(!show)}>Toggle</button>
-        <hr />
-        {show && (
-          <div>
-            <PostsComponent id={40} />
-          </div>
-        )}
-      </div>
+    <ServiceProvider provide={[Vm2, [QueryPost, 'transient']]} props={{ id: 44 }}>
+      <ServiceProvider provide={[PostViewModel]} props={{ id: 40 }}>
+        <div>
+          <button onClick={() => setShow(!show)}>Toggle</button>
+          <hr />
+          {show && (
+            <div>
+              <PostsComponent id={40} />
+            </div>
+          )}
+        </div>
+      </ServiceProvider>
     </ServiceProvider>
   )
 }
