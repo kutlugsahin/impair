@@ -18,6 +18,13 @@ export type RegistrationObject<T = any> =
       provider: FactoryProvider<T> | ValueProvider<T>
     }
 
+/**
+ * Must be a plain js object
+ * Given object will be provided as a shallow reactive object with the given injection token
+ * Changes in the object properties will be reflected as reactive properties
+ */
+export type ReactiveObjectRegistration = [InjectionToken, object]
+
 export type Registration =
   | Constructor
   | RegistrationObject
@@ -25,11 +32,8 @@ export type Registration =
   | [InjectionToken, ClassProvider<any>['useClass']]
   | [InjectionToken, ClassProvider<any>['useClass'], InstanceLifecycle]
 
-/**
- * @deprecated Use `RegistrationObject` instead.
- */
-export type ProviderProps<P extends object> = {
-  provide: Registration[]
+export type ProviderProps<P extends object = object> = {
+  provide: (Registration | ReactiveObjectRegistration)[]
   props?: P
 
   /**

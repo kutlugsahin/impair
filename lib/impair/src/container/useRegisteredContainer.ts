@@ -1,19 +1,19 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
-import { useIsRegistrationStableRef } from 'src/utils/getServiceConstructorArray'
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
 import { Props, ViewProps } from '../injectables/tokens'
-import { Dispose, Registration } from '../types'
+import { Dispose, ProviderProps } from '../types'
 import { useReactiveObject } from '../utils/useReactiveObject'
 import { createChildContainer } from './createChildContainer'
 import { disposeContainer, isDisposed } from './dispose'
 import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
+import { useRegistrations } from 'src/utils/useRegistrations'
 
 type RegisteredContainerParams = {
-  services: Registration[]
+  services: ProviderProps['provide']
   sharedContainerRef?: RefObject<DependencyContainer | undefined>
   props?: object
   viewProps?: object
@@ -38,11 +38,11 @@ export function useRegisteredContainer({
   const registerProps = props != null
   const registerViewProps = viewProps != null
 
-  const registrationStability = useIsRegistrationStableRef(services)
+  const registrations = useRegistrations(services)
 
   const { container } = useMemo(() => {
     if (sharedContainerRef?.current && !isDisposed(sharedContainerRef.current)) {
-      registerServices(sharedContainerRef.current, services, initializeSingletons)
+      registerServices(sharedContainerRef.current, registrations, initializeSingletons)
       return {
         container: sharedContainerRef.current,
         disposers,
@@ -74,7 +74,7 @@ export function useRegisteredContainer({
       })
     }
 
-    registerServices(container, services, initializeSingletons)
+    registerServices(container, registrations, initializeSingletons)
 
     if (sharedContainerRef) {
       sharedContainerRef.current = container
@@ -82,7 +82,7 @@ export function useRegisteredContainer({
 
     return { container, disposers }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parentContainer, resolvedInstances, sharedContainerRef?.current, registrationStability])
+  }, [parentContainer, resolvedInstances, sharedContainerRef?.current, registrations])
 
   useEffect(() => {
     isMounted.current = true

@@ -84,8 +84,14 @@ export class PostViewModel {
     @inject(QueryPost) public posts2: QueryPost,
     @inject(ViewProps) public props: PostProps,
     @inject(Container) public container: Container,
+    @inject(Symbol.for('deneme')) public reactive: { value: number },
   ) {
     console.log(this.container)
+  }
+
+  @trigger
+  logValue() {
+    console.log('logValue', this.reactive.value)
   }
 
   @trigger.async

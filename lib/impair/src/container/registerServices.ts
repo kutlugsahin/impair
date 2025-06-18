@@ -1,6 +1,6 @@
 import { DependencyContainer, InjectionToken, Lifecycle } from 'tsyringe'
 
-import { InstanceLifecycle, ProviderProps, Registration, RegistrationObject } from '../types'
+import { InstanceLifecycle, Registration, RegistrationObject } from '../types'
 
 function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
   switch (lifecycle) {
@@ -71,7 +71,7 @@ function getRegistrationOptions(registration: Registration): RegistrationObject 
 
 export function registerServices(
   container: DependencyContainer,
-  services: ProviderProps<any>['provide'],
+  services: Registration[],
   initializeSingletons?: boolean,
 ) {
   const singletonTokens: InjectionToken[] = []

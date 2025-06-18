@@ -1,6 +1,7 @@
 import { shallowReactive, shallowReadonly } from '@vue/reactivity'
 import { useEffect, useMemo } from 'react'
 import { isPlainObject } from './object'
+import { updateObjectProps } from './updatObjectProps'
 
 /**
  * A hook that creates a shallow reactive object from source object and updates it when object properties changes.
@@ -20,22 +21,7 @@ export function useReactiveObject<P extends object>(obj?: P) {
         throw new Error('[useReactiveObject] argument was previously undefined')
       }
 
-      const currentKeys = Object.keys(state) as Array<keyof P>
-      const nextKeys = Object.keys(nextProps) as Array<keyof P>
-
-      // Update existing/new props
-      for (const key of nextKeys) {
-        if (state[key] !== nextProps[key]) {
-          state[key] = nextProps[key]
-        }
-      }
-
-      // Remove props that no longer exist
-      for (const key of currentKeys) {
-        if (!(key in nextProps)) {
-          delete state[key]
-        }
-      }
+      updateObjectProps(state, nextProps)
     }
 
     return {

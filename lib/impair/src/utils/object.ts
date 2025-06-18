@@ -53,6 +53,6 @@ export function patchClassInstanceMethod(instance: any, methodName: string, call
   return instance
 }
 
-export function isPlainObject(obj: object): boolean {
+export function isPlainObject(obj: unknown): obj is object {
   return obj != null && typeof obj === 'object' && Object.getPrototypeOf(obj) === Object.prototype
 }

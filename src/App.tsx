@@ -59,6 +59,8 @@ export const PostsComponent = component<PostProps>(() => {
 export function Posts() {
   const [show, setShow] = useState(true)
 
+  const [value, setValue] = useState(10)
+
   useEffect(() => {
     console.log('Posts mounted')
     return () => {
@@ -67,18 +69,29 @@ export function Posts() {
   }, [])
 
   return (
-    <ServiceProvider provide={[Vm2, [QueryPost, 'transient']]} props={{ id: 44 }}>
-      <ServiceProvider provide={[PostViewModel]} props={{ id: 40 }}>
-        <div>
-          <button onClick={() => setShow(!show)}>Toggle</button>
-          <hr />
-          {show && (
-            <div>
-              <PostsComponent id={40} />
-            </div>
-          )}
-        </div>
-      </ServiceProvider>
+    <ServiceProvider
+      provide={[
+        Vm2,
+        [QueryPost, 'transient'],
+        [
+          Symbol.for('deneme'),
+          {
+            value,
+          },
+        ],
+      ]}
+      props={{ id: 44 }}
+    >
+      <div>
+        <button onClick={() => setValue(value + 1)}>inc value: {value}</button>
+        <button onClick={() => setShow(!show)}>Toggle</button>
+        <hr />
+        {show && (
+          <div>
+            <PostsComponent id={40} />
+          </div>
+        )}
+      </div>
     </ServiceProvider>
   )
 }
