@@ -88,7 +88,7 @@ export function Posts() {
         <hr />
         {show && (
           <div>
-            <PostsComponent id={40} />
+            <PostsComponent id={47} />
           </div>
         )}
       </div>
