@@ -1,4 +1,15 @@
-import { effect, effectScope, reactive, ref, shallowReactive, shallowRef, stop } from '@vue/reactivity'
+import {
+  computed,
+  effect,
+  effectScope,
+  reactive,
+  ref,
+  shallowReactive,
+  shallowRef,
+  stop,
+  readonly,
+  shallowReadonly,
+} from '@vue/reactivity'
 import { Dispose } from '../types'
 
 const Reactivity = {
@@ -9,6 +20,9 @@ const Reactivity = {
   effect,
   effectScope,
   stop,
+  computed,
+  readonly,
+  shallowReadonly,
 } as const
 
 export type DecoratorInitializer = (instance: any, propertyKey: string, reactivity: typeof Reactivity) => Dispose | void

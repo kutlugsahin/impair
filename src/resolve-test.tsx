@@ -1,4 +1,4 @@
-import { component, inject, injectable, Props, ServiceProvider, state, useService } from 'impair/index'
+import { component, inject, injectable, Props, ServiceProvider, state, useService, useViewModel } from 'impair/index'
 
 @injectable()
 class Counter {
@@ -43,11 +43,13 @@ export function ResolveTest() {
 const CounterView = component(() => {
   const vm = useService(Counter2)
   const vm2 = useService(Counter)
+  const vm3 = useViewModel(Counter)
 
   return (
     <div>
       <button onClick={() => vm.count++}>{vm.count}</button>
       <button onClick={() => vm2.count++}>{vm2.count}</button>
+      <button onClick={() => vm3.count++}>{vm3.count}</button>
     </div>
   )
 })
