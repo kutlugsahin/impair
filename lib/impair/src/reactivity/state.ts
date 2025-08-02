@@ -2,7 +2,7 @@ import { Ref, ref, shallowReactive, shallowRef } from '@vue/reactivity'
 
 import { Dictionary } from '../types'
 import { stateMetadataKey } from '../utils/symbols'
-import { config } from 'src/utils/config'
+import { config } from '../utils/config'
 
 export type StateType = 'shallow' | 'deep' | 'atom' | 'default'
 

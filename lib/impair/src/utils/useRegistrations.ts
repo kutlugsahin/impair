@@ -1,9 +1,9 @@
 import { shallowReactive } from '@vue/reactivity'
 import { useState, useMemo, useEffect } from 'react'
-import { ProviderProps, Registration } from 'src/types'
+import { ProviderProps, Registration } from '../types'
 import { isPlainObject } from './object'
 import { useIsRegistrationStableRef } from './useIsRegistrationStableRef'
-import { updateObjectProps } from './updatObjectProps'
+import { updateObjectProps } from './updateObjectProps'
 
 export function useRegistrations(registrations: ProviderProps['provide']): Registration[] {
   const [mappedPropArr] = useState<object[]>([])

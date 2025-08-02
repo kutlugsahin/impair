@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { toReadonly } from '@vue/reactivity'
-import { config } from 'src/utils/config'
+import { config } from '../../utils/config'
 import { InjectionToken } from 'tsyringe'
 import { useDependencyContainer } from '../../context/context'
 import { Constructor } from '../../types'

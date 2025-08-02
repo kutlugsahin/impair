@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { ProviderProps } from 'src/types'
+import { ProviderProps } from '../types'
 import { ClassProvider } from 'tsyringe'
 import { isPlainObject } from './object'
 

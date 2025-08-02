@@ -7,7 +7,6 @@ import {
   onInit,
   onMount,
   onUnmount,
-  Props,
   provide,
   state,
   trigger,

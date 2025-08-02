@@ -1,7 +1,7 @@
 import { shallowReactive, shallowReadonly } from '@vue/reactivity'
 import { useEffect, useMemo } from 'react'
 import { isPlainObject } from './object'
-import { updateObjectProps } from './updatObjectProps'
+import { updateObjectProps } from './updateObjectProps'
 
 /**
  * A hook that creates a shallow reactive object from source object and updates it when object properties changes.

@@ -10,7 +10,7 @@ import { createChildContainer } from './createChildContainer'
 import { disposeContainer, isDisposed } from './dispose'
 import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
-import { useRegistrations } from 'src/utils/useRegistrations'
+import { useRegistrations } from '../utils/useRegistrations'
 
 type RegisteredContainerParams = {
   services: ProviderProps['provide']

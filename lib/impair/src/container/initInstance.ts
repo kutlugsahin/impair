@@ -1,4 +1,4 @@
-import { initCustomDecorators } from 'src/utils/createDecorator'
+import { initCustomDecorators } from '../utils/createDecorator'
 import { initOnDispose } from '../lifecycle/onDispose'
 import { initOnInit } from '../lifecycle/onInit'
 import { initState } from '../reactivity'
