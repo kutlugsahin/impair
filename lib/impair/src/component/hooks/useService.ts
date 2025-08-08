@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
-import { toReadonly } from '@vue/reactivity'
-import { config } from '../../utils/config'
+import { toReadOnlyService } from 'src/utils/toReadOnlyService'
 import { InjectionToken } from 'tsyringe'
 import { useDependencyContainer } from '../../context/context'
 import { Constructor } from '../../types'
+import { config } from '../../utils/config'
 
 export function useService<T extends Constructor>(service: T): InstanceType<T>
 export function useService<T>(token: InjectionToken): T
@@ -13,6 +13,6 @@ export function useService(service: InjectionToken) {
 
   return useMemo(() => {
     const instance = container.resolve(service)
-    return config.readonlyProxiesForView ? toReadonly(instance) : instance
+    return config.readonlyProxiesForView ? toReadOnlyService(instance) : instance
   }, [service, container])
 }

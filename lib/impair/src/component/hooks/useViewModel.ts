@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { toReadonly } from '@vue/reactivity'
+import { toReadOnlyService } from 'src/utils/toReadOnlyService'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { Constructor } from '../../types'
 import { config } from '../../utils/config'
@@ -28,6 +28,6 @@ export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<
 
   return useMemo(() => {
     const instance = container.resolve<InstanceType<T>>(viewModel)
-    return config.readonlyProxiesForView ? (toReadonly(instance) as InstanceType<T>) : instance
+    return config.readonlyProxiesForView ? (toReadOnlyService(instance) as InstanceType<T>) : instance
   }, [container, viewModel])
 }

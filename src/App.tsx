@@ -20,10 +20,10 @@ import { PostProps, PostViewModel, QueryPost } from './vm'
 import { Vm2 } from './vm2'
 
 export const PostsComponent = component<PostProps>(() => {
-  const { selectedId, setSelectedId, posts, posts2, props } = useViewModel(PostViewModel)
+  const { selectedId, setSelectedId, posts, posts2, props, user, setName, ref } = useViewModel(PostViewModel)
 
   return (
-    <div>
+    <div ref={ref}>
       <div>
         <button
           onClick={() => {
@@ -52,6 +52,8 @@ export const PostsComponent = component<PostProps>(() => {
       </div>
       <hr />
       {props.id}
+      <hr />
+      <input type="text" value={user.name} onChange={(e) => setName(e.target.value)} />
     </div>
   )
 })

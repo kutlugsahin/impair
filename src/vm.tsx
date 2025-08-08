@@ -14,6 +14,7 @@ import {
 } from 'impair'
 
 import { QueryService } from '../lib/impair-query/src/queryService'
+import { createRef } from 'react'
 
 export type Post = {
   id: number
@@ -70,6 +71,8 @@ export type PostProps = {
 ])
 @injectable()
 export class PostViewModel {
+  ref = createRef<HTMLDivElement>()
+
   @state
   selectedId = 1
 
@@ -149,5 +152,11 @@ export class PostViewModel {
 
   dispose() {
     console.log('dispose')
+  }
+
+  setName(name: string) {
+    this.user = { ...this.user, name }
+
+    // this.user.name = name
   }
 }

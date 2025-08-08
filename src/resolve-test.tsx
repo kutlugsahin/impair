@@ -1,4 +1,16 @@
-import { component, inject, injectable, Props, ServiceProvider, state, useService, useViewModel } from 'impair/index'
+import {
+  component,
+  inject,
+  injectable,
+  onMount,
+  Props,
+  ServiceProvider,
+  state,
+  useResolve,
+  useService,
+  useViewModel,
+} from 'impair/index'
+import { createRef } from 'react'
 
 @injectable()
 class Counter {
@@ -40,6 +52,20 @@ export function ResolveTest() {
   )
 }
 
+@injectable()
+class DragService {
+  public readonly ref = createRef<HTMLDivElement>()
+
+  constructor() {
+    console.log('DragService created')
+  }
+
+  @onMount
+  mounted() {
+    console.log(this.ref.current?.innerText, 'mounted')
+  }
+}
+
 const CounterView = component(() => {
   const vm = useService(Counter2)
   const vm2 = useService(Counter)
@@ -51,5 +77,25 @@ const CounterView = component(() => {
       <button onClick={() => vm2.count++}>{vm2.count}</button>
       <button onClick={() => vm3.count++}>{vm3.count}</button>
     </div>
+  )
+})
+
+export const DragComp = component(() => {
+  const dragService = useService(DragService)
+  const dragService2 = useService(DragService)
+
+  return (
+    <div>
+      <div ref={dragService.ref}>11</div>
+      <div ref={dragService2.ref}>22</div>
+    </div>
+  )
+})
+
+export const Drag = component(() => {
+  return (
+    <ServiceProvider provide={[[DragService, 'transient']]}>
+      <DragComp />
+    </ServiceProvider>
   )
 })

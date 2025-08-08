@@ -6,7 +6,8 @@ import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { setQueryClient } from '../lib/impair-query/src/index.ts'
 import { configure } from '../lib/impair/src/index.ts'
-import { Posts2 } from './App.tsx'
+import { Drag } from './resolve-test.tsx'
+import { Posts, Posts2 } from './App.tsx'
 
 const client = new QueryClient()
 
@@ -14,11 +15,11 @@ setQueryClient(client)
 
 configure({
   defaultStateReactiveLevel: 'deep',
-  readonlyProxiesForView: false,
+  readonlyProxiesForView: true,
 })
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={client}>
-    <Posts2 />
+    <Posts />
   </QueryClientProvider>,
 )
