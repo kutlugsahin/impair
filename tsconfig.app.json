@@ -38,6 +38,18 @@
       "impair-query/*": [
         "./lib/impair-query/src/*"
       ],
+      // "impair/*": [
+      //   "./dist/impair/*"
+      // ],
+      // "impair": [
+      //   "./dist/impair"
+      // ],
+      // "impair-query": [
+      //   "./dist/impair-query"
+      // ],
+      // "impair-query/*": [
+      //   "./dist/impair-query/*"
+      // ],
     }
   },
   "include": [

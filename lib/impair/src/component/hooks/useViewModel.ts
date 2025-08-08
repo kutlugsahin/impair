@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
-import { toReadOnlyService } from 'src/utils/toReadOnlyService'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { Constructor } from '../../types'
 import { config } from '../../utils/config'
 import { provideMetadataKey } from '../../utils/symbols'
+import { toReadOnlyService } from '../../utils/toReadOnlyService'
 import { getCurrentComponentContainerRef, getCurrentComponentPropsRef } from '../current-component'
 
 export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<T> {

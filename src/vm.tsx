@@ -13,7 +13,7 @@ import {
   ViewProps,
 } from 'impair'
 
-import { QueryService } from '../lib/impair-query/src/queryService'
+import { QueryService } from 'impair-query'
 import { createRef } from 'react'
 
 export type Post = {
@@ -26,6 +26,11 @@ export type Post = {
 export class QueryPost extends QueryService<Post, [id: number]> {
   protected key = 'posts'
 
+  constructor() {
+    super()
+    console.log('QueryPost created')
+  }
+
   protected override async fetch(id: number) {
     return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json())
   }
@@ -36,7 +41,7 @@ export class QueryPost extends QueryService<Post, [id: number]> {
   }
 
   @onUnmount
-  onMunt() {
+  onUnmount() {
     console.log('onUnmount query')
   }
 
@@ -96,7 +101,7 @@ export class PostViewModel {
     console.log('logValue', this.reactive.value)
   }
 
-  @trigger.async
+  @trigger
   querySelectedPost(cleanup: Cleanup) {
     this.posts.query(this.selectedId)
 

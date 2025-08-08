@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
-import { toReadOnlyService } from 'src/utils/toReadOnlyService'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { Constructor, Registration } from '../../types'
 import { config } from '../../utils/config'
+import { toReadOnlyService } from '../../utils/toReadOnlyService'
 import { getCurrentComponentPropsRef } from '../current-component'
 
 export function useResolve<T extends Constructor>(token: T): InstanceType<T>

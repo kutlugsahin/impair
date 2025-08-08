@@ -6,11 +6,11 @@ import { Container } from '../injectables/container'
 import { Props, ViewProps } from '../injectables/tokens'
 import { Dispose, ProviderProps } from '../types'
 import { useReactiveObject } from '../utils/useReactiveObject'
+import { useRegistrations } from '../utils/useRegistrations'
 import { createChildContainer } from './createChildContainer'
 import { disposeContainer, isDisposed } from './dispose'
 import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
-import { useRegistrations } from '../utils/useRegistrations'
 
 type RegisteredContainerParams = {
   services: ProviderProps['provide']

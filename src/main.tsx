@@ -4,8 +4,8 @@ import 'reflect-metadata'
 import './index.css'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { setQueryClient } from '../lib/impair-query/src/index.ts'
-import { configure } from '../lib/impair/src/index.ts'
+import { setQueryClient } from 'impair-query'
+import { configure } from 'impair'
 import { Drag } from './resolve-test.tsx'
 import { Posts, Posts2 } from './App.tsx'
 

@@ -9,7 +9,7 @@
     "rootDir": ".",
     "baseUrl": "./",
     "sourceMap": true,
-    "target": "ESNext"
+    "target": "ESNext",
   },
   "include": [
     "src/**/*.ts",

@@ -1,6 +1,6 @@
 {
   "name": "impair-query",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "main": "index.cjs",
   "module": "index.js",
   "types": "index.d.ts",
@@ -28,5 +28,8 @@
     "reflect-metadata": ">=0.2.2",
     "impair": "1.0.3"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "tslib": "^2.6.2"
+  }
 }

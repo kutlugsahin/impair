@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 
-import { toReadOnlyService } from 'src/utils/toReadOnlyService'
 import { InjectionToken } from 'tsyringe'
 import { useDependencyContainer } from '../../context/context'
 import { Constructor } from '../../types'
 import { config } from '../../utils/config'
+import { toReadOnlyService } from '../../utils/toReadOnlyService'
 
 export function useService<T extends Constructor>(service: T): InstanceType<T>
 export function useService<T>(token: InjectionToken): T

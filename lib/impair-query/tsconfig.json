@@ -8,14 +8,9 @@
     "declarationDir": "../../dist/impair-query/types",
     "sourceMap": true,
     "target": "ESNext",
-    "paths": {
-      "impair/*": [
-        "../impair/src/*"
-      ],
-      "impair": [
-        "../impair/src/index.ts"
-      ]
-    }
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "importHelpers": true,
   },
   "include": [
     "src/**/*.ts"

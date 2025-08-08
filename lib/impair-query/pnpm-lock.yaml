@@ -1,0 +1,96 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  '@vue/reactivity':
+    specifier: '>=3.2.0'
+    version: 3.2.0
+  impair:
+    specifier: 1.0.3
+    version: 1.0.3(@vue/reactivity@3.2.0)(react@17.0.2)(reflect-metadata@0.2.2)(tsyringe@4.8.0)
+  react:
+    specifier: '>=17.0.2'
+    version: 17.0.2
+  reflect-metadata:
+    specifier: '>=0.2.2'
+    version: 0.2.2
+  tsyringe:
+    specifier: '>=4.8.0'
+    version: 4.8.0
+
+devDependencies:
+  tslib:
+    specifier: ^2.6.2
+    version: 2.6.2
+
+packages:
+
+  /@vue/reactivity@3.2.0:
+    resolution: {integrity: sha512-39L3UJe8+jYeCTM/QrDglDM05O11UrmyhazUOHOOj7+a9pPVu95HGInh5CkKQf98mx2gq6t3PPN8bCN5wK8Wwg==}
+    dependencies:
+      '@vue/shared': 3.2.0
+    dev: false
+
+  /@vue/shared@3.2.0:
+    resolution: {integrity: sha512-MgdilC3YHYSCFuNlxZBgugh8B9/h/h+nQ6lkeaxqFWW+FnV/JzCwW4Bh5bYIYvBleG8QZjFwxdmdqSAWLXzgEA==}
+    dev: false
+
+  /impair@1.0.3(@vue/reactivity@3.2.0)(react@17.0.2)(reflect-metadata@0.2.2)(tsyringe@4.8.0):
+    resolution: {integrity: sha512-+3IGaeTamE8ftOFySqeYl7COvLke4Lv37Ak3HlHzWsMbuqZF+KFXa8jkiSmqjHW2UnwwfDpbIK9mBq1dg7chqg==}
+    peerDependencies:
+      '@vue/reactivity': '>=3.2.0'
+      react: '>=17.0.2'
+      reflect-metadata: '>=0.2.2'
+      tsyringe: '>=4.8.0'
+    dependencies:
+      '@vue/reactivity': 3.2.0
+      react: 17.0.2
+      reflect-metadata: 0.2.2
+      tsyringe: 4.8.0
+    dev: false
+
+  /js-tokens@4.0.0:
+    resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+    dev: false
+
+  /loose-envify@1.4.0:
+    resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
+    hasBin: true
+    dependencies:
+      js-tokens: 4.0.0
+    dev: false
+
+  /object-assign@4.1.1:
+    resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
+    engines: {node: '>=0.10.0'}
+    dev: false
+
+  /react@17.0.2:
+    resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+    dev: false
+
+  /reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
+    dev: false
+
+  /tslib@1.14.1:
+    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
+    dev: false
+
+  /tslib@2.6.2:
+    resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+    dev: true
+
+  /tsyringe@4.8.0:
+    resolution: {integrity: sha512-YB1FG+axdxADa3ncEtRnQCFq/M0lALGLxSZeVNbTU8NqhOVc51nnv2CISTcvc1kyv6EGPtXVr0v6lWeDxiijOA==}
+    engines: {node: '>= 6.0.0'}
+    dependencies:
+      tslib: 1.14.1
+    dev: false
