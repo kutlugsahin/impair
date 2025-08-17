@@ -82,7 +82,7 @@ const CounterView = component(() => {
 
 export const DragComp = component(() => {
   const dragService = useService(DragService)
-  const dragService2 = useService(DragService)
+  const dragService2 = useResolve(DragService)
 
   return (
     <div>

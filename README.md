@@ -358,7 +358,7 @@ So far we have discussed the service layer, creating services shared across the 
 
 ### ViewProps (Injection Token)
 
-If you want to access the component props from viewModel you should pass props as the second parameter to useViewModel and then inject it using ViewProps injection token. injected object will be shallow reactive.
+If you want to access the component props from viewModel you inject it using ViewProps injection token. injected object will be shallow reactive.
 
 ```tsx
 @injectable()
@@ -395,7 +395,7 @@ type AutoCompleteProps = {
 }
 
 const AutoComplete = component((props: AutoCompleteProps) => {
-  const { query, setQuery, isLoading, items } = useViewModel(AutoCompleteViewModel, props)
+  const { query, setQuery, isLoading, items } = useViewModel(AutoCompleteViewModel)
 
   return (
     <div>

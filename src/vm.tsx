@@ -83,7 +83,7 @@ export class PostViewModel {
 
   @state
   user = {
-    name: 'kutlu',
+    name: 'john',
   }
 
   constructor(
