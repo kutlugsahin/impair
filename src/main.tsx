@@ -8,6 +8,8 @@ import { setQueryClient } from 'impair-query'
 import { configure } from 'impair'
 import { Drag } from './resolve-test.tsx'
 import { Posts, Posts2 } from './App.tsx'
+import { PostDeneme } from './post-deneme.tsx'
+import { StrictMode } from 'react'
 
 const client = new QueryClient()
 
@@ -19,7 +21,10 @@ configure({
 })
 
 createRoot(document.getElementById('root')!).render(
-  <QueryClientProvider client={client}>
-    <Posts />
-  </QueryClientProvider>,
+  <StrictMode>
+    <QueryClientProvider client={client}>
+      <PostDeneme />
+    </QueryClientProvider>
+    ,
+  </StrictMode>,
 )

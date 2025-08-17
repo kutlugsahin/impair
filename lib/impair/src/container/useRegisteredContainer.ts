@@ -1,6 +1,7 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { DependencyContainer } from 'tsyringe'
 
+import { useStrictModeIntegrity } from 'src/utils/useStrictModeIntegrity'
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
 import { Props, ViewProps } from '../injectables/tokens'
@@ -39,6 +40,8 @@ export function useRegisteredContainer({
   const registerViewProps = viewProps != null
 
   const registrations = useRegistrations(services)
+
+  const strictModeIntegrity = useStrictModeIntegrity()
 
   const { container } = useMemo(() => {
     if (sharedContainerRef?.current && !isDisposed(sharedContainerRef.current)) {
@@ -82,7 +85,7 @@ export function useRegisteredContainer({
 
     return { container, disposers }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parentContainer, resolvedInstances, sharedContainerRef?.current, registrations])
+  }, [parentContainer, resolvedInstances, sharedContainerRef?.current, registrations, strictModeIntegrity])
 
   useEffect(() => {
     isMounted.current = true
