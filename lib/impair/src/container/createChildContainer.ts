@@ -2,8 +2,7 @@ import { DependencyContainer, InjectionToken } from 'tsyringe'
 
 import { injectableMetadataKey } from '../utils/symbols'
 import { initInstance, isInitialized } from './initInstance'
-
-const symbol_parentContainer = Symbol.for('tsyringe.DependencyContainer.parentContainer')
+import { extendsDependencyContainer, findRegisteredParentContainer } from '../utils/container'
 
 function isInjectionToken(token: InjectionToken): boolean {
   return typeof token === 'function' || typeof token === 'symbol' || typeof token === 'string'
@@ -63,33 +62,4 @@ export function createChildContainer(
   }
 
   return container
-}
-
-function extendsDependencyContainer(container: DependencyContainer): DependencyContainer {
-  if (!container.getParentContainer) {
-    container.getParentContainer = function (this): DependencyContainer | undefined {
-      return (container as any)[symbol_parentContainer]
-    }
-  }
-
-  if (!container.setParentContainer) {
-    container.setParentContainer = function (parent: DependencyContainer): void {
-      ;(container as any)[symbol_parentContainer] = parent
-    }
-  }
-
-  return container
-}
-
-function findRegisteredParentContainer(container: DependencyContainer, token: InjectionToken) {
-  if (container.isRegistered(token)) {
-    return container
-  }
-
-  const parentContainer = container.getParentContainer?.()
-  if (parentContainer) {
-    return findRegisteredParentContainer(parentContainer, token)
-  }
-
-  return undefined
 }

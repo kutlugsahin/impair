@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
+import { useDecoratedProviders } from '../../utils/useDecoratedProviders'
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
 import { Constructor } from '../../types'
 import { config } from '../../utils/config'
-import { provideMetadataKey } from '../../utils/symbols'
 import { toReadOnlyService } from '../../utils/toReadOnlyService'
 import { getCurrentComponentContainerRef, getCurrentComponentPropsRef } from '../current-component'
 
@@ -15,10 +15,7 @@ export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<
     throw new Error('useViewModel must be used within a component')
   }
 
-  const viewModelProviders = useMemo(() => {
-    const provided = Reflect.getMetadata(provideMetadataKey, viewModel) ?? []
-    return [...provided, viewModel]
-  }, [viewModel])
+  const viewModelProviders = useDecoratedProviders(viewModel)
 
   const container = useRegisteredContainer({
     services: viewModelProviders,

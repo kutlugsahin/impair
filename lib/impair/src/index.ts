@@ -1,4 +1,5 @@
 export { component } from './component/component'
+export { componentWithServices } from './component/withServices'
 export { useService } from './component/hooks/useService'
 export { useViewModel } from './component/hooks/useViewModel'
 export { useResolve } from './component/hooks/useResolve'
