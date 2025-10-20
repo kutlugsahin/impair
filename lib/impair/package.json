@@ -1,6 +1,6 @@
 {
   "name": "impair",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "main": "index.cjs",
   "module": "index.js",
   "types": "index.d.ts",
