@@ -15,6 +15,7 @@ import {
   ViewProps,
 } from 'impair'
 
+import { computed, effect, ref } from '@vue/reactivity'
 import { useEffect, useState } from 'react'
 import { PostProps, PostViewModel, QueryPost } from './vm'
 import { Vm2 } from './vm2'
@@ -194,11 +195,13 @@ class StateViewModel<T> {
     console.log('StateViewModel', props.id)
   }
 
-  @derived get age2() {
+  @derived
+  get age2() {
     return this.age1 + 2
   }
 
-  @derived get age1() {
+  @derived
+  get age1() {
     return this.age + 1
   }
 
@@ -351,3 +354,22 @@ export const C = component(({ id }: { id: number }) => {
 // console.log(d.a === obj4.a)
 // console.log(d.b === obj4.b)
 // console.log(d.a === obj4.a)
+
+const data = ref({
+  a: 1,
+  b: {
+    c: 2,
+  },
+})
+
+const c = computed(() => {
+  return data.value.b.c + 1
+})
+
+effect(() => {
+  console.log(c.value)
+})
+
+data.value.b = {
+  c: 2,
+}

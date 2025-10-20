@@ -5,6 +5,12 @@ import { isPlainObject } from './object'
 import { useIsRegistrationStableRef } from './useIsRegistrationStableRef'
 import { updateObjectProps } from './updateObjectProps'
 
+/**
+ * Produce a stable array ref of registrations from the provided services.
+ * Detects HMR Instance replacement and updates accordingly.
+ *
+ * Also handles [token, object] registrations by converting the object into a shallow reactive object to be injected
+ */
 export function useRegistrations(registrations: ProviderProps['provide']): Registration[] {
   const [mappedPropArr] = useState<object[]>([])
 

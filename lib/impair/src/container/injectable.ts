@@ -1,19 +1,12 @@
-import { injectable as tInjectable, Lifecycle, scoped as tScoped } from 'tsyringe'
+import { injectable as tInjectable } from 'tsyringe'
 
+import { globalContainer } from '../context/context'
 import { Constructor } from '../types'
 import { injectableMetadataKey } from '../utils/symbols'
 
-type Scope = 'resolution-scoped' | 'container-scoped'
-
-export function injectable<T extends Constructor>(): (t: T) => void
-export function injectable<T extends Constructor>(scope: Scope): (t: T) => void
-export function injectable<T extends Constructor>(scope?: Scope) {
+export function injectable<T extends Constructor>() {
   return function (target: T) {
-    if (scope != null) {
-      tScoped(scope === 'container-scoped' ? Lifecycle.ContainerScoped : Lifecycle.ResolutionScoped)(target)
-    } else {
-      tInjectable()(target)
-    }
+    tInjectable()(target)
 
     if (!target.prototype.dispose) {
       Object.defineProperty(target.prototype, 'dispose', {
@@ -24,5 +17,13 @@ export function injectable<T extends Constructor>(scope?: Scope) {
     }
 
     Reflect.metadata(injectableMetadataKey, true)(target)
+  }
+}
+
+injectable.global = <T extends Constructor>() => {
+  return function (target: T) {
+    injectable()(target)
+    Reflect.metadata(injectableMetadataKey, 'global')(target)
+    globalContainer.registerSingleton(target)
   }
 }

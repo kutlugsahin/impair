@@ -10,12 +10,12 @@ export type InstanceLifecycle = 'singleton' | 'transient' | 'container' | 'resol
 export type RegistrationObject<T = any> =
   | {
       token: InjectionToken<T>
-      provider: ClassProvider<T> | TokenProvider<T>
+      provider: ClassProvider<T>
       lifecycle: InstanceLifecycle
     }
   | {
       token: InjectionToken<T>
-      provider: FactoryProvider<T> | ValueProvider<T>
+      provider: FactoryProvider<T> | ValueProvider<T> | TokenProvider<T>
     }
 
 /**

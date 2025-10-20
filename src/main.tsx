@@ -10,6 +10,8 @@ import { Drag } from './resolve-test.tsx'
 import { Posts, Posts2 } from './App.tsx'
 import { PostDeneme } from './post-deneme.tsx'
 import { StrictMode } from 'react'
+import { App } from './provide.tsx'
+// import { App } from './trigger.tsx'
 
 const client = new QueryClient()
 
@@ -23,7 +25,7 @@ configure({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={client}>
-      <PostDeneme />
+      <App />
     </QueryClientProvider>
     ,
   </StrictMode>,
