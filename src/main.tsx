@@ -10,8 +10,9 @@ import { Drag } from './resolve-test.tsx'
 import { Posts, Posts2 } from './App.tsx'
 import { PostDeneme } from './post-deneme.tsx'
 import { StrictMode } from 'react'
-// import { App } from './provide.tsx'
-import { App } from './trigger.tsx'
+// import { App } from './props.tsx'
+import { App } from './provide.tsx'
+// import { App } from './trigger.tsx'
 
 const client = new QueryClient()
 

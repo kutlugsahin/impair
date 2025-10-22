@@ -24,6 +24,9 @@ injectable.global = <T extends Constructor>() => {
   return function (target: T) {
     injectable()(target)
     Reflect.metadata(injectableMetadataKey, 'global')(target)
-    globalContainer.registerSingleton(target)
+
+    if (!globalContainer.isRegistered(target)) {
+      globalContainer.registerSingleton(target)
+    }
   }
 }

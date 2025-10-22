@@ -1,6 +1,6 @@
-import { inject, injectable, provide, state, useService, componentWithServices } from 'impair'
+import { componentWithServices, inject, injectable, state, useService } from 'impair'
 
-@injectable()
+@injectable.global()
 class Counter {
   @state
   count = 2
@@ -14,22 +14,28 @@ class Counter {
   }
 }
 
-@provide([[Counter, 'transient']])
+// @provide([[Counter, 'transient']])
 @injectable()
 export class SelfService {
-  constructor(@inject(Counter) public counterService: Counter, @inject(Counter) public counterService2: Counter) {}
+  constructor(@inject(Counter) public c1: Counter, @inject(Counter) public c2: Counter) {}
 }
 
-const component = componentWithServices(SelfService)
+const component = componentWithServices([SelfService, 'transient'])
 
 export const App = component(() => {
-  const { counterService, counterService2 } = useService(SelfService)
-  // const { counterService2 } = useService(SelfService)
+  const s1 = useService(SelfService)
+  const s2 = useService(SelfService)
 
   return (
     <div>
-      <button onClick={() => counterService.inc()}>{counterService.count}</button>
-      <button onClick={() => counterService2.inc()}>{counterService2.count}</button>
+      <div>
+        <button onClick={() => s1.c1.inc()}>{s1.c1.count}</button>
+        <button onClick={() => s1.c2.inc()}>{s1.c2.count}</button>
+      </div>
+      <div>
+        <button onClick={() => s2.c1.inc()}>{s2.c1.count}</button>
+        <button onClick={() => s2.c2.inc()}>{s2.c2.count}</button>
+      </div>
     </div>
   )
 })
