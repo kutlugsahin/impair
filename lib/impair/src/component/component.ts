@@ -4,11 +4,10 @@ import { DependencyContainer } from 'tsyringe'
 
 import { disposeContainer } from '../container/dispose'
 import { Context } from '../context/context'
-import { Constructor, ProviderProps, RendererViewModel } from '../types'
+import { Constructor, RendererViewModel } from '../types'
 import { debounceMicrotask } from '../utils/debounceMicrotask'
 import { setCurrentComponentContainerRef, setCurrentComponentPropsRef } from './current-component'
 import { useViewModel } from './hooks/useViewModel'
-import { ServiceProvider } from 'src/provider/serviceProvider'
 
 function useForceUpdate() {
   const [_, setVal] = useState({})
@@ -88,10 +87,4 @@ component.fromViewModel = <P extends object>(viewModel: Constructor<RendererView
   const comp = component<P>(() => useViewModel(viewModel).render())
   comp.displayName = viewModel.name.replace('ViewModel', '')
   return comp
-}
-
-component.withServices = (...providers: ProviderProps['provide']) => {
-  return <P extends object>(cmp: FC<P>) => {
-    return createElement(ServiceProvider, { provide: providers }, createElement(component(cmp)))
-  }
 }

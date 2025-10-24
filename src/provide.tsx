@@ -1,9 +1,10 @@
-import { componentWithServices, inject, injectable, state, useService } from 'impair'
+import { componentWithServices, inject, injectable, provide, state, useResolve, useService } from 'impair'
+import React from 'react'
 
-@injectable.global()
+@injectable()
 class Counter {
   @state
-  count = 2
+  count = 3
 
   constructor() {
     console.log('Counter initialized')
@@ -14,17 +15,17 @@ class Counter {
   }
 }
 
-// @provide([[Counter, 'transient']])
 @injectable()
+@provide([[Counter, 'transient']])
 export class SelfService {
   constructor(@inject(Counter) public c1: Counter, @inject(Counter) public c2: Counter) {}
 }
 
-const component = componentWithServices([SelfService, 'transient'])
+const component = componentWithServices()
 
 export const App = component(() => {
-  const s1 = useService(SelfService)
-  const s2 = useService(SelfService)
+  const s1 = useResolve(SelfService)
+  const s2 = useResolve(SelfService)
 
   return (
     <div>
