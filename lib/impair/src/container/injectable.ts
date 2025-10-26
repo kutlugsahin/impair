@@ -1,6 +1,5 @@
 import { injectable as tInjectable } from 'tsyringe'
 
-import { globalContainer } from '../context/context'
 import { Constructor } from '../types'
 import { injectableMetadataKey } from '../utils/symbols'
 
@@ -17,16 +16,5 @@ export function injectable<T extends Constructor>() {
     }
 
     Reflect.metadata(injectableMetadataKey, true)(target)
-  }
-}
-
-injectable.global = <T extends Constructor>() => {
-  return function (target: T) {
-    injectable()(target)
-    Reflect.metadata(injectableMetadataKey, 'global')(target)
-
-    if (!globalContainer.isRegistered(target)) {
-      globalContainer.registerSingleton(target)
-    }
   }
 }

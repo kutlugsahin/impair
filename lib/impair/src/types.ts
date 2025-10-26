@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 import type { ClassProvider, FactoryProvider, InjectionToken, TokenProvider, ValueProvider } from 'tsyringe'
 
-import type { isLifecycleHandled, isInitialized } from './utils/symbols'
+import type { isInitialized, isLifecycleHandled } from './utils/symbols'
 
 export type Constructor<T = any> = new (...args: any[]) => T
 
@@ -42,6 +42,8 @@ export type ProviderProps<P extends object = object> = {
    */
   initializeSingletons?: boolean
 }
+
+export type Registrations = ProviderProps['provide']
 
 export type Dispose = () => void
 

@@ -1,9 +1,8 @@
-import { globalContainer } from '../context/context'
-import { isContainerDisposed } from '../utils/symbols'
 import { DependencyContainer } from 'tsyringe'
+import { isContainerDisposed } from '../utils/symbols'
 
 export function disposeContainer(container: DependencyContainer) {
-  if (!(container as any)[isContainerDisposed] && container !== globalContainer) {
+  if (!(container as any)[isContainerDisposed]) {
     ;(container as any)[isContainerDisposed] = true
     container.dispose()
   }

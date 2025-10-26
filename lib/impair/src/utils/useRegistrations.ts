@@ -1,9 +1,9 @@
 import { shallowReactive } from '@vue/reactivity'
-import { useState, useMemo, useEffect } from 'react'
-import { ProviderProps, Registration } from '../types'
+import { useEffect, useMemo, useState } from 'react'
+import { Registration, Registrations } from '../types'
 import { isPlainObject } from './object'
-import { useIsRegistrationStableRef } from './useIsRegistrationStableRef'
 import { updateObjectProps } from './updateObjectProps'
+import { useIsRegistrationStableRef } from './useIsRegistrationStableRef'
 
 /**
  * Produce a stable array ref of registrations from the provided services.
@@ -11,7 +11,7 @@ import { updateObjectProps } from './updateObjectProps'
  *
  * Also handles [token, object] registrations by converting the object into a shallow reactive object to be injected
  */
-export function useRegistrations(registrations: ProviderProps['provide']): Registration[] {
+export function useRegistrations(registrations: Registrations): Registration[] {
   const [mappedPropArr] = useState<object[]>([])
 
   const registrationStability = useIsRegistrationStableRef(registrations)

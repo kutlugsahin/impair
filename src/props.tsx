@@ -1,6 +1,5 @@
 import {
   component,
-  componentWithServices,
   derived,
   inject,
   injectable,
@@ -9,7 +8,6 @@ import {
   state,
   useService,
   useViewModel,
-  ViewProps,
 } from 'impair/index'
 
 type ServiceProps = {

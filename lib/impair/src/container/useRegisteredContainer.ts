@@ -4,7 +4,7 @@ import { DependencyContainer } from 'tsyringe'
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
 import { Props, ViewProps } from '../injectables/tokens'
-import { Dispose, ProviderProps } from '../types'
+import { Dispose, Registrations } from '../types'
 import { useReactiveObject } from '../utils/useReactiveObject'
 import { useRegistrations } from '../utils/useRegistrations'
 import { useStrictModeIntegrity } from '../utils/useStrictModeIntegrity'
@@ -14,7 +14,7 @@ import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
 
 type RegisteredContainerParams = {
-  services: ProviderProps['provide']
+  services: Registrations
   sharedContainerRef?: RefObject<DependencyContainer | undefined>
   props?: object
   viewProps?: object

@@ -1,4 +1,4 @@
-import { DependencyContainer, InjectionToken, container as globalContainer } from 'tsyringe'
+import { DependencyContainer, InjectionToken, container as tsyringeRootContainer } from 'tsyringe'
 
 const symbol_parentContainer = Symbol.for('tsyringe.DependencyContainer.parentContainer')
 
@@ -24,7 +24,7 @@ export function findRegisteredParentContainer(container: DependencyContainer, to
   }
 
   const parentContainer = container.getParentContainer?.()
-  if (parentContainer && parentContainer !== globalContainer) {
+  if (parentContainer && parentContainer !== tsyringeRootContainer) {
     return findRegisteredParentContainer(parentContainer, token)
   }
 
