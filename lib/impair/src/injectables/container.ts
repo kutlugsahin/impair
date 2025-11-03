@@ -6,7 +6,8 @@ import { initInstance } from 'src/container/initInstance'
 
 export class Container {
   constructor(private container: DependencyContainer) {
-    this.resolve = this.resolve.bind(container)
+    this.resolve = this.resolve.bind(this)
+
     this.resolveAll = this.container.resolveAll.bind(container)
     this.register = this.container.register.bind(container)
     this.isRegistered = this.container.isRegistered.bind(container)
