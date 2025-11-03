@@ -40,7 +40,7 @@ export const App = component(function AppFeature() {
       </div>
     </div>
   )
-}).provide(SelfService)
+})
 
 const CounterComponent = component(function CounterComponent() {
   const counter = useViewModel(Counter)
@@ -52,7 +52,7 @@ const CounterComponent = component(function CounterComponent() {
   )
 })
 
-@provide([[Counter, 'transient']])
+// @provide([[Counter, 'transient']])
 @injectable()
 class CounterViewModel {
   constructor(@inject(SelfService) public selfService: SelfService) {}
@@ -62,10 +62,16 @@ class CounterViewModel {
     return this.selfService.c1
   }
 
+  @state
+  user = {
+    name: 'kutlu233',
+  }
+
   render() {
     return (
       <div>
         <button onClick={() => this.counter.inc()}>{this.counter.count}</button>
+        <input type="text" value={this.user.name} onChange={(e) => (this.user.name = e.target.value)} />
       </div>
     )
   }

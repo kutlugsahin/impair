@@ -5,7 +5,7 @@ import { DependencyContainer } from 'tsyringe'
 import { disposeContainer } from '../container/dispose'
 import { Context } from '../context/context'
 import { ServiceProvider } from '../provider/serviceProvider'
-import { Constructor, Registrations, RendererViewModel } from '../types'
+import { Constructor, ReactiveComponent, Registrations, RendererViewModel } from '../types'
 import { debounceMicrotask } from '../utils/debounceMicrotask'
 import { setCurrentComponentContainerRef, setCurrentComponentPropsRef } from './current-component'
 import { useViewModel } from './hooks/useViewModel'
@@ -18,7 +18,7 @@ function useForceUpdate() {
   }, [])
 }
 
-export function component<P extends object>(component: FC<P>) {
+export function component<P extends object>(component: FC<P>): ReactiveComponent<P> {
   const Comp = memo((props: P) => {
     const forceUpdate = useForceUpdate()
     const renderResult = useRef<ReturnType<typeof component>>(null)
@@ -81,7 +81,7 @@ export function component<P extends object>(component: FC<P>) {
     }
 
     return renderResult.current
-  }) as unknown as FC<P> & { provide: (...args: Registrations) => FC<P> }
+  }) as unknown as ReactiveComponent<P>
 
   Comp.provide = (...services: Registrations) => {
     const ComponentWithServices: FC<P> = (props: P) => {

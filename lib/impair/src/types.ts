@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { FC, ReactElement } from 'react'
 import type { ClassProvider, FactoryProvider, InjectionToken, TokenProvider, ValueProvider } from 'tsyringe'
 
 import type { isInitialized, isLifecycleHandled } from './utils/symbols'
@@ -18,22 +18,21 @@ export type RegistrationObject<T = any> =
       provider: FactoryProvider<T> | ValueProvider<T> | TokenProvider<T>
     }
 
-/**
- * Must be a plain js object
- * Given object will be provided as a shallow reactive object with the given injection token
- * Changes in the object properties will be reflected as reactive properties
- */
-export type ReactiveObjectRegistration = [InjectionToken, object]
-
 export type Registration =
   | Constructor
   | RegistrationObject
   | [Constructor, InstanceLifecycle]
   | [InjectionToken, ClassProvider<any>['useClass']]
   | [InjectionToken, ClassProvider<any>['useClass'], InstanceLifecycle]
+  /**
+   * Must be a plain js object
+   * Given object will be provided as a shallow reactive object with the given injection token
+   * Changes in the object properties will be reflected as reactive properties
+   */
+  | [InjectionToken, object]
 
 export type ProviderProps<P extends object = object> = {
-  provide: (Registration | ReactiveObjectRegistration)[]
+  provide: Registration[]
   props?: P
 
   /**
@@ -64,3 +63,7 @@ export type EffectCallback = (cleanup: TriggerCleanup) => void
 
 export type Cleanup = () => void
 export type TriggerCleanup = (cleanup: () => void) => void
+
+export type ReactiveComponent<P extends object> = FC<P> & {
+  provide: (...args: Registrations) => FC<P>
+}
