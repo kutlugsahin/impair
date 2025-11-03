@@ -1,6 +1,6 @@
 import { DependencyContainer, InjectionToken, Lifecycle } from 'tsyringe'
 import { Props } from './tokens'
-import { Constructor } from 'src/types'
+import { Constructor } from '../types'
 import { createChildContainer } from 'src/container/createChildContainer'
 import { initInstance } from 'src/container/initInstance'
 
