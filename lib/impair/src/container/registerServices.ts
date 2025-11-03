@@ -1,6 +1,6 @@
 import { DependencyContainer, InjectionToken, Lifecycle } from 'tsyringe'
 
-import { InstanceLifecycle, Registration, RegistrationObject } from '../types'
+import { Constructor, InstanceLifecycle, Registration, RegistrationObject } from '../types'
 
 function toLifecycle(lifecycle: InstanceLifecycle): Lifecycle {
   switch (lifecycle) {
@@ -52,7 +52,7 @@ function getRegistrationOptions(registration: Registration): RegistrationObject 
     return {
       token: serviceToken,
       provider: {
-        useClass: providedClass,
+        useClass: providedClass as Constructor,
       },
       lifecycle,
     }
