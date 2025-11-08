@@ -1,5 +1,5 @@
 import { shallowReactive, shallowReadonly } from '@vue/reactivity'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { isPlainObject } from './object'
 import { updateObjectProps } from './updateObjectProps'
 
@@ -31,12 +31,9 @@ export function useReactiveObject<P extends object>(obj?: P) {
     }
   }, []) // Empty dependency array ensures this runs only once
 
-  useEffect(() => {
-    // Update the reactive state when props change
-    if (obj) {
-      next(obj)
-    }
-  }, [obj, next]) // Rerun effect if props or the stable next function changes
+  if (obj) {
+    next(obj)
+  }
 
   // Return the readonly reactive props
   return state
