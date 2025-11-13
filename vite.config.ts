@@ -9,11 +9,4 @@ export default defineConfig({
     }),
     tsConfigPaths(),
   ],
-  esbuild: {
-    tsconfigRaw: {
-      compilerOptions: {
-        experimentalDecorators: true,
-      },
-    },
-  },
 })

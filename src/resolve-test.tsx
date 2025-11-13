@@ -1,5 +1,7 @@
 import {
   component,
+  Container,
+  derived,
   inject,
   injectable,
   onMount,
@@ -11,6 +13,7 @@ import {
   useViewModel,
 } from 'impair/index'
 import { createRef } from 'react'
+import { container } from 'tsyringe'
 
 @injectable()
 class Counter {
@@ -32,22 +35,38 @@ class Counter2 {
   count = 0
 }
 
+@injectable()
+class CounterService {
+  constructor(@inject(Counter) public counter: Counter) {}
+
+  @derived
+  get count() {
+    return this.counter.count * 2
+  }
+
+  set count(value: number) {
+    this.counter.count = value / 2
+  }
+}
+
 export function ResolveTest() {
   return (
     <div>
-      <ServiceProvider provide={[Counter]} props={{ id: 5 }}>
-        <ServiceProvider provide={[Counter2]} props={{ id: 1 }}>
+      <ServiceProvider initializeSingletons provide={[Counter]} props={{ id: 5 }}>
+        {/* <ServiceProvider provide={[Counter2]} props={{ id: 1 }}>
           <CounterView />
           <CounterView />
-        </ServiceProvider>
+        </ServiceProvider> */}
+        <CounterView />
+        <CounterView />
       </ServiceProvider>
-      <hr />
+      {/* <hr />
       <ServiceProvider provide={[Counter]} props={{ id: 0 }}>
         <ServiceProvider provide={[Counter2]} props={{ id: 0 }}>
           <CounterView />
           <CounterView />
         </ServiceProvider>
-      </ServiceProvider>
+      </ServiceProvider> */}
     </div>
   )
 }
@@ -66,16 +85,25 @@ class DragService {
   }
 }
 
+@injectable()
+class CounterViewModel {
+  public counter: any
+
+  constructor(@inject(Container) private container: Container) {
+    this.counter = this.container.resolve(CounterService, { a: 1 })
+  }
+}
+
 const CounterView = component(() => {
-  const vm = useService(Counter2)
-  const vm2 = useService(Counter)
-  const vm3 = useViewModel(Counter)
+  // const vm = useService(Counter2)
+  const vm2 = useViewModel(CounterViewModel)
+  // const vm3 = useViewModel(Counter)
 
   return (
     <div>
-      <button onClick={() => vm.count++}>{vm.count}</button>
-      <button onClick={() => vm2.count++}>{vm2.count}</button>
-      <button onClick={() => vm3.count++}>{vm3.count}</button>
+      {/* <button onClick={() => vm.count++}>{vm.count}</button> */}
+      <button onClick={() => vm2.counter.count++}>{vm2.counter.count}</button>
+      {/* <button onClick={() => vm3.count++}>{vm3.count}</button> */}
     </div>
   )
 })
@@ -99,3 +127,7 @@ export const Drag = component(() => {
     </ServiceProvider>
   )
 })
+
+container.registerSingleton(DragService)
+const c1 = container.createChildContainer()
+console.log(c1.isRegistered(DragService))

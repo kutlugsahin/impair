@@ -30,7 +30,8 @@
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.2.1",
     "tsyringe": "^4.8.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "react-router": "7.9.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

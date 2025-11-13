@@ -26,13 +26,14 @@ export function component<P extends object>(component: FC<P>): ReactiveComponent
     const propsRef = useRef<P>(props)
     const isDirty = useRef(false)
     const componentContainer = useRef<DependencyContainer | undefined>(undefined)
+    const isMounted = useRef(false)
 
     propsRef.current = props
     isDirty.current = false
 
     if (!runner.current) {
       const render = debounceMicrotask(() => {
-        if (isDirty.current) {
+        if (isDirty.current && isMounted.current) {
           forceUpdate()
         }
       })
@@ -57,9 +58,11 @@ export function component<P extends object>(component: FC<P>): ReactiveComponent
     }
 
     useEffect(() => {
+      isMounted.current = true
       forceUpdate()
 
       return () => {
+        isMounted.current = false
         if (runner.current) {
           stop(runner.current)
         }

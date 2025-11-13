@@ -1,12 +1,11 @@
 import { createContext, useContext } from 'react'
-import { createChildContainer } from '../container/createChildContainer'
-import { initInstance } from '../container/initInstance'
 import { container, DependencyContainer } from 'tsyringe'
-import { Props, ViewProps } from '../injectables/tokens'
+import { createChildContainer } from '../container/createChildContainer'
 import { Container } from '../injectables/container'
+import { Props, ViewProps } from '../injectables/tokens'
 
-export const globalContainer = createChildContainer(container, (instance) => {
-  initInstance(instance)
+export const globalContainer = createChildContainer(container, () => {
+  // No-op for global container
 })
 
 globalContainer.register(Props, { useValue: {} })
