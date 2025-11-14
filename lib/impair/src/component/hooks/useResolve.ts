@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 
 import { useRegisteredContainer } from '../../container/useRegisteredContainer'
-import { Constructor, Registration } from '../../types'
+import { Constructor, Registration, ServicePropsType } from '../../types'
 import { config } from '../../utils/config'
 import { toReadOnlyService } from '../../utils/toReadOnlyService'
 import { getCurrentComponentPropsRef } from '../current-component'
 
 export function useResolve<T extends Constructor>(token: T): InstanceType<T>
-export function useResolve<T extends Constructor, P extends object>(token: T, props: P): InstanceType<T>
+export function useResolve<T extends Constructor>(token: T, props: ServicePropsType<T>): InstanceType<T>
 export function useResolve(token: Constructor, props?: object) {
   const currentComponentPropsRef = getCurrentComponentPropsRef()
 
@@ -19,8 +19,7 @@ export function useResolve(token: Constructor, props?: object) {
 
   const container = useRegisteredContainer({
     services: provide,
-    viewProps: currentComponentPropsRef.current,
-    props,
+    props: props ?? currentComponentPropsRef.current,
   })
 
   return useMemo(() => {

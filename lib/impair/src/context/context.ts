@@ -2,14 +2,13 @@ import { createContext, useContext } from 'react'
 import { container, DependencyContainer } from 'tsyringe'
 import { createChildContainer } from '../container/createChildContainer'
 import { Container } from '../injectables/container'
-import { Props, ViewProps } from '../injectables/tokens'
+import { Props } from '../injectables/tokens'
 
 export const globalContainer = createChildContainer(container, () => {
   // No-op for global container
 })
 
 globalContainer.register(Props, { useValue: {} })
-globalContainer.register(ViewProps, { useValue: {} })
 globalContainer.register(Container, { useValue: new Container(globalContainer) })
 
 // Override dispose to no-op to prevent disposal of the default container

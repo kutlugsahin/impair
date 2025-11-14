@@ -1,34 +1,32 @@
 import { ServiceProvider } from 'impair/index'
-import { BrowserRouter, Link, Route, Routes } from 'react-router'
+import { lazy } from 'react'
+
 import { AuthProvider } from './auth-provider'
-import { Content } from './content'
 import { CounterService } from './counter.service'
 import { InterceptorProvider } from './interceptor-provider'
 import { Navigation } from './nav'
 import { UserService } from './user-service'
 // import { Content } from './content'
-
-// const Content = lazy(() => import('./content').then((m) => ({ default: m.Content })))
+import { Link, Route, Switch } from 'wouter'
+const Content = lazy(() => import('./content').then((m) => ({ default: m.Content })))
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <InterceptorProvider>
-        <AuthProvider>
-          <ServiceProvider provide={[UserService, CounterService]}>
+    <InterceptorProvider>
+      <AuthProvider>
+        <ServiceProvider provide={[UserService, CounterService]} props={{ userId: 42 }}>
+          <div>
+            <Link to="/app">Goto Content</Link>
+            <Navigation />
             <div>
-              <Link to="/app">Goto Content</Link>
-              <Navigation />
-              <div>
-                <Routes>
-                  <Route path="/" element={<div>Home</div>} />
-                  <Route path="/app" element={<Content />} />
-                </Routes>
-              </div>
+              <Switch>
+                <Route path="/" component={() => <div>Home</div>} />
+                <Route path="/app" component={Content} />
+              </Switch>
             </div>
-          </ServiceProvider>
-        </AuthProvider>
-      </InterceptorProvider>
-    </BrowserRouter>
+          </div>
+        </ServiceProvider>
+      </AuthProvider>
+    </InterceptorProvider>
   )
 }

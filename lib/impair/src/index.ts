@@ -1,29 +1,30 @@
+export { enableTracking, pauseTracking, toReadonly } from '@vue/reactivity'
+export { delay, inject } from 'tsyringe'
 export { component } from './component/component'
+export { useResolve } from './component/hooks/useResolve'
 export { useService } from './component/hooks/useService'
 export { useViewModel } from './component/hooks/useViewModel'
-export { useResolve } from './component/hooks/useResolve'
 export { injectable } from './container/injectable'
 export { provide } from './container/provide'
 export { Container } from './injectables/container'
-export { Props, ViewProps } from './injectables/tokens'
+export { Props } from './injectables/tokens'
+export { onDispose } from './lifecycle/onDispose'
+export { onInit } from './lifecycle/onInit'
+export { onMount } from './lifecycle/onMount'
+export { onUnmount } from './lifecycle/onUnmount'
 export { ServiceProvider } from './provider/serviceProvider'
 export { derived, state, trigger, untrack } from './reactivity'
 export type {
+  TriggerCleanup as Cleanup,
   Constructor,
   InstanceLifecycle,
   ProviderProps,
   Registration,
   Registrations,
   RendererViewModel,
-  TriggerCleanup as Cleanup,
+  ServiceProps as ServiceWithProps,
 } from './types'
-export { enableTracking, pauseTracking, toReadonly } from '@vue/reactivity'
-export { toRaw } from './utils/toRaw'
-export { delay, inject } from 'tsyringe'
-export { onDispose } from './lifecycle/onDispose'
-export { onInit } from './lifecycle/onInit'
-export { onMount } from './lifecycle/onMount'
-export { onUnmount } from './lifecycle/onUnmount'
 export { configure } from './utils/config'
-export { useReactiveObject } from './utils/useReactiveObject'
 export { createDecorator, type DecoratorInitializer } from './utils/createDecorator'
+export { toRaw } from './utils/toRaw'
+export { useReactiveObject } from './utils/useReactiveObject'

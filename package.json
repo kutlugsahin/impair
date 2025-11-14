@@ -26,12 +26,13 @@
     "@vue/reactivity": "^3.5.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router": "7.9.5",
     "reflect-metadata": "^0.2.2",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-dts": "^6.2.1",
     "tsyringe": "^4.8.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "react-router": "7.9.5"
+    "wouter": "^3.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

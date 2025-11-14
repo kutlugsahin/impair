@@ -12,7 +12,6 @@ import {
   trigger,
   useResolve,
   useViewModel,
-  ViewProps,
 } from 'impair'
 
 import { computed, effect, ref } from '@vue/reactivity'
@@ -191,7 +190,7 @@ class StateViewModel<T> {
   @state
   age = 0
 
-  constructor(@inject(State) public state: State, @inject(ViewProps) private props: Props) {
+  constructor(@inject(State) public state: State, @inject(Props) private props: Props) {
     console.log('StateViewModel', props.id)
   }
 
@@ -249,7 +248,7 @@ class Derived extends Base {
     this.count++
   }
 
-  constructor(@inject(Props) public props: any, @inject(ViewProps) public viewprops: any) {
+  constructor(@inject(Props) public props: any, @inject(Props) public viewprops: any) {
     super()
     console.log('Derived constructor', this.props, this.viewprops)
   }

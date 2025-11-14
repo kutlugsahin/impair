@@ -1,4 +1,4 @@
-import { state, trigger, injectable, inject } from 'impair'
+import { state, trigger, injectable, inject, onMount } from 'impair'
 
 import { AuthService } from './auth-service'
 
@@ -14,7 +14,7 @@ export class UserService {
     console.log('UserService created')
   }
 
-  @trigger
+  @onMount
   async loadUser() {
     this.isLoading = true
     if (this.authService.isAuthenticated) {

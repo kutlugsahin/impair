@@ -7,10 +7,10 @@ import {
   onInit,
   onMount,
   onUnmount,
+  Props,
   provide,
   state,
   trigger,
-  ViewProps,
 } from 'impair'
 
 import { QueryService } from 'impair-query'
@@ -89,7 +89,7 @@ export class PostViewModel {
   constructor(
     @inject(QueryPost) public posts: QueryPost,
     @inject(QueryPost) public posts2: QueryPost,
-    @inject(ViewProps) public props: PostProps,
+    @inject(Props) public props: PostProps,
     @inject(Container) public container: Container,
     @inject(Symbol.for('deneme')) public reactive: { value: number },
   ) {

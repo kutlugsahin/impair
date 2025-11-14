@@ -1,6 +1,7 @@
 import { FC, ReactElement } from 'react'
 import type { ClassProvider, FactoryProvider, InjectionToken, TokenProvider, ValueProvider } from 'tsyringe'
 
+import { DelayedConstructor } from 'tsyringe/dist/typings/lazy-helpers'
 import type { isInitialized, isLifecycleHandled } from './utils/symbols'
 
 export type Constructor<T = any> = new (...args: any[]) => T
@@ -67,3 +68,19 @@ export type TriggerCleanup = (cleanup: () => void) => void
 export type ReactiveComponent<P extends object> = FC<P> & {
   provide: (...args: Registrations) => FC<P>
 }
+
+export interface ServiceProps<P extends object = object> {
+  props: P
+}
+
+export type ServicePropsType<T extends InjectionToken> = T extends Constructor
+  ? InstanceType<T> extends ServiceProps<infer P>
+    ? P
+    : any
+  : any
+
+export type TokenResolve<T extends InjectionToken> = T extends Constructor<infer U>
+  ? U
+  : T extends DelayedConstructor<infer U2>
+  ? U2
+  : any

@@ -3,7 +3,7 @@ import { DependencyContainer } from 'tsyringe'
 
 import { useDependencyContainer } from '../context/context'
 import { Container } from '../injectables/container'
-import { Props, ViewProps } from '../injectables/tokens'
+import { Props } from '../injectables/tokens'
 import { Dispose, Registrations } from '../types'
 import { useReactiveObject } from '../utils/useReactiveObject'
 import { useRegistrations } from '../utils/useRegistrations'
@@ -17,7 +17,7 @@ type RegisteredContainerParams = {
   services: Registrations
   sharedContainerRef?: RefObject<DependencyContainer | undefined>
   props?: object
-  viewProps?: object
+
   initializeSingletons?: boolean
 }
 
@@ -25,7 +25,7 @@ export function useRegisteredContainer({
   services,
   sharedContainerRef,
   props,
-  viewProps,
+
   initializeSingletons,
 }: RegisteredContainerParams) {
   const parentContainer = useDependencyContainer()
@@ -34,10 +34,8 @@ export function useRegisteredContainer({
   const isMounted = useRef(false)
 
   const mappedProps = useReactiveObject(props)
-  const mappedViewProps = useReactiveObject(viewProps)
 
   const registerProps = props != null
-  const registerViewProps = viewProps != null
 
   const registrations = useRegistrations(services)
 
@@ -68,12 +66,6 @@ export function useRegisteredContainer({
     if (registerProps && !container.isRegistered(Props)) {
       container.register(Props, {
         useValue: mappedProps,
-      })
-    }
-
-    if (registerViewProps && !container.isRegistered(ViewProps)) {
-      container.register(ViewProps, {
-        useValue: mappedViewProps,
       })
     }
 

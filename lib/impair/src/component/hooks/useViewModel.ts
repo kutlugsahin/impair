@@ -16,7 +16,7 @@ export function useViewModel<T extends Constructor>(viewModel: T): InstanceType<
 
   const container = useRegisteredContainer({
     services: [viewModel],
-    viewProps: currentComponentPropsRef.current,
+    props: currentComponentPropsRef.current,
     sharedContainerRef: currentComponentContainerRef,
   })
 
