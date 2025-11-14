@@ -1,4 +1,4 @@
-import { component, useService, useViewModel } from 'impair/index'
+import { component, useResolve, useService } from 'impair/index'
 import { Route, Switch, useParams, useSearch } from 'wouter'
 import { usePathname } from 'wouter/use-browser-location'
 import { CounterService } from './counter.service'
@@ -6,7 +6,7 @@ import { CounterService } from './counter.service'
 export const Content = component(() => {
   const { count, increment } = useService(CounterService)
 
-  const a = useViewModel(CounterService)
+  const a = useResolve(CounterService)
   // const { user } = useService(UserService)
   const pathname = usePathname()
 

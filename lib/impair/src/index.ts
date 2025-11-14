@@ -22,7 +22,7 @@ export type {
   Registration,
   Registrations,
   RendererViewModel,
-  ServiceProps as ServiceWithProps,
+  ServiceProps,
 } from './types'
 export { configure } from './utils/config'
 export { createDecorator, type DecoratorInitializer } from './utils/createDecorator'
