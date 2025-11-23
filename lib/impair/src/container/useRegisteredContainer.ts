@@ -44,6 +44,7 @@ export function useRegisteredContainer({
   const { container } = useMemo(() => {
     if (sharedContainerRef?.current && !isDisposed(sharedContainerRef.current)) {
       registerServices(sharedContainerRef.current, registrations, initializeSingletons)
+
       return {
         container: sharedContainerRef.current,
         disposers,

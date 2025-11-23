@@ -5,7 +5,7 @@ import { DependencyContainer } from 'tsyringe'
 import { disposeContainer } from '../container/dispose'
 import { Context } from '../context/context'
 import { ServiceProvider } from '../provider/serviceProvider'
-import { Constructor, ReactiveComponent, Registrations, RendererViewModel } from '../types'
+import { Constructor, ReactiveComponent, Registrations, RendererViewModel, ServicePropsType } from '../types'
 import { debounceMicrotask } from '../utils/debounceMicrotask'
 import { setCurrentComponentContainerRef, setCurrentComponentPropsRef } from './current-component'
 import { useViewModel } from './hooks/useViewModel'
@@ -101,8 +101,12 @@ export function component<P extends object>(component: FC<P>): ReactiveComponent
   return Comp
 }
 
-component.fromViewModel = <P extends object>(viewModel: Constructor<RendererViewModel>) => {
-  const comp = component<P>(() => useViewModel(viewModel).render())
+function fromViewModel<T extends Constructor<RendererViewModel>>(viewModel: T): FC<ServicePropsType<T, object>>
+function fromViewModel<P extends object>(viewModel: Constructor<RendererViewModel>): FC<P>
+function fromViewModel(viewModel: Constructor<RendererViewModel>) {
+  const comp = component(() => useViewModel(viewModel).render())
   comp.displayName = `(ImpairViewModel) ${viewModel.name.replace('ViewModel', '')}`
   return comp
 }
+
+component.fromViewModel = fromViewModel

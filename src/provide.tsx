@@ -1,4 +1,4 @@
-import { component, derived, inject, injectable, provide, state, useService, useViewModel } from 'impair'
+import { component, derived, inject, injectable, Props, provide, state, useService, useViewModel } from 'impair'
 
 @injectable()
 class Counter {
@@ -52,7 +52,6 @@ const CounterComponent = component(function CounterComponent() {
   )
 })
 
-// @provide([[Counter, 'transient']])
 @injectable()
 class CounterViewModel {
   constructor(@inject(SelfService) public selfService: SelfService) {}

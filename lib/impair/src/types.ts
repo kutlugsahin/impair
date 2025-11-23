@@ -73,11 +73,11 @@ export interface ServiceProps<P extends object = object> {
   props: P
 }
 
-export type ServicePropsType<T extends InjectionToken> = T extends Constructor
+export type ServicePropsType<T extends InjectionToken, TDefault = any> = T extends Constructor
   ? InstanceType<T> extends ServiceProps<infer P>
     ? P
-    : any
-  : any
+    : TDefault
+  : TDefault
 
 export type TokenResolve<T extends InjectionToken> = T extends Constructor<infer U>
   ? U

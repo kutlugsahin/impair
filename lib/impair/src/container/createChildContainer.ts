@@ -5,6 +5,7 @@ import { initInstance, isInitialized } from './initInstance'
 import { extendsDependencyContainer, findRegisteredParentContainer } from '../utils/container'
 import { registerServices } from './registerServices'
 import { getDecoratedProviders } from './provide'
+import { config } from '../utils/config'
 
 function isInjectionToken(token: InjectionToken): boolean {
   return typeof token === 'function' || typeof token === 'symbol' || typeof token === 'string'
@@ -17,7 +18,7 @@ function isInjectableClass(instance: any): boolean {
 
 export function createChildContainer(
   parentContainer: DependencyContainer,
-  onInstance: (instance: any) => void,
+  onInstance?: (instance: any) => void,
 ): DependencyContainer {
   const container = extendsDependencyContainer(parentContainer.createChildContainer())
 
@@ -56,7 +57,8 @@ export function createChildContainer(
           (_, instance) => {
             if (!isInitialized(instance) && isInjectableClass(instance)) {
               const initializedInstance = initInstance(instance)
-              onInstance(initializedInstance)
+              config.afterResolve?.({ token, instance: initializedInstance, container })
+              onInstance?.(initializedInstance)
             }
           },
           {

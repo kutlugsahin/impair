@@ -1,8 +1,16 @@
+import { DependencyContainer, InjectionToken } from 'tsyringe'
 import { StateType } from '../reactivity'
+
+type ResolutionParams = {
+  token: InjectionToken
+  instance: any
+  container: DependencyContainer
+}
 
 export type Configuration = {
   readonlyProxiesForView: boolean
   defaultStateReactiveLevel: Exclude<StateType, 'default'>
+  afterResolve?(params: ResolutionParams): any
 }
 
 export const config: Configuration = {

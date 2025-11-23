@@ -354,11 +354,11 @@ export const Counter = component(() => {
 
 ### useViewModel(Class)
 
-So far we have discussed the service layer, creating services shared across the components descendent to the ServiceProvider. But what if we want to create a service exclusive to a component which will be created when the component is mounted and destroyed when unmounted. useViewModel is there to achieve this behavior. Conceptually these kind of services are called view models. When a viewModel is used in a component, a dependency container is created for that component as the child of parent container and given viewModel is registered by default. ViewModels can inject services and ViewProps (component props via ViewProps token) as well. A component can use many view models with multiple useViewModel. All the viewModels are registered in the same dependency container so that they can inject each other as well as the services from ancestor dependency containers.
+So far we have discussed the service layer, creating services shared across the components descendent to the ServiceProvider. But what if we want to create a service exclusive to a component which will be created when the component is mounted and destroyed when unmounted. useViewModel is there to achieve this behavior. Conceptually these kind of services are called view models. When a viewModel is used in a component, a dependency container is created for that component as the child of parent container and given viewModel is registered by default. ViewModels can inject services and Props (component props via Props token) as well. A component can use many view models with multiple useViewModel. All the viewModels are registered in the same dependency container so that they can inject each other as well as the services from ancestor dependency containers.
 
-### ViewProps (Injection Token)
+### Props for ViewModel (Injection Token)
 
-If you want to access the component props from viewModel you inject it using ViewProps injection token. injected object will be shallow reactive.
+If you want to access the component props from viewModel you inject it using Props injection token. injected object will be shallow reactive.
 
 ```tsx
 @injectable()
@@ -372,7 +372,7 @@ export class AutoCompleteViewModel {
   @state
   isLoading = false
 
-  constructor(@inject(ViewProps) props: AutoCompleteProps) {}
+  constructor(@inject(Props) props: AutoCompleteProps) {}
 
   setQuery(query: string) {
     this.query = query
@@ -472,6 +472,10 @@ class AutoCompleteViewModel {
 
 export const AutoComplete = component.fromViewModel<AutoCompleteProps>(AutoCompleteViewModel)
 ```
+
+### useResolve(Class, props)
+
+Creates and returns a new instance of the given injectable class. Its not affected by the parent container registrations and it creates new instance per statement. The second parameter (props) is an object to be injected using **Props** token.
 
 ### Lifecycle
 

@@ -4,9 +4,7 @@ import { createChildContainer } from '../container/createChildContainer'
 import { Container } from '../injectables/container'
 import { Props } from '../injectables/tokens'
 
-export const globalContainer = createChildContainer(container, () => {
-  // No-op for global container
-})
+export const globalContainer = createChildContainer(container)
 
 globalContainer.register(Props, { useValue: {} })
 globalContainer.register(Container, { useValue: new Container(globalContainer) })
