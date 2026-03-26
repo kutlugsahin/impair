@@ -1,3 +1,4 @@
+import './devtools'
 export { enableTracking, pauseTracking, toReadonly } from '@vue/reactivity'
 export { delay, inject } from 'tsyringe'
 export { component } from './component/component'

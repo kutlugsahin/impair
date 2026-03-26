@@ -10,6 +10,7 @@ import { useRegistrations } from '../utils/useRegistrations'
 import { useStrictModeIntegrity } from '../utils/useStrictModeIntegrity'
 import { createChildContainer } from './createChildContainer'
 import { disposeContainer, isDisposed } from './dispose'
+import { getDevtoolsHook } from '../devtools/hook'
 import { handleOnMounts } from './handleLifecycle'
 import { registerServices } from './registerServices'
 
@@ -94,6 +95,7 @@ export function useRegisteredContainer({
 
       if (container) {
         disposeContainer(container)
+        getDevtoolsHook()?.unregisterContainer(container)
       }
 
       isMounted.current = false

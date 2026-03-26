@@ -6,6 +6,7 @@ import { extendsDependencyContainer, findRegisteredParentContainer } from '../ut
 import { registerServices } from './registerServices'
 import { getDecoratedProviders } from './provide'
 import { config } from '../utils/config'
+import { getDevtoolsHook } from '../devtools/hook'
 
 function isInjectionToken(token: InjectionToken): boolean {
   return typeof token === 'function' || typeof token === 'symbol' || typeof token === 'string'
@@ -23,6 +24,7 @@ export function createChildContainer(
   const container = extendsDependencyContainer(parentContainer.createChildContainer())
 
   container.setParentContainer(parentContainer)
+  getDevtoolsHook()?.registerContainer(container, parentContainer)
 
   const resolve = container.resolve
 
@@ -59,6 +61,7 @@ export function createChildContainer(
               const initializedInstance = initInstance(instance)
               config.afterResolve?.({ token, instance: initializedInstance, container })
               onInstance?.(initializedInstance)
+              getDevtoolsHook()?.registerInstance(container, token, initializedInstance)
             }
           },
           {

@@ -10,6 +10,7 @@ type ResolutionParams = {
 export type Configuration = {
   readonlyProxiesForView: boolean
   defaultStateReactiveLevel: Exclude<StateType, 'default'>
+  devtools?: boolean
   afterResolve?(params: ResolutionParams): any
 }
 

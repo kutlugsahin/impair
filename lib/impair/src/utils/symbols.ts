@@ -14,3 +14,5 @@ export const onInitMetadataKey = Symbol.for('impair.symbols.onInit')
 export const onDestroyMetadataKey = Symbol.for('impair.symbols.onDestroy')
 
 export const isContainerDisposed = Symbol.for('impair.symbols.isContainerDisposed')
+
+export const devtoolsContainerId = Symbol.for('impair.devtools.containerId')

@@ -1,0 +1,6 @@
+{
+  "name": "impair-devtools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome DevTools extension for Impair"
+}

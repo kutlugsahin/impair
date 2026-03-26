@@ -3,6 +3,7 @@ import { Ref, ref, shallowReactive, shallowRef } from '@vue/reactivity'
 import { Dictionary } from '../types'
 import { stateMetadataKey } from '../utils/symbols'
 import { config } from '../utils/config'
+import { getDevtoolsHook } from '../devtools/hook'
 
 export type StateType = 'shallow' | 'deep' | 'atom' | 'default'
 
@@ -127,6 +128,7 @@ export function initState({ instance }: InitParams) {
               type === 'shallow' && newValue != null && typeof newValue === 'object'
                 ? shallowReactive(newValue)
                 : newValue
+            getDevtoolsHook()?.emit('state-changed', { instance, propertyKey, value: newValue })
           } else {
             console.error(`No ref value found for ${propertyKey}`)
           }
