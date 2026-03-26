@@ -34,30 +34,6 @@ export class QueryPost extends QueryService<Post, [id: number]> {
   protected override async fetch(id: number) {
     return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then((r) => r.json())
   }
-
-  @onDispose
-  dispose() {
-    console.log('dispose query')
-  }
-
-  @onUnmount
-  onUnmount() {
-    console.log('onUnmount query')
-  }
-
-  @onMount
-  onMount(cl: Cleanup) {
-    console.log('onMount query')
-
-    cl(() => {
-      console.log('onMount query > unmount')
-    })
-  }
-
-  @onInit
-  onInit() {
-    console.log('onInit query')
-  }
 }
 
 export type PostProps = {
@@ -125,6 +101,11 @@ export class PostViewModel {
 
   public setSelectedId(id: number) {
     this.selectedId = id
+  }
+
+  @derived
+  get isLoading() {
+    this.posts.isLoading
   }
 
   @onMount

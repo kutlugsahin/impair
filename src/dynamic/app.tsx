@@ -30,3 +30,36 @@ export default function App() {
     </InterceptorProvider>
   )
 }
+
+import { reactive, readonly } from '@vue/reactivity'
+
+const obj = {}
+
+Object.defineProperty(obj, 'stats', {
+  get() {
+    return { a: 5 }
+  },
+  configurable: true,
+  // writable: true,
+})
+
+try {
+  const state: any = reactive(obj)
+  console.log(state.stats)
+} catch (e) {
+  console.error(e)
+}
+
+const r = reactive({
+  user: {
+    name: 'kutut',
+  },
+})
+
+const a = readonly(r.user)
+
+r.user = a
+
+r.user.name = 'changed'
+
+console.log(r.user.name)

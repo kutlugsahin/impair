@@ -115,6 +115,7 @@ export function initState({ instance }: InitParams) {
       stateValueMap.set(propertyKey, reactiveState)
 
       Object.defineProperty(instance, propertyKey, {
+        configurable: true,
         get() {
           return stateValueMap.get(propertyKey)?.value
         },
