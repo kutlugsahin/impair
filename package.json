@@ -14,7 +14,8 @@
     "impair-query:build": "rollup -c lib/impair-query/rollup.config.cjs",
     "impair-query:publish": "cd ./dist/impair-query && npm publish --access=public",
     "impair-query:build:publish": "npm run impair-query:build && npm run impair-query:publish",
-    "impair-devtools:build": "rollup -c lib/impair-devtools/rollup.config.cjs"
+    "impair-devtools:build": "rollup -c lib/impair-devtools/rollup.config.cjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
@@ -38,6 +39,8 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@rollup/plugin-terser": "^0.4.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
@@ -45,9 +48,11 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "jsdom": "^29.1.1",
     "rollup": "4.37.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vitest": "^4.1.6"
   }
 }
