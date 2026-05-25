@@ -2,11 +2,12 @@ import { component, useResolve, useService } from 'impair/index'
 import { Route, Switch } from 'wouter'
 import { CounterService } from './counter.service'
 import { DragService } from './drag'
+import { useLocation } from 'wouter'
 
 export const Content = component(() => {
   const { count, increment } = useService(CounterService)
 
-  const a = useResolve(CounterService)
+  const [location, setLocation] = useLocation()
 
   const { ref: ref1 } = useResolve(DragService)
   const { ref: ref2 } = useResolve(DragService, {
@@ -46,6 +47,7 @@ export const Content = component(() => {
             border: '1px solid red',
           }}
         ></div>
+        <button onClick={() => setLocation('/')}>go back</button>
       </div>
     </div>
   )

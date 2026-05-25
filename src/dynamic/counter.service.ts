@@ -2,7 +2,10 @@ import { Container, inject, injectable, onInit, Props, state } from 'impair'
 
 @injectable()
 export class CounterService {
-  constructor(@inject(Container) private container: Container, @inject(Props) public props: { initialCount: number }) {
+  constructor(
+    @inject(Container) private container: Container,
+    @inject(Props) public props: { initialCount: number },
+  ) {
     console.log('CounterService created: props: ', this.props)
   }
 
@@ -12,7 +15,7 @@ export class CounterService {
   }
 
   @state
-  count = 9
+  count = 100
 
   increment() {
     this.count++

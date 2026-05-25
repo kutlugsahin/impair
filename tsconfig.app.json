@@ -54,6 +54,7 @@
   },
   "include": [
     "src",
-    "impair"
+    "impair",
+    "examples"
   ]
 }

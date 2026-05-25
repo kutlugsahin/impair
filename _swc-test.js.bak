@@ -1,0 +1,80 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+require("reflect-metadata");
+const _tsyringe = require("tsyringe");
+const _src = require("./lib/impair/src");
+const _initInstance = require("./lib/impair/src/container/initInstance");
+function _ts_decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for(var i = decorators.length - 1; i >= 0; i--)if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+function _ts_metadata(k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+class VM {
+    value = 0;
+    syncRuns = 0;
+    debounceRuns = 0;
+    throttleRuns = 0;
+    onSync() {
+        void this.value;
+        this.syncRuns++;
+    }
+    onDebounced() {
+        void this.value;
+        this.debounceRuns++;
+    }
+    onThrottled() {
+        void this.value;
+        this.throttleRuns++;
+    }
+}
+_ts_decorate([
+    _src.state
+], VM.prototype, "value", void 0);
+_ts_decorate([
+    _src.state
+], VM.prototype, "syncRuns", void 0);
+_ts_decorate([
+    _src.state
+], VM.prototype, "debounceRuns", void 0);
+_ts_decorate([
+    _src.state
+], VM.prototype, "throttleRuns", void 0);
+_ts_decorate([
+    _src.trigger,
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", []),
+    _ts_metadata("design:returntype", void 0)
+], VM.prototype, "onSync", null);
+_ts_decorate([
+    _src.trigger.debounce(80),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", []),
+    _ts_metadata("design:returntype", void 0)
+], VM.prototype, "onDebounced", null);
+_ts_decorate([
+    _src.trigger.throttle(80),
+    _ts_metadata("design:type", Function),
+    _ts_metadata("design:paramtypes", []),
+    _ts_metadata("design:returntype", void 0)
+], VM.prototype, "onThrottled", null);
+VM = _ts_decorate([
+    (0, _src.injectable)()
+], VM);
+const vm = _tsyringe.container.resolve(VM);
+(0, _initInstance.initInstance)(vm);
+console.log('after init:  sync=', vm.syncRuns, 'debounce=', vm.debounceRuns, 'throttle=', vm.throttleRuns);
+vm.value = 1;
+vm.value = 2;
+vm.value = 3;
+console.log('after writes:sync=', vm.syncRuns, 'debounce=', vm.debounceRuns, 'throttle=', vm.throttleRuns);
+setTimeout(()=>{
+    console.log('after 150ms: sync=', vm.syncRuns, 'debounce=', vm.debounceRuns, 'throttle=', vm.throttleRuns);
+    process.exit(0);
+}, 150);
+

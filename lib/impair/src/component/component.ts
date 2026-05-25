@@ -7,6 +7,7 @@ import { Context } from '../context/context'
 import { ServiceProvider } from '../provider/serviceProvider'
 import { Constructor, ReactiveComponent, Registrations, RendererViewModel, ServicePropsType } from '../types'
 import { debounceMicrotask } from '../utils/debounceMicrotask'
+import { registerComponentForFastRefresh } from '../utils/fastRefresh'
 import { setCurrentComponentContainerRef, setCurrentComponentPropsRef } from './current-component'
 import { useViewModel } from './hooks/useViewModel'
 
@@ -93,10 +94,18 @@ export function component<P extends object>(component: FC<P>): ReactiveComponent
 
     ComponentWithServices.displayName = `(ImpairServiceProvider) ${Comp.displayName || Comp.name || 'Component'}`
 
+    registerComponentForFastRefresh(
+      ComponentWithServices,
+      ComponentWithServices,
+      `${Comp.displayName || Comp.name || 'Component'}.provide`,
+    )
+
     return ComponentWithServices
   }
 
   Comp.displayName = component.displayName || component.name || 'Component'
+
+  registerComponentForFastRefresh(Comp, component)
 
   return Comp
 }
@@ -104,7 +113,13 @@ export function component<P extends object>(component: FC<P>): ReactiveComponent
 function fromViewModel<T extends Constructor<RendererViewModel>>(viewModel: T): FC<ServicePropsType<T, object>>
 function fromViewModel<P extends object>(viewModel: Constructor<RendererViewModel>): FC<P>
 function fromViewModel(viewModel: Constructor<RendererViewModel>) {
-  const comp = component(() => useViewModel(viewModel).render())
+  // Tag the inner FC with the ViewModel class name so Fast Refresh registers `comp` under
+  // a stable id derived from the VM. Without this, the anonymous arrow falls through to a
+  // counter-based id that drifts across HMR updates and prevents state preservation.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const renderFn: FC<object> = () => useViewModel(viewModel).render()
+  renderFn.displayName = viewModel.name
+  const comp = component(renderFn)
   comp.displayName = `(ImpairViewModel) ${viewModel.name.replace('ViewModel', '')}`
   return comp
 }

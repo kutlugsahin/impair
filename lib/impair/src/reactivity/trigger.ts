@@ -1,20 +1,30 @@
 import { stop } from '@vue/reactivity'
 import { Cleanup, Dictionary, Dispose, EffectCallback } from '../types'
 import { triggerMetadataKey } from '../utils/symbols'
-import { asyncEffect, effect } from '../reactivity/effect'
+import { asyncEffect, debouncedEffect, effect, throttledEffect } from '../reactivity/effect'
+
+type TriggerFlush = 'sync' | 'async' | 'debounce' | 'throttle'
 
 type TriggerInfo = {
   propertyKey: string
-  flush: 'sync' | 'async'
+  flush: TriggerFlush
+  ms?: number
 }
 
-function addTriggerMetadata(target: any, propertyKey: string, flush: 'sync' | 'async' = 'sync') {
+function addTriggerMetadata(target: any, propertyKey: string, flush: TriggerFlush = 'sync', ms?: number) {
   const triggerInfoArr: TriggerInfo[] = Reflect.getMetadata(triggerMetadataKey, target) ?? []
   triggerInfoArr.push({
     propertyKey,
     flush,
+    ms,
   })
   return Reflect.metadata(triggerMetadataKey, triggerInfoArr)(target)
+}
+
+function assertNonNegativeNumber(name: string, ms: unknown): asserts ms is number {
+  if (typeof ms !== 'number' || !Number.isFinite(ms) || ms < 0) {
+    throw new Error(`@trigger.${name}(ms) requires a non-negative finite number, got ${String(ms)}`)
+  }
 }
 
 /**
@@ -48,6 +58,33 @@ trigger.async = function (target: any, propertyKey: string) {
   return addTriggerMetadata(target, propertyKey, 'async')
 }
 
+/**
+ * @trigger.debounce(ms)
+ * Trailing-only debounce. The trigger re-runs `ms` milliseconds after the most recent
+ * dependency change. Bursts of changes inside the same `ms` window collapse to one run
+ * on the final values. The cleanup callback (if any) fires before each actual invocation.
+ */
+trigger.debounce = function (ms: number) {
+  assertNonNegativeNumber('debounce', ms)
+  return function (target: any, propertyKey: string) {
+    return addTriggerMetadata(target, propertyKey, 'debounce', ms)
+  }
+}
+
+/**
+ * @trigger.throttle(ms)
+ * Leading + trailing throttle. At most one run per `ms` milliseconds: the first change
+ * in a window fires immediately; if further changes arrive during the window, one trailing
+ * run is scheduled at window close. The cleanup callback (if any) fires before each
+ * actual invocation.
+ */
+trigger.throttle = function (ms: number) {
+  assertNonNegativeNumber('throttle', ms)
+  return function (target: any, propertyKey: string) {
+    return addTriggerMetadata(target, propertyKey, 'throttle', ms)
+  }
+}
+
 type InitParams = {
   instance: Dictionary
   disposers: Dispose[]
@@ -63,7 +100,7 @@ export function initTrigger({ instance, disposers }: InitParams) {
       propertyMap.set(triggerInfo.propertyKey, triggerInfo)
     })
 
-    propertyMap.forEach(({ flush, propertyKey }) => {
+    propertyMap.forEach(({ flush, propertyKey, ms }) => {
       const effectFn = instance[propertyKey] as EffectCallback
 
       if (typeof effectFn !== 'function') {
@@ -74,17 +111,24 @@ export function initTrigger({ instance, disposers }: InitParams) {
 
       const triggerMethod = effectFn.bind(instance)
 
-      const effectRunner = flush === 'sync' ? effect : asyncEffect
-
       let cleanup: Cleanup | undefined = undefined
 
-      const runner = effectRunner(() => {
+      const body = () => {
         cleanup?.()
         cleanup = undefined
         return triggerMethod((clb: Cleanup) => {
           cleanup = clb
         })
-      })
+      }
+
+      const runner =
+        flush === 'sync'
+          ? effect(body)
+          : flush === 'async'
+            ? asyncEffect(body)
+            : flush === 'debounce'
+              ? debouncedEffect(body, ms!)
+              : throttledEffect(body, ms!)
 
       disposers.push(() => {
         cleanup?.()

@@ -1,0 +1,276 @@
+# impair
+
+A React framework that holds state in class-based services managed by a dependency container, and lets React be the View layer. Components are declarative and stateless; services hold and mutate state via reactive class fields. Components re-render automatically when fields they read change.
+
+Repository: https://github.com/kutlugsahin/impair
+Examples: `examples/` directory in this repository — each numbered folder is a single-concept example.
+
+## Install
+
+```bash
+npm install impair reflect-metadata
+```
+
+```jsonc
+// tsconfig.json
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  }
+}
+```
+
+```ts
+// main.tsx — must be first import
+import 'reflect-metadata'
+```
+
+```ts
+// vite.config.ts — SWC variant
+import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vite'
+export default defineConfig({
+  plugins: [react({ tsDecorators: true })],
+  esbuild: { tsconfigRaw: { compilerOptions: { experimentalDecorators: true } } },
+})
+```
+
+## Mental model
+
+- **Services** are `@injectable()` classes registered in a `ServiceProvider`. One instance per container by default (`singleton`).
+- **View models** are `@injectable()` classes scoped to a single component, instantiated via `useViewModel`. Each component instance gets its own.
+- **Reactivity** is per-field via `@state`. Reading a field inside a `component(...)`-wrapped function subscribes that render to changes.
+- **Side effects** in services/VMs use `@trigger` (runs on read deps changing) or `@onMount` / `@onInit`.
+- **Containers form a hierarchy** through React context — child containers can resolve from any ancestor.
+
+## API surface
+
+### Decorators (class-level)
+
+- `@injectable()` — required on every class managed by the container.
+- `@provide(registrations)` — view model class decorator. Adds registrations to the per-component container before the VM is resolved.
+
+### Decorators (field/getter)
+
+- `@state` / `@state.deep` — deeply reactive field. Mutations to nested properties trigger updates.
+- `@state.shallow` — first-level reactivity only.
+- `@state.atom` — reactive on reassignment only.
+- `@derived` — getter decorator. Computed value cached until upstream `@state` changes.
+
+### Decorators (method)
+
+- `@trigger` — runs immediately on first resolution, then **synchronously** every time any reactive read inside the body changes. Optional `Cleanup` param fires before each re-run and on disposal.
+- `@trigger.async` — same dependency tracking, but the call is deferred to the next microtask. Multiple `@state` mutations made in the same synchronous block coalesce into a **single** run on the final values. Use it whenever one method flips several reactive fields that all feed the same effect.
+- `@trigger.debounce(ms)` — trailing-only debounce. Re-runs `ms` after the most recent dependency change; bursts of changes inside the window collapse to one run on the final state. Use for "wait until the input settles" cases (typeahead, autosave on idle, resize-end recompute). Initial run is immediate.
+- `@trigger.throttle(ms)` — leading + trailing throttle. Fires immediately on the first change in a window, then at most one trailing run per `ms` if more changes arrive. Use for "give me regular updates while it's still moving" cases (scroll/drag-driven UI, telemetry). Initial run is immediate.
+- `@onInit` / `@onDispose` — fires when the instance is constructed / when its container is disposed. Optional `Cleanup`.
+- `@onMount` / `@onUnmount` — fires when the host React component mounts / unmounts. Optional `Cleanup` on `@onMount`.
+
+### Decorators (constructor parameter)
+
+- `@inject(token)` — `token` is a class, string, or `Symbol`. Use `@inject(delay(() => SomeClass))` to break circular dependencies (impair injects a proxy until the cycle resolves).
+
+### Hooks
+
+- `useService<T>(ClassOrToken)` — resolves from the current container or any ancestor. By default returns a read-only proxy (configurable).
+- `useViewModel<T>(VMClass)` — instantiates VM in the per-component container, shared across all `useViewModel` / `useResolve` calls within the same component. Throws if not inside a `component(...)` wrapper.
+- `useResolve<T>(Class, props?)` — creates a fresh transient instance per call site. Calling it more than once in the same component yields **independent** instances (one of the few things `useViewModel` cannot do). Props (if provided) are exposed to that instance via the `Props` token.
+
+  ```ts
+  // three independent FieldViewModels in one component
+  const email    = useResolve(FieldViewModel, { initial: '', validate: emailRule })
+  const password = useResolve(FieldViewModel, { initial: '', validate: passwordRule })
+  const code     = useResolve(FieldViewModel, { initial: '', validate: codeRule })
+  ```
+
+### Components
+
+- `component(fn)` — wraps a function component, returning a memoized reactive component. Required for any component that reads reactive state.
+  - `Comp.provide(...registrations)` — returns a variant whose contents see those services in scope.
+- `component.fromViewModel(VMClass)` — turns a VM with a `render(): ReactElement` method into a component. The VM is its own renderer.
+- `ServiceProvider` — registers services into a new container and provides it through context. Props: `provide: Registration[]`, `props?: object`, `initializeSingletons?: boolean`.
+
+### Injection tokens
+
+- `Props` — the `props` object passed to `ServiceProvider` or the React props of a `component(...)`-wrapped component, exposed as a shallowly reactive object.
+- `Container` — handle to the current container; supports `.resolve(token)` / `.register(...)`.
+
+### Utilities
+
+- `configure({ readonlyProxiesForView?, defaultStateReactiveLevel? })` — call once at app boot.
+- `createDecorator((instance, key, reactivity) => Dispose | void)` — build a custom field decorator. `reactivity` exposes Vue primitives (`ref`, `effect`, `computed`, etc.).
+- `toRaw(reactive)` — unwrap a reactive proxy to access the underlying object.
+- `useReactiveObject(obj)` — make a plain object into a stable shallowly reactive object that tracks the latest values.
+- `untrack(fn)` / `pauseTracking()` / `enableTracking()` — escape hatches for dependency collection.
+- `inject`, `delay` — re-exported from `tsyringe`.
+
+### Registration forms (`provide: Registration[]`)
+
+```ts
+// 1. Class — singleton
+provide={[TodoService]}
+
+// 2. [Class, Lifecycle]
+provide={[[TodoService, 'transient']]}
+
+// 3. [Token, Class] — token resolves to singleton instance of Class
+provide={[['todoApi', TodoApi]]}
+
+// 4. [Token, Class, Lifecycle]
+provide={[['todoApi', TodoApi, 'resolution']]}
+
+// 5. RegistrationObject — value/factory provider
+provide={[{
+  token: 'apiToken',
+  provider: { useValue: 'Bearer ...' },
+  lifecycle: 'singleton',
+}]}
+
+// 6. [Token, plainObject] — exposed as a shallow reactive object
+provide={[['config', { theme: 'dark' }]]}
+```
+
+Lifecycles: `'singleton' | 'transient' | 'container' | 'resolution'`.
+
+## Patterns
+
+### Counter (smallest VM)
+```ts
+@injectable()
+class CounterViewModel {
+  @state count = 0
+  increment() { this.count++ }   // plain method — impair auto-binds at construction
+}
+
+const Counter = component(() => {
+  // Destructure freely — reactive reads are tracked at the moment of access in render,
+  // and methods are pre-bound so `onClick={increment}` works without `.bind(vm)`.
+  const { count, increment } = useViewModel(CounterViewModel)
+  return <button onClick={increment}>{count}</button>
+})
+```
+
+### Service shared across components
+```tsx
+<ServiceProvider provide={[ApiClient, CartService]}>
+  <Cart />
+  <Checkout />
+</ServiceProvider>
+
+// any descendant component — destructure the parts you actually use
+const { items, addItem, removeItem } = useService(CartService)
+```
+
+### Trigger with cleanup (cancel in-flight on dep change)
+```ts
+@trigger
+async loadUser(cleanup: Cleanup) {
+  const controller = new AbortController()
+  cleanup(() => controller.abort())
+  this.user = await fetch(`/users/${this.props.userId}`, { signal: controller.signal })
+}
+```
+
+### Component props into a view model
+```ts
+@injectable()
+class UserViewModel {
+  constructor(@inject(Props) private props: { userId: number }) {}
+
+  @trigger
+  load() { /* re-runs whenever props.userId changes */ }
+}
+
+const UserCard = component<{ userId: number }>(() => {
+  const vm = useViewModel(UserViewModel)
+  return <div>{vm.user?.name}</div>
+})
+```
+
+### Derived state
+```ts
+@injectable()
+class TodoService {
+  @state todos: Todo[] = []
+  @derived get completed() { return this.todos.filter(t => t.done) }
+  @derived get pendingCount() { return this.todos.length - this.completed.length }
+}
+```
+
+### Narrow a trigger's deps with `untrack`
+A `@trigger` subscribes to every reactive read inside it. Wrap reads in `untrack(() => ...)` when you want the *current value* of a field without making it a dependency. Classic case: autosave that reacts to content changes but uses the *current* author/session at the moment of save.
+```ts
+@trigger
+autoSave() {
+  const content = this.draft                          // tracked → re-runs on draft change
+  const by      = untrack(() => this.currentUser)     // not tracked → won't re-trigger
+  save({ content, by })
+}
+```
+
+### Lifecycle
+```ts
+@onMount
+async load(cleanup: Cleanup) {
+  const controller = new AbortController()
+  cleanup(() => controller.abort())
+  this.todos = await this.api.fetch({ signal: controller.signal })
+}
+```
+
+### View model as the renderer (`fromViewModel`)
+```ts
+@injectable()
+class TimerViewModel implements RendererViewModel {
+  @state seconds = 0
+
+  @onMount
+  start(cleanup: Cleanup) {
+    const h = setInterval(() => this.seconds++, 1000)
+    cleanup(() => clearInterval(h))
+  }
+
+  render() { return <div>{this.seconds}s</div> }
+}
+
+export const Timer = component.fromViewModel(TimerViewModel)
+```
+
+## Conventions
+
+- **Declare service / view-model behaviour as normal class methods**, not arrow-function fields. impair auto-binds every prototype method to the instance at construction time, so `onClick={vm.increment}` works without explicit `.bind`. Arrow-function fields work but cost an allocation per instance and bypass the auto-bind path.
+
+  ```ts
+  // ✅ idiomatic
+  class CounterViewModel {
+    @state count = 0
+    increment() { this.count++ }
+  }
+
+  // ❌ avoid — extra allocation, redundant with auto-bind
+  class CounterViewModel {
+    @state count = 0
+    increment = () => { this.count++ }
+  }
+  ```
+
+- **Destructure the hook return.** Reactive reads are tracked at the moment of access during render, so pulling `count`/`increment`/etc. out of `useService` / `useViewModel` / `useResolve` does not break reactivity. Prefer this for readability.
+
+  ```ts
+  const { count, increment } = useViewModel(CounterViewModel)
+  ```
+
+  Caveat: don't destructure *deep* into reactive objects — `const { name } = vm.user` will not re-render when `vm.user` becomes a different object. Destructure top-level only.
+
+## Pitfalls
+
+- **Wrap components with `component()`** if they read reactive state, otherwise they will not re-render on mutation.
+- **Mutate from services, not from JSX.** Reactive fields exposed to components are read-only proxies by default. Call a method on the service instead. (Set `readonlyProxiesForView: false` in `configure()` to disable, but it's safer left on.)
+- **Class identity matters.** `useService(TodoService)` resolves by class reference. Two `class TodoService {}` declarations in different files are different tokens. Import the class from one canonical module.
+- **HMR**: editing a service file invalidates importers transitively until a refresh boundary is hit. Modules that aren't re-evaluated keep the old class reference and will resolve a detached instance. Prefer string/`Symbol` tokens for boundaries where this matters.
+- **`useViewModel` only inside `component(...)`-wrapped components.** Calling it from a plain function component throws.
+- **Triggers run synchronously on every dep change.** Use `@trigger.async` when a single method assigns several `@state` fields that all feed the trigger — sync would fire once per assignment, observing intermediate (often invalid) snapshots; async runs once on the final values.
+- **Circular service deps** require `@inject(delay(() => OtherService))` on at least one side, otherwise the container loops infinitely during construction.
+- **`@state` defaults to deep tracking.** For large objects or maps where you only mutate the reference, use `@state.atom` / `@state.shallow` to avoid proxy overhead.
+- **`onMount` ≠ `onInit`.** `@onInit` runs when the instance is constructed (which may be lazily on first resolve). `@onMount` runs when the host React component mounts. For service-layer side effects tied to UI lifetime, prefer `@onMount`.

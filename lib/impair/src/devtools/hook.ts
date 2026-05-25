@@ -1,3 +1,4 @@
+import { pauseTracking, enableTracking } from '@vue/reactivity'
 import { DependencyContainer } from 'tsyringe'
 import { stateMetadataKey, derivedMetadataKey, devtoolsContainerId } from '../utils/symbols'
 import type { StateMetadata } from '../reactivity/state'
@@ -33,17 +34,27 @@ function on(event: string, cb: EventCallback) {
 }
 
 function emit(event: string, data?: any) {
-  listeners.get(event)?.forEach((cb) => cb(data))
-  // Also push to content script via postMessage
-  if (typeof window !== 'undefined') {
-    try {
-      window.postMessage(
-        { source: 'impair-devtools-hook', event, data: serializeForTransport(data) },
-        '*',
-      )
-    } catch {
-      // serialization may fail for complex objects, ignore
+  // Pause Vue's dep tracking for the duration of the emit. The data payload often
+  // contains the instance itself (e.g. for 'state-changed'), and `serializeForTransport`
+  // walks every key — invoking the @state getters and silently subscribing whatever
+  // reactive effect happens to be running (a @trigger writing to a field) to every
+  // other @state field on the instance. Without this guard, an unrelated state write
+  // later notifies that effect and causes it to re-fire.
+  pauseTracking()
+  try {
+    listeners.get(event)?.forEach((cb) => cb(data))
+    if (typeof window !== 'undefined') {
+      try {
+        window.postMessage(
+          { source: 'impair-devtools-hook', event, data: serializeForTransport(data) },
+          '*',
+        )
+      } catch {
+        // serialization may fail for complex objects, ignore
+      }
     }
+  } finally {
+    enableTracking()
   }
 }
 

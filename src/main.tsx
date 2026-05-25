@@ -14,6 +14,8 @@ import { StrictMode } from 'react'
 import { App } from './provide.tsx'
 // import { App } from './trigger.tsx'
 import Dynamic from './dynamic/app.tsx'
+import { HmrDemo } from './hmr-demo/index.tsx'
+import { SelfInjectDemo } from './self-inject-demo/index.tsx'
 
 const client = new QueryClient()
 
@@ -27,7 +29,7 @@ configure({
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>
   <QueryClientProvider client={client}>
-    <Dynamic />
+    <SelfInjectDemo />
   </QueryClientProvider>,
   // </StrictMode>,
 )
