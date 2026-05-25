@@ -266,6 +266,27 @@ export class TodoService {
 By default triggers will run synchronously but you can make it run async too.
 
 - @trigger.async: method will be triggered in the next tick debouncing frequent sync state changes.
+- @trigger.debounce(ms): trailing-only debounce. The trigger re-runs `ms` milliseconds after the most recent dependency change. Bursts of changes inside the same `ms` window collapse to one run on the final values.
+- @trigger.throttle(ms): leading + trailing throttle. At most one run per `ms` milliseconds: the first change fires immediately; if further changes arrive during the window, one trailing run is scheduled at window close.
+
+```tsx
+import { state, trigger, injectable } from 'impair'
+
+@injectable()
+export class SearchService {
+  @state
+  query = ''
+
+  @trigger.debounce(300)
+  async search(cleanup: Cleanup) {
+    const controller = new AbortController()
+    cleanup(() => controller.abort())
+
+    this.results = await fetchResults(this.query, controller.signal)
+  }
+}
+```
+
 - **@derived**: property getter decorator for aggregated reactive values
 
 ```tsx
