@@ -17,8 +17,7 @@ const ParentConsumer = component(function ParentConsumer() {
 })
 
 const ChildConsumer = component(function ChildConsumer() {
-  const { localCount, parentCount, parentName, incrementLocal, incrementParent } =
-    useService(ChildService)
+  const { localCount, parentCount, parentName, incrementLocal, incrementParent } = useService(ChildService)
 
   return (
     <div style={childCard}>
@@ -35,9 +34,7 @@ export const SelfInjectDemo = component(function SelfInjectDemo() {
   return (
     <main style={shell}>
       <h1 style={{ marginTop: 0 }}>Parent Inject Demo</h1>
-      <p style={{ opacity: 0.7 }}>
-        ChildService injects ParentService from the outer ServiceProvider.
-      </p>
+      <p style={{ opacity: 0.7 }}>ChildService injects ParentService from the outer ServiceProvider.</p>
 
       <ServiceProvider provide={[ParentService]}>
         <section style={card}>

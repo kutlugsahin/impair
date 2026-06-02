@@ -33,17 +33,16 @@ function on(event: string, cb: EventCallback) {
   return () => listeners.get(event)?.delete(cb)
 }
 
+let devtoolsConnected = false
+
 function emit(event: string, data?: any) {
-  // Pause Vue's dep tracking for the duration of the emit. The data payload often
-  // contains the instance itself (e.g. for 'state-changed'), and `serializeForTransport`
-  // walks every key — invoking the @state getters and silently subscribing whatever
-  // reactive effect happens to be running (a @trigger writing to a field) to every
-  // other @state field on the instance. Without this guard, an unrelated state write
-  // later notifies that effect and causes it to re-fire.
+  const eventListeners = listeners.get(event)
+  if (!eventListeners?.size && !devtoolsConnected) return
+
   pauseTracking()
   try {
-    listeners.get(event)?.forEach((cb) => cb(data))
-    if (typeof window !== 'undefined') {
+    eventListeners?.forEach((cb) => cb(data))
+    if (devtoolsConnected && typeof window !== 'undefined') {
       try {
         window.postMessage(
           { source: 'impair-devtools-hook', event, data: serializeForTransport(data) },
@@ -242,6 +241,8 @@ function setStateValue(containerId: string, tokenName: string, key: string, valu
 
 function handleMessage(event: MessageEvent) {
   if (event.data?.source !== 'impair-devtools-content') return
+
+  devtoolsConnected = true
 
   const { command, args, requestId } = event.data
 
